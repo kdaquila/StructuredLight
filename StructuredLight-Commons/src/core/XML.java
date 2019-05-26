@@ -1,4 +1,4 @@
-package structuredlightcommons;
+package core;
 
 import org.dom4j.DocumentException;
 import org.dom4j.Element;

@@ -3,8 +3,8 @@ package testing_quad;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import structuredlightcommons.TXT;
-import structuredlightcommons.Quad;
+import core.TXT;
+import core.Quad;
 
 public class test_findMaxAreaQuad {
 

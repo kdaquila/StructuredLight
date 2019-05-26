@@ -1,8 +1,8 @@
 package testing_contours;
 
 import java.awt.image.BufferedImage;
-import structuredlightcommons.ImageUtil;
-import structuredlightcommons.Contours;
+import core.ImageUtil;
+import core.Contours;
 
 public class test_findcontours {
 

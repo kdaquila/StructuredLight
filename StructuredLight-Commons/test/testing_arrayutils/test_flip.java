@@ -2,8 +2,8 @@ package testing_arrayutils;
 
 import java.util.ArrayList;
 import java.util.List;
-import structuredlightcommons.ArrayUtils;
-import structuredlightcommons.TXT;
+import core.ArrayUtils;
+import core.TXT;
 
 public class test_flip {
 

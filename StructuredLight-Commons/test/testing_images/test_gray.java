@@ -1,7 +1,7 @@
 package testing_images;
 
 import java.awt.image.BufferedImage;
-import structuredlightcommons.ImageUtil;
+import core.ImageUtil;
 
 public class test_gray {
 

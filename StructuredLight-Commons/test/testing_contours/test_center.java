@@ -3,7 +3,7 @@ package testing_contours;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import structuredlightcommons.Contours;
+import core.Contours;
 
 public class test_center {
 

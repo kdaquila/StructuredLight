@@ -1,4 +1,4 @@
-package structuredlightcommons;
+package core;
 
 import java.util.List;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;

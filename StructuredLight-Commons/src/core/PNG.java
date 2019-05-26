@@ -1,4 +1,4 @@
-package structuredlightcommons;
+package core;
 
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;

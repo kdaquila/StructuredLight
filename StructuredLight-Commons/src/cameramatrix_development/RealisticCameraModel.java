@@ -1,6 +1,6 @@
 package cameracalibration;
 
-import structuredlightcommons.ArrayUtils;
+import core.ArrayUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

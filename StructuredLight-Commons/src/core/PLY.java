@@ -1,4 +1,4 @@
-package structuredlightcommons;
+package core;
 
 import java.io.BufferedWriter;
 import java.io.File;

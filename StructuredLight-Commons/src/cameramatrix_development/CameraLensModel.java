@@ -1,6 +1,6 @@
 package cameracalibration;
 
-import structuredlightcommons.ArrayUtils;
+import core.ArrayUtils;
 import java.util.List;
 import org.apache.commons.math3.fitting.leastsquares.EvaluationRmsChecker;
 import org.apache.commons.math3.fitting.leastsquares.GaussNewtonOptimizer;

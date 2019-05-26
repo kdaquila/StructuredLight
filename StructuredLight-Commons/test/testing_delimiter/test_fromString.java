@@ -1,7 +1,7 @@
 package testing_delimiter;
 
 import java.util.List;
-import structuredlightcommons.TXT;
+import core.TXT;
 
 public class test_fromString {
 
