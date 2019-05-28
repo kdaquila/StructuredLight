@@ -27,7 +27,7 @@ public class test_save_load {
         }
         String folder = "C:\\Users\\kfd18\\Downloads";
         String filename = "matrix_double.txt";
-        TXT.saveMatrix(matrix, Double.class, folder, filename, false, "%.3f", ",", "\n");
+        TXT.saveMatrix(matrix, Double.class, folder, filename, "%.3f", ",", "\n", false);
         System.out.println("---matrix saved successfully.\n");
     }
     
@@ -43,7 +43,7 @@ public class test_save_load {
         }
         String folder = "C:\\Users\\kfd18\\Downloads";
         String filename = "matrix_integer.txt";
-        TXT.saveMatrix(matrix, Integer.class, folder, filename, false, "%d", ",", "\n");
+        TXT.saveMatrix(matrix, Integer.class, folder, filename, "%d", ",", "\n", false);
         System.out.println("---matrix saved successfully.\n");
     }
     

@@ -5,6 +5,18 @@ import java.util.List;
 
 public class ArrayUtils
 {
+    public static List<List<Integer>> castArrayDouble_To_Integer(List<List<Double>> input) {
+        List<List<Integer>> output = new ArrayList<>();
+        for (List<Double> oldRow: input) {
+            List<Integer> newRow = new ArrayList<>();
+            for (Double item: oldRow) {                
+                newRow.add(item.intValue());
+            }
+            output.add(newRow);
+        }        
+        return output;
+    }
+    
     
     public static <T> List<List<T>> reshape(List<List<T>> array, int new_nRows, int new_nCols) 
     {

@@ -25,12 +25,5 @@ public class ModelApp {
         int dpi = 300;
         png.setDPI(dpi);
         png.save(model.img, save_path);       
-    }    
-    
-    public static void find() {
-//        String rgbImgPath = "C:\\Users\\kfd18\\OneDrive\\kdaquila_SoftwareDev\\Structured-Light\\StructuredLight-Commons\\Test_Resources\\RingGrid_Images\\2300.png";
-//        String savePath = "C:\\Users\\kfd18\\OneDrive\\kdaquila_SoftwareDev\\Structured-Light\\StructuredLight-Commons\\Test_Resources\\RingGrid_Points\\imagePoints.txt";
-//        RingGrid grid = new RingGrid(13,17);
-//        grid.find(rgbImgPath, savePath);
-    }
+    }        
 }

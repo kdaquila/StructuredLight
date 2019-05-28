@@ -3,6 +3,7 @@ package testing_contours;
 import java.awt.image.BufferedImage;
 import core.ImageUtil;
 import core.Contours;
+import java.util.List;
 
 public class test_findcontours {
 
@@ -25,15 +26,9 @@ public class test_findcontours {
         ImageUtil.save(bwImage, saveFolder, "bw_img.png");
         
         Contours myRegions = new Contours(bwImage);
-        myRegions.findContours();
-        int nRegionsFound = myRegions.edges.size();
+        List<List<List<Integer>>> contours = myRegions.findContours();
+        int nRegionsFound = contours.size();
         System.out.println("Found " + String.valueOf(nRegionsFound) + " regions");
-        
-        BufferedImage contourImage = myRegions.drawEdges();
-        ImageUtil.save(contourImage, saveFolder, "contour_img.png");
-        
-        BufferedImage tagImage = ImageUtil.ListToGrayImage_Integer(myRegions.tagMap);
-        ImageUtil.save(tagImage, saveFolder, "tag_img.png");
     }
 
 }

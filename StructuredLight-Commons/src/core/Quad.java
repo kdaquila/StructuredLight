@@ -83,7 +83,7 @@ public class Quad
             }
             if (b == c)
             {
-                c = (c+1)%nPts; // avoid collision\
+                c = (c+1)%nPts; // avoid collision
             }
             if (c == d)
             {

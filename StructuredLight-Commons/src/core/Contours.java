@@ -2,7 +2,6 @@ package core;
 
 import java.awt.Rectangle;
 import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
@@ -319,29 +318,6 @@ public class Contours {
         return hull;
     }     
     
-    public BufferedImage drawEdges(List<List<List<Integer>>> contours)
-    {
-        BufferedImage rgbImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-        int[] rgbBuffer = ((DataBufferInt)rgbImage.getRaster().getDataBuffer()).getData();
-        List<Integer> colors = new ArrayList<>();
-        colors.add(0xFF00FF);
-        colors.add(0xFFFF00);
-        colors.add(0x00FFFF);
-        int color_index = 0;
-        for (List<List<Integer>> contour: contours)
-        {
-            for (List<Integer> point: contour)
-            {
-                int x = point.get(0);
-                int y = point.get(1); 
-                int index = y*WIDTH + x;
-                rgbBuffer[index] = colors.get(color_index);                
-            }
-            color_index = (color_index + 1)%colors.size();
-        }
-        return rgbImage;
-    }    
-
     public static Map<Integer,List<Integer>> findHierarchy(List<List<List<Integer>>> contours) {
         
         Map<Integer, List<Integer>> hierarchy = new HashMap<>();

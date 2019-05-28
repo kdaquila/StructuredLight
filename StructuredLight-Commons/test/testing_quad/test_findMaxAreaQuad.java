@@ -32,7 +32,7 @@ public class test_findMaxAreaQuad {
         // save the original points
         String folder = "C:\\Users\\kfd18\\Downloads";
         String filename = "original_points.txt";
-        TXT.saveMatrix(points, Integer.class, folder, filename, false, "%d", ",", "\n");
+        TXT.saveMatrix(points, Integer.class, folder, filename, "%d", ",", "\n", false);
         
         List<List<Integer>> quadPoints = Quad.findMaxAreaQuad(points);
         
@@ -42,7 +42,7 @@ public class test_findMaxAreaQuad {
         // save the original points
         folder = "C:\\Users\\kfd18\\Downloads";
         filename = "quad_points.txt";
-        TXT.saveMatrix(quadPoints, Integer.class, folder, filename, false, "%d", ",", "\n");
+        TXT.saveMatrix(quadPoints, Integer.class, folder, filename, "%d", ",", "\n", false);
         
     }
 }
