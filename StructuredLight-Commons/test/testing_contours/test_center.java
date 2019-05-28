@@ -19,7 +19,7 @@ public class test_center {
         contour.add(Arrays.asList(20,0));
         contour.add(Arrays.asList(20,10));
         contour.add(Arrays.asList(0,10));
-        List<Double> center = Contours.findCenter(contour);
+        List<Double> center = Contours.computeCenter(contour);
         System.out.println(center);
         System.out.println("\n");
     }

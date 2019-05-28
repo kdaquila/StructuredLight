@@ -1,12 +1,17 @@
 package core;
 
+import java.awt.Rectangle;
+import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Contours {
     
@@ -22,6 +27,9 @@ public class Contours {
     private final int INITIALTAG;
     private int newTag;
     public List<List<List<Integer>>> edges;
+    public List<List<List<Integer>>> innerEdges;
+    public List<List<List<Integer>>> outerEdges;
+    public Map<Integer, List<Integer>> hierarchy;
     
     public Contours(BufferedImage bwImage)
     {
@@ -35,6 +43,10 @@ public class Contours {
         HEIGHT = bwImage.getHeight();
         bwImg = bwImage;
         bwImgData = ((DataBufferByte)bwImg.getData().getDataBuffer()).getData();
+        edges = new ArrayList<>();
+        outerEdges = new ArrayList<>();
+        innerEdges = new ArrayList<>();
+        hierarchy = new HashMap<>();
         
         // initialize Tag Map
         tagMap = new ArrayList<>();
@@ -46,12 +58,16 @@ public class Contours {
                 newRow.add(NOTAG);
             }            
             tagMap.add(newRow);
-        }        
-        
-        edges = new ArrayList<>();
+        }     
+                
     }
     
-    public void findRegions() {
+    public void findContours() {
+        int minArea = 0;
+        findContours(minArea);
+    }
+    
+    public void findContours(int minArea) {
         
         ImageUtil.fillBoundary(bwImg, EMPTYPIXEL);
         
@@ -75,8 +91,11 @@ public class Contours {
                 {
                     int startAngle = 315; //degrees
                     List<List<Integer>> newEdge = followEdge(x, y, startAngle, newTag);
-                    edges.add(newEdge);                    
                     newTag += 1;
+                    if (Contours.computeArea(newEdge) >= minArea) {
+                        edges.add(newEdge); 
+                        outerEdges.add(newEdge);
+                    }                    
                 }
                 // This is a new internal edge
                 else if (bw == FILLEDPIXEL &&
@@ -84,9 +103,12 @@ public class Contours {
                          tagDown != MARKEDTAG)
                 {
                     int startAngle = 135; //degrees
-                    List<List<Integer>> newEdge = followEdge(x, y, startAngle, newTag);
-                    edges.add(newEdge);                    
+                    List<List<Integer>> newEdge = followEdge(x, y, startAngle, newTag);                    
                     newTag += 1;
+                    if (Contours.computeArea(newEdge) >= minArea) {
+                        edges.add(newEdge); 
+                        innerEdges.add(newEdge);
+                    }  
                 } 
             }
         }
@@ -158,7 +180,7 @@ public class Contours {
         return -1; // could not find a neighbor with the correct value
     }
     
-    public static List<Double> findCenter(List<List<Integer>> contour)
+    public static List<Double> computeCenter(List<List<Integer>> contour)
     {
         double sumX = 0;
         double n = 0;
@@ -176,6 +198,49 @@ public class Contours {
         center.add(sumY/n);
         
         return center;
+    }
+    
+    public static List<Integer> computeBoundingBox(List<List<Integer>> contour) {
+        
+        int nPts = contour.size();
+        List<Integer> xList = new ArrayList<>(nPts);
+        List<Integer> yList = new ArrayList<>(nPts);
+        for (List<Integer> pt: contour) {
+            xList.add(pt.get(0));
+            yList.add(pt.get(1));
+        }
+        
+        int xMax = Collections.max(xList);
+        int xMin = Collections.min(xList);
+        int yMax = Collections.max(yList);
+        int yMin = Collections.min(yList);
+        
+        int x = xMin;
+        int y = yMin;
+        int w = xMax - xMin;
+        int h = yMax - yMin;
+        
+        List<Integer> box = new ArrayList<>(4);
+        box.add(x);
+        box.add(y);
+        box.add(w);
+        box.add(h);
+        
+        return box;
+    }
+    
+    public static Double computeArea(List<List<Integer>> contour) {
+        
+        double area = 0.0;
+        int nPts = contour.size();
+        for (int i = 0; i < nPts; i++) {
+            int y_curr = contour.get(i).get(1);
+            int y_next = contour.get((i+1)%nPts).get(1);
+            int x_curr = contour.get(i).get(0);
+            int x_next = contour.get((i+1)%nPts).get(0);
+            area += x_curr*y_next - x_next*y_curr;
+        }
+        return 0.5*Math.abs(area);
     }
     
     public static List<List<Integer>> findConvexHull(List<List<Integer>> contour)
@@ -236,7 +301,23 @@ public class Contours {
         return hull;
     }
     
-    public BufferedImage drawEdges()
+    public BufferedImage drawAllEdges()
+    {
+        return drawEdges(edges);
+    }
+    
+    public BufferedImage drawOuterEdges()
+    {
+        return drawEdges(innerEdges);
+    }
+    
+    public BufferedImage drawInnerEdges()
+    {
+        return drawEdges(outerEdges);
+    }
+    
+    
+    public BufferedImage drawEdges(List<List<List<Integer>>> contours)
     {
         BufferedImage rgbImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         int[] rgbBuffer = ((DataBufferInt)rgbImage.getRaster().getDataBuffer()).getData();
@@ -245,7 +326,7 @@ public class Contours {
         colors.add(0xFFFF00);
         colors.add(0x00FFFF);
         int color_index = 0;
-        for (List<List<Integer>> contour: edges)
+        for (List<List<Integer>> contour: contours)
         {
             for (List<Integer> point: contour)
             {
@@ -258,7 +339,92 @@ public class Contours {
         }
         return rgbImage;
     }
+    
+    public Map<Integer,List<Integer>> findOuterEdgeHierarchy() {
+        return Contours.findHierarchy(outerEdges);
+    }
+    
+    public Map<Integer,List<Integer>> findInnerEdgeHierarchy() {
+        return Contours.findHierarchy(innerEdges);
+    }
+    
+    public Map<Integer,List<Integer>> findAllEdgeHierarchy() {
+        return Contours.findHierarchy(edges);
+    }
 
+    public static Map<Integer,List<Integer>> findHierarchy(List<List<List<Integer>>> contours) {
+        
+        Map<Integer, List<Integer>> hierarchy = new HashMap<>();
+        
+        // Check each Alpha contour
+        for (int alphaID = 0; alphaID < contours.size(); alphaID++) {
+            
+            // Store the Alpha Contour as a Path
+            Path2D alphaPath = new Path2D.Double();
+            List<Integer> firstPt = contours.get(alphaID).get(0);
+            alphaPath.moveTo(firstPt.get(0), firstPt.get(1));
+            for (int pt_index = 1; pt_index < contours.get(alphaID).size(); pt_index++) {
+                List<Integer> point = contours.get(alphaID).get(pt_index);
+                alphaPath.lineTo(point.get(0), point.get(1));
+            }
+            
+            // Check each Beta contour
+            for (int betaID = 0; betaID < contours.size(); betaID++) {
+                
+                if (betaID != alphaID) {
+                    
+                    // Find the Beta Contour Bounding Box
+                    List<List<Integer>> betaContour = contours.get(betaID);
+                    List<Integer> box = Contours.computeBoundingBox(betaContour);
+                    int x = box.get(0);
+                    int y = box.get(1);
+                    int width = box.get(2);
+                    int height = box.get(3);
+                    Rectangle boxRect = new Rectangle(x, y, width, height);
+                    
+                    // Check if Beta is Inside Alpha                    
+                    if (alphaPath.contains(boxRect)) {
+                        
+                        // Existing Parent Contour
+                        if (hierarchy.containsKey(alphaID)) {
+                            List<Integer> children = hierarchy.get(alphaID);
+                            
+                            // Check each existing child
+                            boolean isBetaInsideExisting = false;
+                            for (Integer existingID: children) {
+                                List<List<Integer>> existingContour = contours.get(existingID);
+                                List<Integer> existingBox = Contours.computeBoundingBox(existingContour);
+                                int existingX = existingBox.get(0);
+                                int existingY = existingBox.get(1);
+                                int existingW = existingBox.get(2);
+                                int existingH = existingBox.get(3);
+                                Rectangle existingContourBoxRect = new Rectangle(existingX, existingY, existingW, existingH);
+                                
+                                // Check if Beta is Inside Existing
+                                if (existingContourBoxRect.contains(boxRect)) {
+                                    isBetaInsideExisting = true;
+                                    break;
+                                }                                
+                            }
+                            if (isBetaInsideExisting == false) {
+                                children.add(betaID);
+                            }
+                            
+                        } 
+                        // New Parent Contour
+                        else {
+                            List<Integer> children = new ArrayList<>();
+                            children.add(betaID);
+                            hierarchy.put(alphaID, children);
+                        }
+                    }
+                }
+            }
+        }
+        
+        return hierarchy;
+    }
+    
     
     public class LocalPixels
     {    

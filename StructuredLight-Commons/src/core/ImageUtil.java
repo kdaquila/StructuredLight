@@ -15,11 +15,10 @@ import org.apache.commons.io.FileUtils;
 
 public class ImageUtil {
     
-    public static BufferedImage load(String folder, String filename)
-    {
+    public static BufferedImage load(String fullpath) {
         BufferedImage output;
         try {
-            output = ImageIO.read(new File(folder + "\\" + filename));
+            output = ImageIO.read(new File(fullpath));
         }
         catch (IOException exp) {
             for (StackTraceElement elem: exp.getStackTrace()) {
@@ -27,7 +26,28 @@ public class ImageUtil {
             }
             throw new RuntimeException("Can't read the images");
         }
-        return output;
+        return output;        
+    }
+    
+    
+    public static BufferedImage load(String folder, String filename)
+    {
+        return load(folder + "\\" + filename);
+    }
+    
+    public static void save(BufferedImage inputImage, String fullPath)
+    {        
+        try {
+            // write the image
+            File outputFile = new File (fullPath);
+            ImageIO.write(inputImage, "png", outputFile);
+        }
+        catch (IOException exp) {
+            for (StackTraceElement elem: exp.getStackTrace()) {
+                System.out.println(elem);
+            }
+            throw new RuntimeException("Could not save the image");
+        } 
     }
         
     public static void save(BufferedImage inputImage, String folder, String name)
@@ -504,10 +524,6 @@ public class ImageUtil {
         int nRows = grayImage.getHeight();
         int type = BufferedImage.TYPE_BYTE_GRAY;
         BufferedImage bwImage = new BufferedImage(nCols, nRows, type);
-        for (int index =0; index < nRows*nCols; index++)
-        {
-            
-        }
         
         // Blur
         BufferedImage blurImage = ImageUtil.meanFilter(grayImage, windowSize);

@@ -25,7 +25,7 @@ public class test_findcontours {
         ImageUtil.save(bwImage, saveFolder, "bw_img.png");
         
         Contours myRegions = new Contours(bwImage);
-        myRegions.findRegions();
+        myRegions.findContours();
         int nRegionsFound = myRegions.edges.size();
         System.out.println("Found " + String.valueOf(nRegionsFound) + " regions");
         

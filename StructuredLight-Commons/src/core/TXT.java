@@ -47,19 +47,22 @@ public class TXT {
     }
     
     public static <T> void saveMatrix(List<List<T>> matrix, Class<T> type, 
-                                            String folder, String filename, boolean append, 
-                                            String formatString, 
-                                            String delimiter, String EOL){
+                                            String path, String formatString) {
+        String delimiter = ",";
+        String EOL = "\n";
+        boolean append = false;
+        saveMatrix(matrix, type, path, formatString, delimiter, EOL, append);
+    }
+    
+    public static <T> void saveMatrix(List<List<T>> matrix, Class<T> type, 
+                                            String path, String formatString, 
+                                            String delimiter, String EOL, 
+                                            boolean append){
         try {
-            // create the folder if needed
-            File dir = new File(folder);
-            if (!dir.exists())
-            {
-                FileUtils.forceMkdir(dir);
-            }
+            // open the file
+            File newFile = new File(path);
             
             // open the writer
-            File newFile = new File(folder + "\\" + filename);
             FileWriter writer = new FileWriter(newFile, append);
             BufferedWriter buffWriter = new BufferedWriter(writer);
             
@@ -73,6 +76,29 @@ public class TXT {
         catch (IOException exp){
             throw new RuntimeException("Could not save to the file");
         }
+        
+    }
+    
+    public static <T> void saveMatrix(List<List<T>> matrix, Class<T> type, 
+                                            String folder, String filename, 
+                                            String formatString) {
+        createFolder(folder);
+        String path = folder + "\\" + filename;
+        String delimiter = ",";
+        String EOL = "\n";
+        boolean append = false;
+        saveMatrix(matrix, type, path, formatString, delimiter, EOL, append);
+    }
+    
+    
+    public static <T> void saveMatrix(List<List<T>> matrix, Class<T> type, 
+                                            String folder, String filename, 
+                                            String formatString, 
+                                            String delimiter, String EOL, 
+                                            boolean append){
+        createFolder(folder);
+        String path = folder + "\\" + filename;
+        saveMatrix(matrix, type, path, formatString, delimiter, EOL, append);
     }
     
     public static <T> void saveVector(List<T> vector, Class<T> type, 
@@ -156,7 +182,20 @@ public class TXT {
         return writer.toString();
     }
     
-
+    public static void createFolder(String folder) {
+        try {            
+            // create the folder if needed
+            File dir = new File(folder);
+            if (!dir.exists())
+            {
+                FileUtils.forceMkdir(dir);
+            }            
+            
+        }
+        catch (IOException exp){
+            throw new RuntimeException("Could not create new folder");
+        }
+    }
     
 
 }

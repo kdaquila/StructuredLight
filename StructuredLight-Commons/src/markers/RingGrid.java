@@ -1,5 +1,7 @@
 package markers;
 
+import core.Contours;
+import core.ImageUtil;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -7,6 +9,10 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import core.PNG;
+import core.TXT;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class RingGrid {
     
@@ -26,48 +32,60 @@ public class RingGrid {
         draw(borderWidth, ringOuterRadius, ringInnerRadius, ringMarginRadius, savePath);
     }
     
-    public void draw(int borderWidth, int ringOuterRadius, int ringInnerRadius, int ringMarginRadius, String savePath) {
-        // compute page size
+    
+    public void draw(int borderWidth, int ringOuterRadius, int ringInnerRadius, 
+                     int ringMarginRadius, String savePath) {
+        
+        // Compute page size
         int pageWidth = nCols*2*ringMarginRadius + 2*borderWidth;
         int pageHeight = nRows*2*ringMarginRadius + 2*borderWidth;
 
-        // create image
+        // Create image and graphics
         BufferedImage img = new BufferedImage(pageWidth, pageHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = img.createGraphics();
         
-        // create graphics objects
-        Graphics2D g = img.createGraphics();
-        Graphics2D g2 = (Graphics2D)g;
-        
-        // set rendering hints
-        RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // Set rendering hints
+        RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING, 
+                                               RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHints(rh);
         
         // Fill with White
-        g.setPaint(Color.WHITE);
-        g.fillRect(0, 0, img.getWidth(), img.getHeight());
+        g2.setPaint(Color.WHITE);
+        g2.fillRect(0, 0, img.getWidth(), img.getHeight());
         
-         // Draw boundary
+         // Draw border
         g2.setPaint(Color.BLACK);
         g2.setStroke(new BasicStroke(borderWidth));
-        g2.drawRect(0 + borderWidth/2, 0 + borderWidth/2, pageWidth - borderWidth, pageHeight - borderWidth);
+        int borderStart = borderWidth/2;
+        int borderAreaWidth = pageWidth - borderWidth;
+        int borderAreaHeight = pageHeight - borderWidth;
+        g2.drawRect(borderStart, borderStart, borderAreaWidth, borderAreaHeight);
         
         // Draw Ring's Black Disc
-        int outerOffset = borderWidth + (ringMarginRadius - ringOuterRadius);
-        for (int x = outerOffset; x < pageWidth - outerOffset; x+= 2*ringMarginRadius ){
-            for (int y = outerOffset; y < pageHeight - outerOffset; y+= 2*ringMarginRadius){
+        int blackDiscStart = borderWidth + (ringMarginRadius - ringOuterRadius);
+        int blackDiscStopX = pageWidth - blackDiscStart;
+        int blackDiscStopY = pageHeight - blackDiscStart;
+        int blackDiscStep = 2*ringMarginRadius;
+        int blackDiscSize = 2*ringOuterRadius;
+        for (int x = blackDiscStart; x < blackDiscStopX; x+= blackDiscStep) {
+            for (int y = blackDiscStart; y < blackDiscStopY; y+= blackDiscStep) {
                 g2.setPaint(Color.BLACK);                             
-                g2.fillOval(x, y, 2*ringOuterRadius, 2*ringOuterRadius);
+                g2.fillOval(x, y, blackDiscSize, blackDiscSize);
             }
-        }
+        }        
         
-        // Draw Ring's White Disc
-        int innerOffset = borderWidth + (ringMarginRadius - ringInnerRadius);
-        for (int x = innerOffset; x < pageWidth - innerOffset; x+= 2*ringMarginRadius ){
-            for (int y = innerOffset; y < pageHeight - innerOffset; y+= 2*ringMarginRadius){
+        // Draw Ring's White Disc        
+        int whiteDiscStart = borderWidth + (ringMarginRadius - ringInnerRadius);
+        int whiteDiscStopX = pageWidth - whiteDiscStart;
+        int whiteDiscStopY = pageHeight - whiteDiscStart;
+        int whiteDiscStep = 2*ringMarginRadius;
+        int whiteDiscSize = 2*ringInnerRadius;
+        for (int x = whiteDiscStart; x < whiteDiscStopX; x+= whiteDiscStep) {
+            for (int y = whiteDiscStart; y < whiteDiscStopY; y+= whiteDiscStep) {
                 g2.setPaint(Color.WHITE);                             
-                g2.fillOval(x, y, 2*ringInnerRadius, 2*ringInnerRadius);
+                g2.fillOval(x, y, whiteDiscSize, whiteDiscSize);
             }
-        }
+        }       
         
         // save
         int DPI = 300;
@@ -75,9 +93,58 @@ public class RingGrid {
         png.setDPI(DPI);
         png.save(img, savePath);
     }
-    
-    public void find() {
-        // TODO implement RingGrid find() method
+        
+    public void find(String rgbImgPath, String saveDataPath) {
+
+        // Load the rgb image
+        System.out.println("Loading the rgb image: Please wait ...");
+        BufferedImage rgbImage = ImageUtil.load(rgbImgPath);
+        
+        // Convert RGB to gray
+        System.out.println("Converting to grayscale: Please wait ...");
+        BufferedImage grayImage = ImageUtil.color2Gray(rgbImage);
+                       
+        // Adaptive threshold to black and white
+        System.out.println("Adaptive thresholding to black and white: Please wait ...");
+        int windowSize = 21;
+        int offset = 5;
+        BufferedImage bwImage = ImageUtil.adaptiveThreshold(grayImage, windowSize, offset);
+                             
+        // Find the contours
+        System.out.println("Looking for contours: Please wait ...");
+        Contours contours = new Contours(bwImage);
+        int minArea = 200;
+        contours.findContours(minArea);    
+        List<List<List<Integer>>> edges = contours.outerEdges;   
+        
+        // Organize the contours into a hierarchy
+        System.out.println("Organizing Contours into a Hierarchy: Please wait ...");
+        Map<Integer, List<Integer>> hierarchy = contours.findOuterEdgeHierarchy();        
+          
+        // Find the ring centers
+        System.out.println("Computing Centers Points: Please wait ...");
+        List<List<Double>> discCenters = new ArrayList<>();
+        int nRings = nRows*nCols;        
+        for (List<Integer> children: hierarchy.values()) {
+            
+            if (children.size() == nRings) {
+                for (Integer childID: children) {
+                    List<List<Integer>> childContour = edges.get(childID);
+                    discCenters.add(Contours.computeCenter(childContour));
+                }
+                break;
+            }
+        }
+        if (discCenters.isEmpty()) {
+            throw new RuntimeException("Could not find the correct number of discs.");
+        }
+        
+        // Save the disc centers
+        System.out.println("Saving the Center Points: Please wait ...");
+        String formatString = "%.3f";
+        TXT.saveMatrix(discCenters, Double.class, saveDataPath, formatString);
+        
+       
     }
     
     
