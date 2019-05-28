@@ -1,2 +1,0 @@
-CalibrationGridPoints.Contours
-CalibrationGridPoints.NeighborPixels

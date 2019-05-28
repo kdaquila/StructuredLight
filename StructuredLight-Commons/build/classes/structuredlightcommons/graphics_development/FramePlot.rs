@@ -1,3 +1,0 @@
-videoframes.FramePlotWindow
-videoframes.FramePlot$1
-videoframes.FramePlot

@@ -1,1 +1,0 @@
-cylinderphoto.ImageRegion
