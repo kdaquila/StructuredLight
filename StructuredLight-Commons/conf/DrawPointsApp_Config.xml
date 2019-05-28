@@ -1,6 +1,9 @@
 <config>
-	<nRings>221</nRings>
-	<formatString>%.3f</formatString>
-	<rgbImagePath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Images\9222.png</rgbImagePath>
+	<circleRadius>3</circleRadius>
+	<circleLineWidth>1</circleLineWidth>
+	<circleLineColor>FF0000</circleLineColor>
+	<circleIsFilled>true</circleIsFilled>
+	<rgbImagePath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Images\8659.png</rgbImagePath>
 	<loadDataPath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Points\imagePoints.txt</loadDataPath>
+	<saveImagePath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\Debug\drawing.png</saveImagePath>
 </config>

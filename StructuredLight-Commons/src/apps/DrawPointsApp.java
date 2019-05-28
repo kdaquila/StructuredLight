@@ -24,35 +24,42 @@ public class DrawPointsApp {
         System.out.print("Loading the configuration ... ");
         
         XML conf = new XML(configPath);      
-        int nRings = conf.getInt("/config/nRings");
-        String formatString = conf.getString("/config/formatString"); 
+        int circleRadius = conf.getInt("/config/circleRadius");
+        int circleLineWidth = conf.getInt("/config/circleLineWidth");
+        int circleLineColor = conf.getInt("/config/circleLineColor", 16);
+        boolean circleIsFilled = conf.getBool("/config/circleIsFilled");
         String rgbImagePath = conf.getString("/config/rgbImagePath"); 
         String loadDataPath = conf.getString("/config/loadDataPath"); 
+        String saveImagePath = conf.getString("/config/saveImagePath"); 
         
         System.out.println("Done");
         
-        // Load the image        
+        // Load the image
+
+        System.out.print("Drawing on the RGB image ... ");  
+        
         BufferedImage rgbImage = ImageUtil.load(rgbImagePath);
         
-        // Load the pointss
-        String delimiter = ",";
-        String EOL = "\n";
-        List<List<Double>> contours = TXT.loadMatrix(loadDataPath, Double.class, delimiter, EOL);
+        // Load the points
+        List<List<Double>> contours = TXT.loadMatrix(loadDataPath, Double.class);
         
         // Convert Double to Int
         List<List<Integer>> contoursINT = ArrayUtils.castArrayDouble_To_Integer(contours);
         
         // Draw the image
-        int radius = 3;
-        int lineWidth = 1;
-        int colorHex = 0xFF0000;
-        boolean isFill = true;
-        BufferedImage drawing = Draw.drawCircles(rgbImage, contoursINT, radius, lineWidth, colorHex, isFill);
+        BufferedImage drawing = Draw.drawCircles(rgbImage, contoursINT, 
+                                                 circleRadius, circleLineWidth, 
+                                                 circleLineColor, circleIsFilled);
         
-        // Save the image
-        String drawImgSavePath = ".\\Test_Resources\\Debug\\drawing.png";
+        System.out.println("Done");
+        
+        // Save the image        
+        System.out.print("Loading the RGB image ... "); 
+        
         PNG png = new PNG();
-        png.save(drawing, drawImgSavePath);
+        png.save(drawing, saveImagePath);
+        
+        System.out.println("Done");
         
     }
 }

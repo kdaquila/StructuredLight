@@ -206,14 +206,19 @@ public class Contours {
     
     public static Integer findParentID(Map<Integer, List<Integer>> hierarchy, int nChildren) {
         int parentID = 0;
-        for (Integer id: hierarchy.keySet()) {
+        boolean isChildrenFound = false;
+        for (Integer id: hierarchy.keySet()) {            
+            
             if (hierarchy.get(id).size() == nChildren) {
                 parentID = id;
+                isChildrenFound = true;
                 break;
-            } else {
-                throw new RuntimeException("Could not find a parent contour with the correct number of child contours.");
             }
         } 
+        
+        if (!isChildrenFound) {
+            throw new RuntimeException("Could not find a parent contour with the correct number of child contours.");
+        }
         return parentID;
     }
     
