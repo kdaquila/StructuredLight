@@ -5,17 +5,36 @@ import core.Draw;
 import core.ImageUtil;
 import core.PNG;
 import core.TXT;
+import core.XML;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
 public class DrawPointsApp {
     public static void main(String[] args) {
-        // Load the image        
-        String rgbImgPath = ".\\Test_Resources\\RingGrid_Images\\2300.png";
-        BufferedImage rgbImage = ImageUtil.load(rgbImgPath);
         
-        // Load the points
-        String loadDataPath = ".\\Test_Resources\\RingGrid_Points\\imagePoints.txt";
+        // Validate arguments
+        if (args.length == 0) {
+            throw new IllegalArgumentException("Please provide one argument which is the path to the XML configuration file");
+        } 
+        
+        // Parse the arguments
+        String configPath = args[0];
+        
+        // Load the configuration variables
+        System.out.print("Loading the configuration ... ");
+        
+        XML conf = new XML(configPath);      
+        int nRings = conf.getInt("/config/nRings");
+        String formatString = conf.getString("/config/formatString"); 
+        String rgbImagePath = conf.getString("/config/rgbImagePath"); 
+        String loadDataPath = conf.getString("/config/loadDataPath"); 
+        
+        System.out.println("Done");
+        
+        // Load the image        
+        BufferedImage rgbImage = ImageUtil.load(rgbImagePath);
+        
+        // Load the pointss
         String delimiter = ",";
         String EOL = "\n";
         List<List<Double>> contours = TXT.loadMatrix(loadDataPath, Double.class, delimiter, EOL);

@@ -12,6 +12,13 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 
 public class TXT {
+    
+    public static <T> List<List<T>> loadMatrix(String path, Class<T> type)
+    {
+        String delimiter = ",";
+        String EOL = "\n";
+        return loadMatrix(path, type, delimiter, EOL);
+    }
         
     public static <T> List<List<T>> loadMatrix(String path, Class<T> type, String delimiter, String EOL)
     {
