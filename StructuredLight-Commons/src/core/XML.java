@@ -16,12 +16,17 @@ public class XML {
     }
     
     public int getInt(String xPath) {
+        int radix = 10;
+        return getInt(xPath, radix);
+    }
+    
+    public int getInt(String xPath, int radix) {
         
         Node valueNode = root.selectSingleNode(xPath);            
         if (valueNode == null) {
             throw new RuntimeException("Could not find " + xPath + " in the configuration file");
         }        
-        return Integer.parseInt(valueNode.getText());
+        return Integer.parseInt(valueNode.getText(), radix);
     }
     
     public String getString(String xPath) {

@@ -36,7 +36,7 @@ public class PNG {
         metadata = writer.getDefaultImageMetadata(typeSpec, null);
     }
     
-    public void setDPI(float dpi)
+    private void setDPI(float dpi)
     {
         float pixelSize_mm = dpi/25.4f;
         
@@ -63,13 +63,18 @@ public class PNG {
         }       
     }
     
-    public void save(BufferedImage image, String path)
+    public void save(BufferedImage image, String  path) {
+        int dpi = 300;
+        save(image, path, dpi);
+    }
+    
+    public void save(BufferedImage image, String path, int dpi)
     {
         File outputFile = new File(path);
         try (ImageOutputStream stream = ImageIO.createImageOutputStream(outputFile))
         {
-            Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName);
             writer.setOutput(stream);
+            setDPI(dpi);
             IIOImage imgOut = new IIOImage(image, null, metadata);
             writer.write(imgOut);
         }

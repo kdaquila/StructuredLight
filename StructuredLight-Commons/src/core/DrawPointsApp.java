@@ -28,8 +28,6 @@ public class DrawPointsApp {
         // Save the image
         String drawImgSavePath = ".\\Test_Resources\\Debug\\drawing.png";
         PNG png = new PNG();
-        int dpi = 300;
-        png.setDPI(dpi);
         png.save(drawing, drawImgSavePath);
         
     }
