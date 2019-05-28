@@ -99,7 +99,7 @@ public class Triangulation {
         Vector3D XYZ = r1.scalarMultiply(a).add(p1);
         
         // store as List
-        List XYZ_List = ArrayUtils.ArrayToList_Double(XYZ.toArray());
+        List<Double> XYZ_List = ArrayUtils.ArrayToList_Double(XYZ.toArray());
         
         return XYZ_List;
     }

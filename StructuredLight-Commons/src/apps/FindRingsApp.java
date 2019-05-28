@@ -1,11 +1,12 @@
-package calibrationpattern.rings;
+package apps;
 
+import calibrationpattern.rings.ImagePoints;
 import core.ImageUtil;
 import core.TXT;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-public class ImagePointsApp {
+public class FindRingsApp {
     
     public static void main(String[] args) {
         // Load the image        

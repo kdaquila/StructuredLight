@@ -1,4 +1,4 @@
-package cameracalibration;
+package cameramatrix_development;
 
 import java.util.List;
 import org.apache.commons.math3.fitting.leastsquares.MultivariateJacobianFunction;
@@ -190,7 +190,7 @@ public class RealisticCameraProjection implements MultivariateJacobianFunction {
         computeAllJacobians();
         RealMatrix jacobian = new Array2DRowRealMatrix(jacobianFull);
         
-        Pair<RealVector, RealMatrix> output = new Pair(uvPts, jacobian);
+        Pair<RealVector, RealMatrix> output = new Pair<>(uvPts, jacobian);
         
         return output;
     }
