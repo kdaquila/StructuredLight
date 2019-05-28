@@ -23,31 +23,33 @@ public class FindRingsApp {
         System.out.print("Loading the configuration ... ");
         
         XML conf = new XML(configPath);      
-        int nRows = conf.getInt("/config/nRows");
-        int nCols = conf.getInt("/config/nCols");
-        int borderWidth = conf.getInt("/config/borderWidth");
-        int shapeRadius = conf.getInt("/config/shapeRadius");
-        int backgroundColor = conf.getInt("/config/backgroundColor", 16);        
-        int borderColor = conf.getInt("/config/borderColor", 16);        
-        int ringColor = conf.getInt("/config/ringColor", 16);
-        int ringOuterRadius = conf.getInt("/config/ringOuterRadius");
-        int ringInnerRadius = conf.getInt("/config/ringInnerRadius");
-        String savePath = conf.getString("/config/savePath"); 
+        int nRings = conf.getInt("/config/nRings");
+        String formatString = conf.getString("/config/formatString"); 
+        String rgbImagePath = conf.getString("/config/rgbImagePath"); 
+        String saveDataPath = conf.getString("/config/saveDataPath"); 
         
         System.out.println("Done");
         
-        // Load the image        
-        String rgbImgPath = ".\\Test_Resources\\RingGrid_Images\\2300.png";
-        BufferedImage rgbImage = ImageUtil.load(rgbImgPath);
+        // Load the image
+        System.out.print("Loading the RGB image ... ");        
         
-        // Find the rings centers       
-        int nRings = 221;
+        BufferedImage rgbImage = ImageUtil.load(rgbImagePath);
+        
+        System.out.println("Done");
+        
+        // Find the rings centers    
+        System.out.print("Searching for ring centers ... ");
+        
         List<List<Double>> ringCenters = ImagePoints.find(rgbImage, nRings);
         
+        System.out.println("Done");
+        
         // Save the point data
-        String saveDataPath = ".\\Test_Resources\\RingGrid_Points\\imagePoints.txt";
-        String formatString = "%.3f";
+        System.out.print("Saving the ring centers data... ");
+        
         TXT.saveMatrix(ringCenters, Double.class, saveDataPath, formatString);
+        
+        System.out.println("Done");
     }
 
 }
