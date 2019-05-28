@@ -84,7 +84,7 @@ public class CameraLensDistortion implements MultivariateJacobianFunction{
         
         // Compute UV
         allSTtoUV();
-        RealVector uvPts = new ArrayRealVector(ArrayUtils.flattenArrayOfPairs(uvList));
+        RealVector uvPts = new ArrayRealVector();
         
         // Compute Jacobian
         computeAllJacobians();

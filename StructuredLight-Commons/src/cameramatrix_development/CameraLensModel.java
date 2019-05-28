@@ -1,4 +1,4 @@
-package cameracalibration;
+package cameramatrix_development;
 
 import core.ArrayUtils;
 import java.util.List;
@@ -40,7 +40,7 @@ public class CameraLensModel extends AbstractCameraModel {
         builder.start(initialDistortions);
         
         // Set the target data
-        double[] actualImagePtsFlat = ArrayUtils.flattenArrayOfPairs(actualImagePts);
+        double[] actualImagePtsFlat = new double[1];
         builder.target(actualImagePtsFlat);
         
         // Set the options
@@ -64,7 +64,7 @@ public class CameraLensModel extends AbstractCameraModel {
         
         // Organize the results
         finalDistortions = solution.getPoint().toArray();
-        finalImagePts = ArrayUtils.unflattenArrayToPairs(model.value(new ArrayRealVector(finalDistortions)).getFirst().toArray());
+//        finalImagePts = ArrayUtils.unflattenArrayToPairs(model.value(new ArrayRealVector(finalDistortions)).getFirst().toArray());
         totalIterations = solution.getIterations();
     }
 

@@ -1,5 +1,6 @@
-package cameracalibration;
+package cameramatrix_development;
 
+import core.ArrayUtils;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
@@ -20,17 +21,17 @@ public class CameraMatrixDecomposition {
     }
     
     public void decompose() {
-        QRDecomposition qr = new QRDecomposition(MatrixUtil.flipud(M.getSubMatrix(0, 2, 0, 2)).transpose());
-        K = MatrixUtil.fliplr(MatrixUtil.flipud(qr.getR().transpose()));                
-        double scaling = K.getEntry(2, 2);        
-        K = K.scalarMultiply(1/scaling);
-        R = MatrixUtil.flipud(qr.getQ().transpose()); 
-        R = R.scalarMultiply(scaling);        
-        T = (new QRDecomposition(K)).getSolver().getInverse().multiply(M.getSubMatrix(0, 2, 3, 3));
-        RT = new Array2DRowRealMatrix(3, 4);
-        RT.setSubMatrix(R.getData(), 0, 0);
-        RT.setSubMatrix(T.getData(), 0, 3);        
-        C = (new QRDecomposition(R)).getSolver().getInverse().multiply(T.scalarMultiply(-1));
+//        QRDecomposition qr = new QRDecomposition(ArrayUtils.flipud(M.getSubMatrix(0, 2, 0, 2)).transpose());
+//        K = ArrayUtils.fliplr(ArrayUtils.flipud(qr.getR().transpose()));                
+//        double scaling = K.getEntry(2, 2);        
+//        K = K.scalarMultiply(1/scaling);
+//        R = ArrayUtils.flipud(qr.getQ().transpose()); 
+//        R = R.scalarMultiply(scaling);        
+//        T = (new QRDecomposition(K)).getSolver().getInverse().multiply(M.getSubMatrix(0, 2, 3, 3));
+//        RT = new Array2DRowRealMatrix(3, 4);
+//        RT.setSubMatrix(R.getData(), 0, 0);
+//        RT.setSubMatrix(T.getData(), 0, 3);        
+//        C = (new QRDecomposition(R)).getSolver().getInverse().multiply(T.scalarMultiply(-1));
     }
     
     public double getFocalLengthX_px() {

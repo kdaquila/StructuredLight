@@ -100,7 +100,8 @@ public class RealisticCameraModel extends AbstractCameraModel {
     public List<Double> project3DTo2D(List<Double> xyz) {
         List<Double> imagePt = new ArrayList<>();
         
-        double[] M = ArrayUtils.flattenArrayOfArrays(projectionFinal);
+        double[] M = new double[1];
+//        double[] M = ArrayUtils.flattenArrayOfArrays(projectionFinal);
         double x = xyz.get(0);
         double y = xyz.get(1);
         double z = xyz.get(2);
