@@ -26,10 +26,6 @@ public class Contours {
     private final int MARKEDTAG;
     private final int INITIALTAG;
     private int newTag;
-    public List<List<List<Integer>>> edges;
-    public List<List<List<Integer>>> innerEdges;
-    public List<List<List<Integer>>> outerEdges;
-    public Map<Integer, List<Integer>> hierarchy;
     
     public Contours(BufferedImage bwImage)
     {
@@ -43,10 +39,6 @@ public class Contours {
         HEIGHT = bwImage.getHeight();
         bwImg = bwImage;
         bwImgData = ((DataBufferByte)bwImg.getData().getDataBuffer()).getData();
-        edges = new ArrayList<>();
-        outerEdges = new ArrayList<>();
-        innerEdges = new ArrayList<>();
-        hierarchy = new HashMap<>();
         
         // initialize Tag Map
         tagMap = new ArrayList<>();
@@ -62,12 +54,14 @@ public class Contours {
                 
     }
     
-    public void findContours() {
+    public List<List<List<Integer>>> findContours() {
         int minArea = 0;
-        findContours(minArea);
+        return findContours(minArea);
     }
     
-    public void findContours(int minArea) {
+    public List<List<List<Integer>>> findContours(int minArea) {
+        
+        List<List<List<Integer>>> outerEdges = new ArrayList<>();
         
         ImageUtil.fillBoundary(bwImg, EMPTYPIXEL);
         
@@ -92,8 +86,8 @@ public class Contours {
                     int startAngle = 315; //degrees
                     List<List<Integer>> newEdge = followEdge(x, y, startAngle, newTag);
                     newTag += 1;
+                    // store the contour
                     if (Contours.computeArea(newEdge) >= minArea) {
-                        edges.add(newEdge); 
                         outerEdges.add(newEdge);
                     }                    
                 }
@@ -103,15 +97,14 @@ public class Contours {
                          tagDown != MARKEDTAG)
                 {
                     int startAngle = 135; //degrees
-                    List<List<Integer>> newEdge = followEdge(x, y, startAngle, newTag);                    
+                    followEdge(x, y, startAngle, newTag);                    
                     newTag += 1;
-                    if (Contours.computeArea(newEdge) >= minArea) {
-                        edges.add(newEdge); 
-                        innerEdges.add(newEdge);
-                    }  
+                    // don't store the contour
                 } 
             }
         }
+        
+        return outerEdges;
     }
     
     private List<List<Integer>> followEdge(int startX, int startY, int startAngle, int tag)
@@ -198,6 +191,31 @@ public class Contours {
         center.add(sumY/n);
         
         return center;
+    }
+    
+    public static List<List<Double>> computeCenters(List<List<List<Integer>>> contours, List<Integer> ids) {
+        
+        List<List<Double>> centers = new ArrayList<>();
+        for (Integer id: ids) {
+            List<List<Integer>> contour = contours.get(id);
+            List<Double> center = Contours.computeCenter(contour);
+            centers.add(center);
+        }
+        
+        return centers;
+    }
+    
+    public static Integer findParentID(Map<Integer, List<Integer>> hierarchy, int nChildren) {
+        int parentID = 0;
+        for (Integer id: hierarchy.keySet()) {
+            if (hierarchy.get(id).size() == nChildren) {
+                parentID = id;
+                break;
+            } else {
+                throw new RuntimeException("Could not find a parent contour with the correct number of child contours.");
+            }
+        } 
+        return parentID;
     }
     
     public static List<Integer> computeBoundingBox(List<List<Integer>> contour) {
@@ -299,23 +317,7 @@ public class Contours {
         }
         
         return hull;
-    }
-    
-    public BufferedImage drawAllEdges()
-    {
-        return drawEdges(edges);
-    }
-    
-    public BufferedImage drawOuterEdges()
-    {
-        return drawEdges(innerEdges);
-    }
-    
-    public BufferedImage drawInnerEdges()
-    {
-        return drawEdges(outerEdges);
-    }
-    
+    }     
     
     public BufferedImage drawEdges(List<List<List<Integer>>> contours)
     {
@@ -338,19 +340,7 @@ public class Contours {
             color_index = (color_index + 1)%colors.size();
         }
         return rgbImage;
-    }
-    
-    public Map<Integer,List<Integer>> findOuterEdgeHierarchy() {
-        return Contours.findHierarchy(outerEdges);
-    }
-    
-    public Map<Integer,List<Integer>> findInnerEdgeHierarchy() {
-        return Contours.findHierarchy(innerEdges);
-    }
-    
-    public Map<Integer,List<Integer>> findAllEdgeHierarchy() {
-        return Contours.findHierarchy(edges);
-    }
+    }    
 
     public static Map<Integer,List<Integer>> findHierarchy(List<List<List<Integer>>> contours) {
         
