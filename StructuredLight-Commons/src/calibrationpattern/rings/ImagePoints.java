@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ImagePoints {
+    
+    public static void find() {
     // Load the rgb image
     System.out.println("Loading the rgb image: Please wait ...");
     BufferedImage rgbImage = ImageUtil.load(rgbImgPath);
