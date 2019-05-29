@@ -1,6 +1,8 @@
 <config>
 	<nRings>221</nRings>
 	<formatString>%.3f</formatString>
-	<rgbImagePath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Images\8659.png</rgbImagePath>
+	<rgbImagePath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Images\0142.png</rgbImagePath>
 	<saveDataPath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Points\imagePoints.txt</saveDataPath>
+	<isSubPixel>true</isSubPixel>
+	<subPixelSaveDataPath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Points\imagePoints_subPixel.txt</subPixelSaveDataPath>
 </config>

@@ -26,7 +26,9 @@ public class FindRingsApp {
         int nRings = conf.getInt("/config/nRings");
         String formatString = conf.getString("/config/formatString"); 
         String rgbImagePath = conf.getString("/config/rgbImagePath"); 
-        String saveDataPath = conf.getString("/config/saveDataPath"); 
+        String saveDataPath = conf.getString("/config/saveDataPath");
+        String subPixelSaveDataPath = conf.getString("/config/subPixelSaveDataPath");
+        boolean isSubPixel = conf.getBool("/config/isSubPixel");
         
         System.out.println("Done");
         
@@ -42,14 +44,30 @@ public class FindRingsApp {
         
         List<List<Double>> ringCenters = ImagePoints.find(rgbImage, nRings);
         
-        System.out.println("Done");
+        System.out.println("Done");      
         
         // Save the point data
         System.out.print("Saving the ring centers data... ");
-        
+
         TXT.saveMatrix(ringCenters, Double.class, saveDataPath, formatString);
-        
+
         System.out.println("Done");
+        
+        if (isSubPixel) {
+            // Find the ring centers to subPixel accuracy
+            System.out.print("Searching for ring centers to subPixel Accuracy... ");
+            List<List<Double>> subPixelRingCenters = ImagePoints.refineSubPixel(rgbImage, ringCenters);
+
+            System.out.println("Done");
+
+            // Save the point data
+            System.out.print("Saving the subPixel ring centers data... ");
+
+            TXT.saveMatrix(subPixelRingCenters, Double.class, subPixelSaveDataPath, formatString);
+
+            System.out.println("Done");                        
+        }      
+        
     }
 
 }

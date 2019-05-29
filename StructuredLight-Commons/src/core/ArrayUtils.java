@@ -359,5 +359,11 @@ public class ArrayUtils
         
         return output;
     }
+    
+    public static void printList_Double2D(List<List<Double>> list) {
+        for (List<Double> row: list) {
+            System.out.println(row);
+        }
+    }
 
 }
