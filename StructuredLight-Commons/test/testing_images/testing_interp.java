@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import core.ImageUtil;
+import core.Interpolation;
 
 public class testing_interp {
 
@@ -32,7 +33,7 @@ public class testing_interp {
             newPoint.add(y);
             points.add(newPoint);
         }
-        List<Double> values = ImageUtil.interpolate_1D(grayImage, points);
+        List<Double> values = Interpolation.interpolate_1D(grayImage, points);
         
         System.out.println("the points are: " + points);
         System.out.println("the interpolated values are: " + values);

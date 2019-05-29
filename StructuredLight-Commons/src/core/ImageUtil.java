@@ -614,52 +614,7 @@ public class ImageUtil {
             }    
         }
     }
-    
-    public static List<Double> interpolate_1D(BufferedImage grayImage, List<List<Double>> points)
-    {
-        // get buffer
-        int nRows = grayImage.getHeight();
-        int nCols = grayImage.getWidth();
-        byte[] grayData = ((DataBufferByte)grayImage.getData().getDataBuffer()).getData();
         
-        List<Double> interpValues = new ArrayList<>(points.size());
-        for (List<Double> point: points)
-        {
-            interpValues.add(interpolate_0D(grayImage, point));                    
-        }   
-        return interpValues;
-    }
-    
-    public static double interpolate_0D(BufferedImage grayImage, List<Double> xy)
-    {
-        // get buffer
-        int nRows = grayImage.getHeight();
-        int nCols = grayImage.getWidth();
-        byte[] grayData = ((DataBufferByte)grayImage.getData().getDataBuffer()).getData();
-        
-        // get center coordinates
-        double centerX = xy.get(0);
-        double centerY = xy.get(1);
-
-        // get offsets to neighboring point
-        int offsetNE = (int)Math.floor(centerY) * nCols + (int)Math.ceil(centerX);
-        int offsetNW = (int)Math.floor(centerY) * nCols + (int)Math.floor(centerX);
-        int offsetSE = (int)Math.ceil(centerY) * nCols + (int)Math.ceil(centerX);
-        int offsetSW = (int)Math.ceil(centerY) * nCols + (int)Math.floor(centerX);
-
-        // get displacement from center
-        double xDisp = (centerX-Math.floor(centerX));
-        double yDisp = (centerY-Math.floor(centerY));
-
-        // linear interpolation
-        double interpValue = xDisp * (1-yDisp) * (int)(grayData[offsetNE]&0xFF) + 
-                           (1-xDisp) * (1-yDisp) * (int)(grayData[offsetNW]&0xFF) +
-                           xDisp * yDisp * (int)(grayData[offsetSE]&0xFF) +
-                           (1-xDisp) * yDisp * (int)(grayData[offsetSW]&0xFF);
-
-        return interpValue;          
-    }
-    
     public static BufferedImage convolve(BufferedImage inputImg, int kernalSize, float[] kernalArray) {
         // convert input image to ushort        
         int width = inputImg.getWidth();
@@ -668,7 +623,7 @@ public class ImageUtil {
         BufferedImage inputImgUSHORT = new BufferedImage(width, height, type);
         Graphics2D g = inputImgUSHORT.createGraphics();
         g.drawImage(inputImg, 0, 0, null);
-        
+                
         BufferedImage outputImage = new BufferedImage(width, height, type);
         ConvolveOp op = new ConvolveOp(new Kernel(kernalSize,kernalSize,kernalArray));
         op.filter(inputImgUSHORT, outputImage);        
