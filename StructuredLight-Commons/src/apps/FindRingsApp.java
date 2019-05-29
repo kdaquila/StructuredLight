@@ -55,7 +55,7 @@ public class FindRingsApp {
         
         if (isSubPixel) {
             // Find the ring centers to subPixel accuracy
-            System.out.print("Searching for ring centers to subPixel Accuracy... ");
+            System.out.println("Searching for ring centers to subPixel Accuracy... ");
             List<List<Double>> subPixelRingCenters = ImagePoints.refineSubPixel(rgbImage, ringCenters);
 
             System.out.println("Done");

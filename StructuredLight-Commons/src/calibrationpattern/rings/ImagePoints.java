@@ -61,8 +61,8 @@ public class ImagePoints {
         for (List<Double> point: points) {
             int x = (int) point.get(0).doubleValue();
             int y = (int) point.get(1).doubleValue();
-            int w = (int) (0.75*kernalSigma);
-            int h = (int) (0.75*kernalSigma);
+            int w = (int) 7;
+            int h = (int) 7;
             List<Double> coeffs = para.fit(x, y, w, h);
             List<Double> newCenter = new ArrayList<>();
             newCenter.add(coeffs.get(2));
