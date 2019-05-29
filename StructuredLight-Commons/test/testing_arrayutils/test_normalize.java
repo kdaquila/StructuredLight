@@ -28,7 +28,7 @@ public class test_normalize {
         System.out.println(TXT.MatrixToString(matrix, "%.1f", ",", "\n"));
         
         // normalize it
-        List<List<Double>> output = ArrayUtils.normalizeDoubleArray(matrix);
+        List<List<Double>> output = ArrayUtils.normalizeDoubleList(matrix);
         
         // show the matrix
         System.out.println(TXT.MatrixToString(output, "%.1f", ",", "\n"));

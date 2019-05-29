@@ -109,19 +109,39 @@ public class TXT {
     }
     
     public static <T> void saveVector(List<T> vector, Class<T> type, 
+                                            String folder, String filename){
+        createFolder(folder);
+        String path = folder + "\\" + filename;
+        boolean append = false; 
+        String formatString = "%.3f"; 
+        String delimiter = ",";
+        saveVector(vector, type, path, append, formatString, delimiter);
+    }
+    
+    public static <T> void saveVector(List<T> vector, Class<T> type, 
                                             String folder, String filename, boolean append, 
                                             String formatString, 
                                             String delimiter){
+        createFolder(folder);
+        String path = folder + "\\" + filename;
+        saveVector(vector, type, path, append, formatString, delimiter);
+    }
+    
+    public static <T> void saveVector(List<T> vector, Class<T> type, 
+                                            String path){
+        boolean append = false; 
+        String formatString = "%.3f"; 
+        String delimiter = ",";
+        saveVector(vector, type, path, append, formatString, delimiter);
+    }
+    
+    public static <T> void saveVector(List<T> vector, Class<T> type, 
+                                            String path, boolean append, 
+                                            String formatString, 
+                                            String delimiter){
         try {
-            // create the folder if needed
-            File dir = new File(folder);
-            if (!dir.exists())
-            {
-                FileUtils.forceMkdir(dir);
-            }
-            
             // open the writer
-            File newFile = new File(folder + "\\" + filename);
+            File newFile = new File(path);
             FileWriter writer = new FileWriter(newFile, append);
             BufferedWriter buffWriter = new BufferedWriter(writer);
             

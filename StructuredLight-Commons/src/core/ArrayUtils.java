@@ -1,6 +1,7 @@
 package core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ArrayUtils
@@ -121,6 +122,16 @@ public class ArrayUtils
         return output;
     }
     
+    public static List<Float> ArrayToList_Float(float[] input)
+    {
+        List<Float> output = new ArrayList<>(input.length);
+        for(int i = 0; i < input.length; i++)
+        {
+            output.add(input[i]);
+        }
+        return output;
+    }
+    
     public static List<Integer> ArrayToList_Integer(int[] input)
     {
         List<Integer> output = new ArrayList<>(input.length);
@@ -210,7 +221,42 @@ public class ArrayUtils
         return closestIndex;
     }
     
-    public static List<List<Double>> normalizeDoubleArray(List<List<Double>> matrix){
+    public static float[] normalizeFloatArray(float[] input, float newMax, float newMin) {
+        
+        int nPts = input.length;
+        
+        // store in a list
+        List<Float> inputList = new ArrayList<>();
+        for (float item: input) {
+            inputList.add(item);
+        }
+
+        // find the min
+        Float minVal = Collections.min(inputList);
+        
+        // subtract all elements by the min
+        for (int i=0; i<nPts; i++) {
+            inputList.set(i, inputList.get(i) - minVal);
+        }        
+        
+        // find the max
+        Float maxVal = Collections.max(inputList);
+        
+        // rescale
+        for (int i=0; i<nPts; i++) {
+            inputList.set(i, inputList.get(i)/maxVal*(newMax - newMin) + newMin);
+        }
+        
+        // store back in array
+        float[] outputArray = new float[nPts];
+        for (int i=0; i<nPts; i++) {
+            outputArray[i] = inputList.get(i);
+        } 
+        
+        return outputArray;
+    }
+    
+    public static List<List<Double>> normalizeDoubleList(List<List<Double>> matrix){
         // find the min
         double min = min_Double2D(matrix);
 

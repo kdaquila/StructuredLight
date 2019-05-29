@@ -46,6 +46,15 @@ public class XML {
         }        
         return Boolean.parseBoolean(valueNode.getText());
     }
+    
+    public double getDouble(String xPath) {
+        
+        Node valueNode = root.selectSingleNode(xPath);            
+        if (valueNode == null) {
+            throw new RuntimeException("Could not find " + xPath + " in the configuration file");
+        }        
+        return Double.parseDouble(valueNode.getText());
+    }
 
     public static Element loadXML(String path) {
         File inputFile = new File(path);

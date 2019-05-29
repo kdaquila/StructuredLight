@@ -3,8 +3,10 @@ package core;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.ConvolveOp;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
+import java.awt.image.Kernel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -656,6 +658,21 @@ public class ImageUtil {
                            (1-xDisp) * yDisp * (int)(grayData[offsetSW]&0xFF);
 
         return interpValue;          
+    }
+    
+    public static BufferedImage convolve(BufferedImage inputImg, int kernalSize, float[] kernalArray) {
+        // convert input image to ushort        
+        int width = inputImg.getWidth();
+        int height = inputImg.getHeight();
+        int type = BufferedImage.TYPE_USHORT_GRAY;
+        BufferedImage inputImgUSHORT = new BufferedImage(width, height, type);
+        Graphics2D g = inputImgUSHORT.createGraphics();
+        g.drawImage(inputImg, 0, 0, null);
+        
+        BufferedImage outputImage = new BufferedImage(width, height, type);
+        ConvolveOp op = new ConvolveOp(new Kernel(kernalSize,kernalSize,kernalArray));
+        op.filter(inputImgUSHORT, outputImage);        
+        return outputImage;
     }
     
 }

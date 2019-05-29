@@ -1,0 +1,11 @@
+<config>
+	<rgbImagePath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Images\0142.png</rgbImagePath>
+	<saveImagePath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\Debug\laplacian.png</saveImagePath>
+	<saveKernalPath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\Debug\kernal.txt</saveKernalPath>
+	<kernalFormatStr>%.4f</kernalFormatStr>
+	<delimiter>,</delimiter>
+	<EOL>\n</EOL>
+	<append>false</append>
+	<kernalSize>37</kernalSize>
+	<kernalSigma>9.25</kernalSigma>
+</config>
