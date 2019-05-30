@@ -364,6 +364,12 @@ public class Contours {
                 
                 // Get the candidate parent contour
                 List<List<Integer>> candidateParentContour = contours.get(candidateParentIndex);
+                
+                
+                // Stop if the candidate parent is not a contour
+                if (candidateParentContour == null) {
+                    continue;
+                }
 
                 // Store the candidate parent contour as a path
                 Path2D candidateParentContourPath = new Path2D.Double();
