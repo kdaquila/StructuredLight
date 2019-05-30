@@ -4,7 +4,6 @@ import java.awt.Rectangle;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -323,6 +322,66 @@ public class Contours {
         return hull;
     }     
     
+    public static Map<Integer,List<Integer>> findHierarchy2(List<List<List<Integer>>> contours) {
+        
+        // Initialize each contour as a parent
+        Map<Integer, List<Integer>> hierarchy = new HashMap<>();
+        for (int index = 0; index < contours.size(); index++) {
+            hierarchy.put(index, new ArrayList<>());
+        }
+        
+        // Find the direct of each contour
+        for (int contourIndex = 0; contourIndex < contours.size(); contourIndex++) {
+            
+            // Get the contour
+            List<List<Integer>> contour = contours.get(contourIndex);
+            
+            // Find the contour's bounding box
+            List<Integer> box = Contours.computeBoundingBox(contour);
+            int x = box.get(0);
+            int y = box.get(1);
+            int width = box.get(2);
+            int height = box.get(3);
+            Rectangle contourBox = new Rectangle(x, y, width, height);
+            
+            // Check each candidate parent contour
+            Double minArea = Double.MAX_VALUE;
+            Integer parentIndex = null;
+            for (int candidateParentIndex = 0; candidateParentIndex < contours.size(); candidateParentIndex++) {
+                
+                // Get the candidate parent contour
+                List<List<Integer>> candidateParentContour = contours.get(candidateParentIndex);
+
+                // Store the candidate parent contour as a path
+                Path2D candidateParentContourPath = new Path2D.Double();
+                List<Integer> firstPt = candidateParentContour.get(0);
+                candidateParentContourPath.moveTo(firstPt.get(0), firstPt.get(1));
+                for (int pt_index = 1; pt_index < candidateParentContour.size(); pt_index++) {
+                    List<Integer> point = candidateParentContour.get(pt_index);
+                    candidateParentContourPath.lineTo(point.get(0), point.get(1));
+                }
+                
+                // check if candidate parent contour contains the contour
+                if (candidateParentContourPath.contains(contourBox)) {
+                    
+                    // check if candidate parent is smaller than previous candidate parents
+                    double candidateParentArea = Contours.computeArea(candidateParentContour);
+                    if (candidateParentArea < minArea) {
+                        minArea = candidateParentArea;
+                        parentIndex = candidateParentIndex;
+                    }    
+                }                
+            }
+            
+            // Associate this contour with its parent
+            if (parentIndex != null) {
+                hierarchy.get(parentIndex).add(contourIndex);
+            }    
+        }
+        
+        return hierarchy;
+    }
+    
     public static Map<Integer,List<Integer>> findHierarchy(List<List<List<Integer>>> contours) {
         
         Map<Integer, List<Integer>> hierarchy = new HashMap<>();
@@ -353,7 +412,7 @@ public class Contours {
                     int height = box.get(3);
                     Rectangle boxRect = new Rectangle(x, y, width, height);
                     
-                    // Check if Beta is Inside Alpha                    
+                    // Check if Beta is Inside Alpha
                     if (alphaPath.contains(boxRect)) {
                         
                         // Existing Parent Contour

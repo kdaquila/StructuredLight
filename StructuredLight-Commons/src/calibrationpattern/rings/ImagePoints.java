@@ -27,7 +27,7 @@ public class ImagePoints {
         List<List<List<Integer>>> outerEdges = contours.findContours(minArea);  
 
         // Organize the edges into a hierarchy
-        Map<Integer, List<Integer>> hierarchy = Contours.findHierarchy(outerEdges); 
+        Map<Integer, List<Integer>> hierarchy = Contours.findHierarchy2(outerEdges); 
 
         // Find the rings' parent
         int nChildren = nPts;
