@@ -18,6 +18,18 @@ public class ArrayUtils
         return output;
     }
     
+    public static List<List<Double>> castArrayInteger_To_Double(List<List<Integer>> input) {
+        List<List<Double>> output = new ArrayList<>();
+        for (List<Integer> oldRow: input) {
+            List<Double> newRow = new ArrayList<>();
+            for (Integer item: oldRow) {                
+                newRow.add(item.doubleValue());
+            }
+            output.add(newRow);
+        }        
+        return output;
+    }
+    
     
     public static <T> List<List<T>> reshape(List<List<T>> array, int new_nRows, int new_nCols) 
     {

@@ -15,7 +15,7 @@ import javax.imageio.ImageIO;
 import org.apache.commons.io.FileUtils;
 
 
-public class ImageUtil {
+public class ImageUtils {
     
     public static BufferedImage load(String fullpath) {
         BufferedImage output;
@@ -410,14 +410,14 @@ public class ImageUtil {
     public static BufferedImage meanFilter(BufferedImage inputGrayImage, int radius)
     {
         BufferedImage outputImage;        
-        outputImage = ImageUtil.meanFilterRows(inputGrayImage, radius);
-        outputImage = ImageUtil.meanFilterRows(outputImage, radius);
-        outputImage = ImageUtil.meanFilterRows(outputImage, radius);
-        outputImage = ImageUtil.transpose(outputImage);
-        outputImage = ImageUtil.meanFilterRows(outputImage, radius);
-        outputImage = ImageUtil.meanFilterRows(outputImage, radius);
-        outputImage = ImageUtil.meanFilterRows(outputImage, radius);
-        outputImage = ImageUtil.transpose(outputImage);
+        outputImage = ImageUtils.meanFilterRows(inputGrayImage, radius);
+        outputImage = ImageUtils.meanFilterRows(outputImage, radius);
+        outputImage = ImageUtils.meanFilterRows(outputImage, radius);
+        outputImage = ImageUtils.transpose(outputImage);
+        outputImage = ImageUtils.meanFilterRows(outputImage, radius);
+        outputImage = ImageUtils.meanFilterRows(outputImage, radius);
+        outputImage = ImageUtils.meanFilterRows(outputImage, radius);
+        outputImage = ImageUtils.transpose(outputImage);
         
         return outputImage;
     }
@@ -528,7 +528,7 @@ public class ImageUtil {
         BufferedImage bwImage = new BufferedImage(nCols, nRows, type);
         
         // Blur
-        BufferedImage blurImage = ImageUtil.meanFilter(grayImage, windowSize);
+        BufferedImage blurImage = ImageUtils.meanFilter(grayImage, windowSize);
         
         // get buffers
         byte[] grayData = ((DataBufferByte)grayImage.getData().getDataBuffer()).getData();

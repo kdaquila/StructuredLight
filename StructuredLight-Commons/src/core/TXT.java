@@ -59,6 +59,28 @@ public class TXT {
         String EOL = "\n";
         boolean append = false;
         saveMatrix(matrix, type, path, formatString, delimiter, EOL, append);
+    }   
+        
+    public static <T> void saveMatrix(List<List<T>> matrix, Class<T> type, 
+                                            String folder, String filename, 
+                                            String formatString) {
+        createFolder(folder);
+        String path = folder + "\\" + filename;
+        String delimiter = ",";
+        String EOL = "\n";
+        boolean append = false;
+        saveMatrix(matrix, type, path, formatString, delimiter, EOL, append);
+    }
+    
+    
+    public static <T> void saveMatrix(List<List<T>> matrix, Class<T> type, 
+                                            String folder, String filename, 
+                                            String formatString, 
+                                            String delimiter, String EOL, 
+                                            boolean append){
+        createFolder(folder);
+        String path = folder + "\\" + filename;
+        saveMatrix(matrix, type, path, formatString, delimiter, EOL, append);
     }
     
     public static <T> void saveMatrix(List<List<T>> matrix, Class<T> type, 
@@ -84,28 +106,6 @@ public class TXT {
             throw new RuntimeException("Could not save to the file");
         }
         
-    }
-    
-    public static <T> void saveMatrix(List<List<T>> matrix, Class<T> type, 
-                                            String folder, String filename, 
-                                            String formatString) {
-        createFolder(folder);
-        String path = folder + "\\" + filename;
-        String delimiter = ",";
-        String EOL = "\n";
-        boolean append = false;
-        saveMatrix(matrix, type, path, formatString, delimiter, EOL, append);
-    }
-    
-    
-    public static <T> void saveMatrix(List<List<T>> matrix, Class<T> type, 
-                                            String folder, String filename, 
-                                            String formatString, 
-                                            String delimiter, String EOL, 
-                                            boolean append){
-        createFolder(folder);
-        String path = folder + "\\" + filename;
-        saveMatrix(matrix, type, path, formatString, delimiter, EOL, append);
     }
     
     public static <T> void saveVector(List<T> vector, Class<T> type, 
@@ -191,8 +191,13 @@ public class TXT {
         // build delimter separated list of values
         StringWriter writer = new StringWriter();
         for (List<T> row: matrix) {
-            for (T item: row) {                
-                 writer.append(String.format(formatString + delimiter, item));
+            for (int row_ind = 0; row_ind < row.size(); row_ind++) {      
+                 T item = row.get(row_ind);
+                 if (row_ind == row.size() - 1) {
+                     writer.append(String.format(formatString, item));
+                 } else {
+                     writer.append(String.format(formatString + delimiter, item));
+                 }                 
             }
             // end of line character
              writer.append(EOL);

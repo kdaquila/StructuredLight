@@ -2,7 +2,7 @@ package testing_images;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
-import core.ImageUtil;
+import core.ImageUtils;
 
 public class test_lists {
 
@@ -22,9 +22,9 @@ public class test_lists {
         String load_filename = "Image1.png";
         
         // load the rgb
-        BufferedImage rgbImage = ImageUtil.load(load_folder, load_filename);
+        BufferedImage rgbImage = ImageUtils.load(load_folder, load_filename);
         
-        System.out.println(ImageUtil.ColorImageToList(rgbImage));
+        System.out.println(ImageUtils.ColorImageToList(rgbImage));
         
         System.out.println("\n");
     }
@@ -38,9 +38,9 @@ public class test_lists {
         String load_filename = "Image1_gray.png";
         
         // load the gray
-        BufferedImage grayImage = ImageUtil.load(load_folder, load_filename);
+        BufferedImage grayImage = ImageUtils.load(load_folder, load_filename);
         
-        System.out.println(ImageUtil.GrayImageToList(grayImage));
+        System.out.println(ImageUtils.GrayImageToList(grayImage));
         
         System.out.println("\n");
     }
@@ -54,10 +54,10 @@ public class test_lists {
         String load_filename = "Image1.png";
         
         // load the rgb
-        BufferedImage rgbImage = ImageUtil.load(load_folder, load_filename);
+        BufferedImage rgbImage = ImageUtils.load(load_folder, load_filename);
         
         // get the list
-        List<List<List<Double>>> rgbList =ImageUtil.ColorImageToList(rgbImage);
+        List<List<List<Double>>> rgbList =ImageUtils.ColorImageToList(rgbImage);
         
         // modify the list
         int nCols = rgbImage.getWidth();
@@ -84,12 +84,12 @@ public class test_lists {
         }
         
         // convert list to image
-        BufferedImage modifiedRGBImage = ImageUtil.ListToColorImage(rgbList);
+        BufferedImage modifiedRGBImage = ImageUtils.ListToColorImage(rgbList);
         
         // save the color image
         String save_folder = "F:\\kdaquila_SoftwareLibraries\\Java\\kdaquila\\StructuredLight-Commons\\Test_Resources\\trash";
         String save_filename = "Image2_rgb.png";
-        ImageUtil.save(modifiedRGBImage, save_folder, save_filename);
+        ImageUtils.save(modifiedRGBImage, save_folder, save_filename);
         
         System.out.println("\n");
     }
@@ -103,10 +103,10 @@ public class test_lists {
         String load_filename = "Image1_gray.png";
         
         // load the gray
-        BufferedImage grayImage = ImageUtil.load(load_folder, load_filename);
+        BufferedImage grayImage = ImageUtils.load(load_folder, load_filename);
         
         // get the list
-        List<List<Double>> grayList =ImageUtil.GrayImageToList(grayImage);
+        List<List<Double>> grayList =ImageUtils.GrayImageToList(grayImage);
         
         // modify the list
         int nCols = grayImage.getWidth();
@@ -130,12 +130,12 @@ public class test_lists {
         }
         
         // convert list to image
-        BufferedImage modifiedGrayImage = ImageUtil.ListToGrayImage_Double(grayList);
+        BufferedImage modifiedGrayImage = ImageUtils.ListToGrayImage_Double(grayList);
         
         // save the gray image
         String save_folder = "F:\\kdaquila_SoftwareLibraries\\Java\\kdaquila\\StructuredLight-Commons\\Test_Resources\\trash";
         String save_filename = "Image2_gray.png";
-        ImageUtil.save(modifiedGrayImage, save_folder, save_filename);
+        ImageUtils.save(modifiedGrayImage, save_folder, save_filename);
         
         System.out.println("\n");
     }

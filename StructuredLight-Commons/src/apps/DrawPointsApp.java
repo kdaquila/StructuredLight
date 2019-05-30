@@ -2,7 +2,7 @@ package apps;
 
 import core.ArrayUtils;
 import core.Draw;
-import core.ImageUtil;
+import core.ImageUtils;
 import core.PNG;
 import core.TXT;
 import core.XML;
@@ -39,7 +39,7 @@ public class DrawPointsApp {
 
         System.out.print("Drawing on the RGB image ... ");  
         
-        BufferedImage rgbImage = ImageUtil.load(rgbImagePath);
+        BufferedImage rgbImage = ImageUtils.load(rgbImagePath);
         
         // Load the points
         List<List<Double>> contours = TXT.loadMatrix(loadDataPath, Double.class);

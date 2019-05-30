@@ -61,7 +61,7 @@ public class Contours {
         
         List<List<List<Integer>>> contours = new ArrayList<>();
         
-        ImageUtil.fillBoundary(bwImg, EMPTYPIXEL);
+        ImageUtils.fillBoundary(bwImg, EMPTYPIXEL);
         
         for (int y = 1; y < HEIGHT-1; y++)
         {

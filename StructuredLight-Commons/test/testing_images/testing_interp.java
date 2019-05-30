@@ -3,7 +3,7 @@ package testing_images;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import core.ImageUtil;
+import core.ImageUtils;
 import core.Interpolation;
 
 public class testing_interp {
@@ -21,7 +21,7 @@ public class testing_interp {
         String load_filename = "Image5_gray.png";
         
         // load the gray
-        BufferedImage grayImage = ImageUtil.load(load_folder, load_filename); 
+        BufferedImage grayImage = ImageUtils.load(load_folder, load_filename); 
         
         // do the interpolation
         List<List<Double>> points = new ArrayList<>(6);     

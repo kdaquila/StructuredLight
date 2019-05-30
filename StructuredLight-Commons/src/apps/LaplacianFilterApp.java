@@ -2,7 +2,7 @@ package apps;
 
 import core.ArrayUtils;
 import core.FilterKernal;
-import core.ImageUtil;
+import core.ImageUtils;
 import core.TXT;
 import core.XML;
 import java.awt.image.BufferedImage;
@@ -54,18 +54,18 @@ public class LaplacianFilterApp {
         
         // Load the input image
         System.out.print("Loading the image ... ");
-        BufferedImage inputRGBImage = ImageUtil.load(rgbImagePath);
-        BufferedImage grayImage = ImageUtil.color2Gray(inputRGBImage);
+        BufferedImage inputRGBImage = ImageUtils.load(rgbImagePath);
+        BufferedImage grayImage = ImageUtils.color2Gray(inputRGBImage);
         System.out.println("Done");
         
         // Run the filter
         System.out.print("Filtering the image ... ");
-        BufferedImage outputImage = ImageUtil.convolve(grayImage, kernalSize, kernalArray);
+        BufferedImage outputImage = ImageUtils.convolve(grayImage, kernalSize, kernalArray);
         System.out.println("Done");
         
         // Save the output image
         System.out.print("Saving the image ... ");
-        ImageUtil.save(outputImage, saveImagePath);
+        ImageUtils.save(outputImage, saveImagePath);
         System.out.println("Done");
         
     }

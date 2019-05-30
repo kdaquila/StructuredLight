@@ -1,7 +1,7 @@
 package testing_images;
 
 import java.awt.image.BufferedImage;
-import core.ImageUtil;
+import core.ImageUtils;
 
 public class test_adaptiveThreshold {
 
@@ -18,22 +18,22 @@ public class test_adaptiveThreshold {
         String load_filename = "Image4.png";
         
         // load the rgb
-        BufferedImage rgbImage = ImageUtil.load(load_folder, load_filename);
+        BufferedImage rgbImage = ImageUtils.load(load_folder, load_filename);
         
         // convert to gray
-        BufferedImage grayImage = ImageUtil.color2Gray(rgbImage);
+        BufferedImage grayImage = ImageUtils.color2Gray(rgbImage);
         
-        ImageUtil.fillBoundary(grayImage, 0);
+        ImageUtils.fillBoundary(grayImage, 0);
         
         // save the bw image
         String save_folder = "F:\\kdaquila_SoftwareLibraries\\Java\\kdaquila\\StructuredLight-Commons\\Test_Resources\\trash";
-        ImageUtil.save(grayImage, save_folder, "Image4_gray.png");
+        ImageUtils.save(grayImage, save_folder, "Image4_gray.png");
         
         // adaptive threshold
-        BufferedImage bwImage = ImageUtil.adaptiveThreshold(grayImage, 21, 21);      
+        BufferedImage bwImage = ImageUtils.adaptiveThreshold(grayImage, 21, 21);      
                 
         // save the bw image
-        ImageUtil.save(bwImage, save_folder, "Image4_bw.png");
+        ImageUtils.save(bwImage, save_folder, "Image4_bw.png");
         
         System.out.println("\n");
     }

@@ -2,7 +2,7 @@ package apps;
 
 import calibrationpattern.rings.ImageRings;
 import core.Contours;
-import core.ImageUtil;
+import core.ImageUtils;
 import core.TXT;
 import core.XML;
 import java.awt.image.BufferedImage;
@@ -26,7 +26,8 @@ public class FindRingsApp {
         System.out.print("Loading the configuration ... ");
         
         XML conf = new XML(configPath);      
-        int nRings = conf.getInt("/config/nRings");
+        int nRows = conf.getInt("/config/nRows");
+        int nCols = conf.getInt("/config/nCols");        
         String formatString = conf.getString("/config/formatString"); 
         String rgbImagePath = conf.getString("/config/rgbImagePath"); 
         String saveDataPath = conf.getString("/config/saveDataPath");
@@ -35,22 +36,25 @@ public class FindRingsApp {
         
         System.out.println("Done");
         
+        // Compute the number of rings
+        int nRings = nRows*nCols;
+        
         // Load the RGB image
         System.out.print("Loading the RGB image ... ");        
         
-        BufferedImage rgbImage = ImageUtil.load(rgbImagePath);
+        BufferedImage rgbImage = ImageUtils.load(rgbImagePath);
         
         System.out.println("Done");
         
         // Convert RGB to gray        
-        BufferedImage grayImage = ImageUtil.color2Gray(rgbImage);
+        BufferedImage grayImage = ImageUtils.color2Gray(rgbImage);
 
         // Adaptive threshold to black and white        
         System.out.print("Thresholding to black and white ... "); 
         
         int windowSize = 21;
         int offset = 5;
-        BufferedImage bwImage = ImageUtil.adaptiveThreshold(grayImage, windowSize, offset);
+        BufferedImage bwImage = ImageUtils.adaptiveThreshold(grayImage, windowSize, offset);
         
         System.out.println("Done");
         
@@ -74,12 +78,20 @@ public class FindRingsApp {
            
         List<List<Double>> ringCenters = ImageRings.computeCenters(edges, hierarchy, nRings);
         
-        System.out.println("Done");      
+        System.out.println("Done"); 
+        
+        // Sort ring centers as row-major on a grid
+        System.out.print("Sorting the ring centers as grid... ");
+        
+//        List<List<Double>> ringCenters_sort = ringCenters;
+        List<List<Double>> ringCenters_sort = ImageRings.sortCentersRowMajor(ringCenters, nRows, nCols);
+        
+        System.out.println("Done");
         
         // Save the point data
         System.out.print("Saving the ring centers data... ");
 
-        TXT.saveMatrix(ringCenters, Double.class, saveDataPath, formatString);
+        TXT.saveMatrix(ringCenters_sort, Double.class, saveDataPath, formatString);
 
         System.out.println("Done");
         
@@ -93,7 +105,7 @@ public class FindRingsApp {
             double ringInnerRadius = averageWidths.get("Inner");            
             
             // Find the ring centers to subPixel accuracy  
-            List<List<Double>> subPixelRingCenters = ImageRings.refineCenters(ringCenters, grayImage,
+            List<List<Double>> subPixelRingCenters = ImageRings.refineCenters(ringCenters_sort, grayImage,
                                                                               ringOuterRadius, ringInnerRadius);
 
             System.out.println("Done");

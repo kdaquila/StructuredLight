@@ -1,7 +1,7 @@
 package testing_contours;
 
 import java.awt.image.BufferedImage;
-import core.ImageUtil;
+import core.ImageUtils;
 import core.Contours;
 import java.util.List;
 
@@ -17,13 +17,13 @@ public class test_findcontours {
         
         String openFolder = "C:\\Users\\kfd18\\OneDrive\\kdaquila_SoftwareDev\\2018_12_13_CameraCalibrationImages\\Dataset1\\Extracted_Frames\\RGB";
         String openFilename = "9222.png";
-        BufferedImage rgbImage = ImageUtil.load(openFolder, openFilename);
-        BufferedImage grayImage = ImageUtil.color2Gray(rgbImage);
-        BufferedImage bwImage = ImageUtil.adaptiveThreshold(grayImage, 21, 21);
-        ImageUtil.fillBoundary(bwImage, 255);       
+        BufferedImage rgbImage = ImageUtils.load(openFolder, openFilename);
+        BufferedImage grayImage = ImageUtils.color2Gray(rgbImage);
+        BufferedImage bwImage = ImageUtils.adaptiveThreshold(grayImage, 21, 21);
+        ImageUtils.fillBoundary(bwImage, 255);       
         
         String saveFolder = "C:\\Users\\kfd18\\Downloads";
-        ImageUtil.save(bwImage, saveFolder, "bw_img.png");
+        ImageUtils.save(bwImage, saveFolder, "bw_img.png");
         
         Contours myRegions = new Contours(bwImage);
         List<List<List<Integer>>> contours = myRegions.findContours();
