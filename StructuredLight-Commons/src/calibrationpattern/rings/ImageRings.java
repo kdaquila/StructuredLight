@@ -79,6 +79,24 @@ public class ImageRings {
         
         return newCenters;
     }
+    
+    public static List<List<Double>> sortCentersRowMajor(List<List<Double>> centers, int nRows, int nCols) {
+        // Find the convex hull around contour centers
+
+        // Find the enclosing rectangle around contour centers
+
+        // Find the corner points
+
+        // Compute the corners-only homography
+
+        // Project all contour centers to normalized plane using the corners-only homography
+
+        // Sort the contour centers into a grid
+
+        // Project the contour centers grid to image plane using the corners-only homography
+        
+        return centers;
+    }
 
     
     
