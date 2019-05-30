@@ -625,7 +625,7 @@ public class ImageUtil {
         g.drawImage(inputImg, 0, 0, null);
                 
         BufferedImage outputImage = new BufferedImage(width, height, type);
-        ConvolveOp op = new ConvolveOp(new Kernel(kernalSize,kernalSize,kernalArray));
+        ConvolveOp op = new ConvolveOp(new Kernel(kernalSize, kernalSize, kernalArray));
         op.filter(inputImgUSHORT, outputImage);        
         return outputImage;
     }

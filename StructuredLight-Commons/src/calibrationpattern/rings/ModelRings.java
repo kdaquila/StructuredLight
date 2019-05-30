@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
-public class Model {
+public class ModelRings {
     
     public int nRows;
     public int nCols;
@@ -17,7 +17,7 @@ public class Model {
     public BufferedImage img;
     private Graphics2D g;
     
-    public Model(int nRows, int nCols, int borderWidth, int shapeRadius) {
+    public ModelRings(int nRows, int nCols, int borderWidth, int shapeRadius) {
         this.nRows = nRows;
         this.nCols = nCols;
         this.borderWidth = borderWidth;

@@ -253,6 +253,16 @@ public class Contours {
         return box;
     }
     
+    public static Double computeAverageWidth(List<List<List<Integer>>> contours, List<Integer> ids) {
+        double sum = 0;
+        for(Integer id: ids) {        
+            List<List<Integer>> contour = contours.get(id);
+            List<Integer> box = Contours.computeBoundingBox(contour);
+            sum += box.get(2);
+        }
+        return sum/contours.size();
+    }
+    
     public static Double computeArea(List<List<Integer>> contour) {
         
         double area = 0.0;

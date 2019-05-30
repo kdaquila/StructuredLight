@@ -1,5 +1,5 @@
 package calibrationpattern.rings;
 
-public class WorldPoints {
+public class WorldRings {
 
 }

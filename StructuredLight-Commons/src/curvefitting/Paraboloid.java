@@ -2,14 +2,14 @@ package curvefitting;
 
 import core.ArrayUtils;
 import core.HomogCoords;
-import core.ImageUtil;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferUShort;
 import java.awt.image.Raster;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import org.apache.commons.math3.linear.DecompositionSolver;
+import java.util.Map;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -24,7 +24,7 @@ public class Paraboloid {
         this.uShortGrayImg = uShortGrayImg;
     }
     
-    public List<Double> fit(int centerX, int centerY, int w, int h) {
+    public Map<String,Double> fit(int centerX, int centerY, int w, int h) {
         // Compute the top left point
         int x = centerX - w/2;
         int y = centerY - h/2;        
@@ -47,25 +47,34 @@ public class Paraboloid {
             iArray[k] = regionData[k] & 0xFFFF;            
         }
 
-        // compute the means
+        // compute the means for normalization
         double xSum = 0;
         double ySum = 0;
+        double iSum = 0;
         for (int k = 0; k < w*h; k++) {
             xSum += xArray[k];
             ySum += yArray[k];
+            iSum += iArray[k];
         }
         double xMean = xSum/(w*h);
         double yMean = ySum/(w*h);
+        double iMean = iSum/(w*h);
         
-        // compute the standard deviations
-        double xDiff = 0;
-        double yDiff = 0;
+        // compute the standard deviations for normalization
+        double xSumSqr = 0;
+        double ySumSqr = 0;
+        double iSumSqr = 0;
         for (int k = 0; k < w*h; k++) {
-            xDiff += Math.abs(xArray[k] - xMean);
-            yDiff += Math.abs(yArray[k] - yMean);
+            xSumSqr += Math.pow(xArray[k] - xMean, 2);
+            ySumSqr += Math.pow(yArray[k] - yMean, 2);
+            iSumSqr += Math.pow(iArray[k] - iMean, 2);
         }
-        double xStd = xDiff/(w*h);
-        double yStd = yDiff/(w*h);
+        double xVar= xSumSqr/(w*h);
+        double yVar = ySumSqr/(w*h);
+        double iVar= iSumSqr/(w*h);
+        double xStd = Math.sqrt(xVar);
+        double yStd = Math.sqrt(yVar);
+        double iStd = Math.sqrt(iVar);
         
         // Create the XY normalization matrix        
         RealMatrix N = MatrixUtils.createRealMatrix(3, 3);
@@ -125,17 +134,24 @@ public class Paraboloid {
         RealVector B = MatrixUtils.createRealVector(b);        
                 
         // Compute Vector X (from AX = B)
-        RealVector X_norm;        
+        RealVector X_norm;     
+        double condNum = 0;
         try {
             SingularValueDecomposition svd = new SingularValueDecomposition(A_norm);            
-            double condNum = svd.getConditionNumber();
-            System.out.println("the condition number is: " + String.format("%.3e", condNum));
+            condNum = svd.getConditionNumber();
             X_norm = svd.getSolver().solve(B);
         }
         catch (SingularMatrixException e) {
             System.out.println(e.getMessage());
             throw new RuntimeException("Could not fit the paraboloid.");
-        }                
+        }
+        
+        // Compute the error
+        RealVector B_compute = A_norm.operate(X_norm);
+        RealVector errorVec = B.subtract(B_compute);     
+        double residual = errorVec.getNorm();
+        double rSqr = 1 - Math.pow(residual, 2)/iVar;
+
                 
         // Extract the paraboloid parameters (A, B, x0, y0 from A(x-x0)^2 + B(y-y0)^2 = I)
         List<Double> coeffs_norm = new ArrayList<>();
@@ -150,20 +166,18 @@ public class Paraboloid {
         coeffs.add(coeffs_norm.get(1)*Math.pow(alphaY, 2));
         coeffs.add((coeffs_norm.get(2)-betaX)/alphaX);
         coeffs.add((coeffs_norm.get(3)-betaY)/alphaY);
- 
-// TODO remove debug info       
-//        System.out.println("Matrix A: ");
-//        ArrayUtils.printList_Double2D(ArrayUtils.ArrayToList_Double2D(A_norm.getData()));
-//        System.out.println("Vector B: ");
-//        System.out.println(ArrayUtils.ArrayToList_Double(B.toArray()));
-//        System.out.println("Vector X: ");
-//        System.out.println(ArrayUtils.ArrayToList_Double(X_norm.toArray()));
-//        System.out.println("Paraboloid Normalized Coefficients: ");
-//        System.out.println(coeffs_norm);
-//        System.out.println("Paraboloid Regular Coefficients: ");
-//        System.out.println(coeffs);
         
-        return coeffs;
+        // store the output
+        Map<String, Double> output = new HashMap<>();
+        output.put("A", coeffs.get(0));
+        output.put("B", coeffs.get(1));
+        output.put("x0", coeffs.get(2));
+        output.put("y0", coeffs.get(3));
+        output.put("condNum", condNum);
+        output.put("residual", residual);
+        output.put("rSqr", rSqr);
+        
+        return output;
     }
 
 }

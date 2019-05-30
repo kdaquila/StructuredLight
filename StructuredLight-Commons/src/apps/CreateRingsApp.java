@@ -1,6 +1,6 @@
 package apps;
 
-import calibrationpattern.rings.Model;
+import calibrationpattern.rings.ModelRings;
 import core.PNG;
 import core.XML;
 import java.awt.Color;
@@ -43,7 +43,7 @@ public class CreateRingsApp {
         // Render the calibration pattern model
         System.out.print("Rendering the ring pattern ... ");
         
-        Model model = new Model(nRows, nCols, borderWidth, shapeRadius);  
+        ModelRings model = new ModelRings(nRows, nCols, borderWidth, shapeRadius);  
         model.drawFill(new Color(backgroundColor));   
         model.drawBorder(new Color(borderColor));   
         model.drawRings(new Color(ringColor), ringOuterRadius, ringInnerRadius);
