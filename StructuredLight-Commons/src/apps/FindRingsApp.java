@@ -12,6 +12,7 @@ import java.util.Map;
 public class FindRingsApp {
     
     public static void main(String[] args) {
+        System.out.println("Running the FindRingsApp:");
         
         // Validate arguments
         if (args.length == 0) {

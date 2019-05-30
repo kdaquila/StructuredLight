@@ -12,6 +12,8 @@ import java.util.List;
 public class LaplacianFilterApp {
 
     public static void main(String[] args) {
+        System.out.println("Running the LaplacianFilterApp:");
+        
         // Validate arguments
         if (args.length == 0) {
             throw new IllegalArgumentException("Please provide one argument which is the path to the XML configuration file");

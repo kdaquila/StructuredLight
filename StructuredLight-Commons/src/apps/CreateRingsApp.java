@@ -14,6 +14,7 @@ import java.awt.Color;
 public class CreateRingsApp {
     
     public static void main(String[] args) {
+        System.out.println("Running the CreateRingsApp:");
         
         // Validate arguments
         if (args.length == 0) {

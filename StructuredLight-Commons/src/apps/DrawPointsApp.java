@@ -11,6 +11,7 @@ import java.util.List;
 
 public class DrawPointsApp {
     public static void main(String[] args) {
+        System.out.println("Running the DrawPointsApp:");
         
         // Validate arguments
         if (args.length == 0) {
