@@ -59,7 +59,7 @@ public class Contours {
     
     public List<List<List<Integer>>> findContours(int minArea) {
         
-        List<List<List<Integer>>> outerEdges = new ArrayList<>();
+        List<List<List<Integer>>> contours = new ArrayList<>();
         
         ImageUtil.fillBoundary(bwImg, EMPTYPIXEL);
         
@@ -86,7 +86,7 @@ public class Contours {
                     newTag += 1;
                     // store the contour
                     if (Contours.computeArea(newEdge) >= minArea) {
-                        outerEdges.add(newEdge);
+                        contours.add(newEdge);
                     }                    
                 }
                 // This is a new internal edge
@@ -95,14 +95,17 @@ public class Contours {
                          tagDown != MARKEDTAG)
                 {
                     int startAngle = 135; //degrees
-                    followEdge(x, y, startAngle, newTag);                    
+                    List<List<Integer>> newEdge = followEdge(x, y, startAngle, newTag);                    
                     newTag += 1;
-                    // don't store the contour
+                    // store the contour
+                    if (Contours.computeArea(newEdge) >= minArea) {
+                        contours.add(newEdge);
+                    } 
                 } 
             }
         }
         
-        return outerEdges;
+        return contours;
     }
     
     private List<List<Integer>> followEdge(int startX, int startY, int startAngle, int tag)
@@ -322,7 +325,7 @@ public class Contours {
         return hull;
     }     
     
-    public static Map<Integer,List<Integer>> findHierarchy2(List<List<List<Integer>>> contours) {
+    public static Map<Integer,List<Integer>> findHierarchy(List<List<List<Integer>>> contours) {
         
         // Initialize each contour as a parent
         Map<Integer, List<Integer>> hierarchy = new HashMap<>();
@@ -380,81 +383,7 @@ public class Contours {
         }
         
         return hierarchy;
-    }
-    
-    public static Map<Integer,List<Integer>> findHierarchy(List<List<List<Integer>>> contours) {
-        
-        Map<Integer, List<Integer>> hierarchy = new HashMap<>();
-        
-        // Check each Alpha contour
-        for (int alphaID = 0; alphaID < contours.size(); alphaID++) {
-            
-            // Store the Alpha Contour as a Path
-            Path2D alphaPath = new Path2D.Double();
-            List<Integer> firstPt = contours.get(alphaID).get(0);
-            alphaPath.moveTo(firstPt.get(0), firstPt.get(1));
-            for (int pt_index = 1; pt_index < contours.get(alphaID).size(); pt_index++) {
-                List<Integer> point = contours.get(alphaID).get(pt_index);
-                alphaPath.lineTo(point.get(0), point.get(1));
-            }
-            
-            // Check each Beta contour
-            for (int betaID = 0; betaID < contours.size(); betaID++) {
-                
-                if (betaID != alphaID) {
-                    
-                    // Find the Beta Contour Bounding Box
-                    List<List<Integer>> betaContour = contours.get(betaID);
-                    List<Integer> box = Contours.computeBoundingBox(betaContour);
-                    int x = box.get(0);
-                    int y = box.get(1);
-                    int width = box.get(2);
-                    int height = box.get(3);
-                    Rectangle boxRect = new Rectangle(x, y, width, height);
-                    
-                    // Check if Beta is Inside Alpha
-                    if (alphaPath.contains(boxRect)) {
-                        
-                        // Existing Parent Contour
-                        if (hierarchy.containsKey(alphaID)) {
-                            List<Integer> children = hierarchy.get(alphaID);
-                            
-                            // Check each existing child
-                            boolean isBetaInsideExisting = false;
-                            for (Integer existingID: children) {
-                                List<List<Integer>> existingContour = contours.get(existingID);
-                                List<Integer> existingBox = Contours.computeBoundingBox(existingContour);
-                                int existingX = existingBox.get(0);
-                                int existingY = existingBox.get(1);
-                                int existingW = existingBox.get(2);
-                                int existingH = existingBox.get(3);
-                                Rectangle existingContourBoxRect = new Rectangle(existingX, existingY, existingW, existingH);
-                                
-                                // Check if Beta is Inside Existing
-                                if (existingContourBoxRect.contains(boxRect)) {
-                                    isBetaInsideExisting = true;
-                                    break;
-                                }                                
-                            }
-                            if (isBetaInsideExisting == false) {
-                                children.add(betaID);
-                            }
-                            
-                        } 
-                        // New Parent Contour
-                        else {
-                            List<Integer> children = new ArrayList<>();
-                            children.add(betaID);
-                            hierarchy.put(alphaID, children);
-                        }
-                    }
-                }
-            }
-        }
-        
-        return hierarchy;
-    }
-    
+    }    
     
     public class LocalPixels
     {    
