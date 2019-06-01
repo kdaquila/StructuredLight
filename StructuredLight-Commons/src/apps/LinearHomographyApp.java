@@ -1,9 +1,7 @@
 package apps;
 
-import cameracalibration.LinearHomography;
-import cameramatrix_development.CameraMatrixDecomposition;
-import cameramatrix_development.PinholeCameraModel;
-import core.ArrayUtils;
+import homography.HomographyError;
+import homography.LinearHomography;
 import core.TXT;
 import core.XML;
 import java.util.List;
@@ -12,7 +10,7 @@ public class LinearHomographyApp {
     
     public static void main(String[] args) {
         
-        System.out.println("Running the CameraCalibrationApp:");
+        System.out.println("Running the LinearHomographyApp:");
         
         // Validate arguments
         if (args.length == 0) {
@@ -30,9 +28,6 @@ public class LinearHomographyApp {
         String worldPointsPath = conf.getString("/config/worldPointsPath");
         String formatString = conf.getString("/config/formatString");
         String HSavePath = conf.getString("/config/HSavePath");
-        String KSavePath = conf.getString("/config/KSavePath");
-        String RSavePath = conf.getString("/config/RSavePath");
-        String TSavePath = conf.getString("/config/TSavePath");
         
         System.out.println("Done");
         
@@ -45,7 +40,7 @@ public class LinearHomographyApp {
         // Compute the homography
         System.out.print("Compute the homography ... ");
         
-        LinearHomography plane = new LinearHomography(imagePts, worldPts);
+        LinearHomography plane = new LinearHomography(worldPts, imagePts);
         plane.computeHomography();
         
         System.out.println("Done");
@@ -54,26 +49,9 @@ public class LinearHomographyApp {
         List<List<Double>> H = plane.getHomography();
         TXT.saveMatrix(H, Double.class, HSavePath, formatString);
         
-        System.out.println("The reprojection error is: " + String.format("%.3f", plane.computeReprojectError()));
-                
-                
-        
-//        // Compute the full camera calibration matrix
-//        PinholeCameraModel camera = new PinholeCameraModel();
-//        camera.computeParameters(imagePts, worldPts);        
-//        List<List<Double>> cameraMatrix = camera.getMatrix();
-//        
-//        // Compute the intrinsic and extrinsic matrices
-//        CameraMatrixDecomposition camDecomp = new CameraMatrixDecomposition(ArrayUtils.ListToArray_Double2D(cameraMatrix));
-//        camDecomp.decompose();
-//        List<List<Double>> K = camDecomp.getK();
-//        List<List<Double>> R = camDecomp.getR();
-//        List<List<Double>> T = camDecomp.getT();
-//                
-//        // Save the intrinsic and extrinsic matrices
-//        TXT.saveMatrix(K, Double.class, KSavePath, formatString);
-//        TXT.saveMatrix(R, Double.class, RSavePath, formatString);
-//        TXT.saveMatrix(T, Double.class, TSavePath, formatString);
+        // Compute reprojection error
+        double error = HomographyError.computeReprojectError(worldPts, imagePts, H);
+        System.out.println("The reprojection error is: " + String.format("%.3f", error));               
         
     }
 }

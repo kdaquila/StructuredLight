@@ -1,4 +1,4 @@
-package cameracalibration;
+package homography;
 
 import core.ArrayUtils;
 import core.CoordinateSystems;
@@ -79,7 +79,6 @@ public class NormalizationMatrix {
             x.set(k, xy_cart_norm_list.get(0));
             y.set(k, xy_cart_norm_list.get(1));
         }  
-    }
-          
+    }          
       
 }

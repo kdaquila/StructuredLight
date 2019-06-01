@@ -30,6 +30,30 @@ public class ArrayUtils
         return output;
     }
     
+    public static <T> List<List<T>> addDim_1Dto2D(List<T> list1D) {
+        List<List<T>> list2D = new ArrayList<>(1);
+        list2D.add(list1D);
+        return list2D;
+    }
+    
+    public static <T> List<List<T>> zipLists(List<T> list1, List<T> list2) {
+        int nPts = list1.size();
+        List<List<T>> list2D = new ArrayList<>(nPts);        
+        for (int i = 0; i < nPts; i++) {
+            List<T> newRow = new ArrayList<>(2);
+            newRow.add(list1.get(i));
+            newRow.add(list2.get(i));
+            list2D.add(newRow);
+        }
+        return list2D;
+    }
+    
+    public static <T> void unzipList(List<List<T>> inputList2D, List<T> outList1, List<T> outList2) {
+        for (List<T> row: inputList2D) {
+            outList1.add(row.get(0));
+            outList2.add(row.get(1));
+        }
+    }
     
     public static <T> List<List<T>> reshape(List<List<T>> array, int new_nRows, int new_nCols) 
     {
@@ -457,9 +481,10 @@ public class ArrayUtils
     }
     
     public static void printList_Double2D(List<List<Double>> list) {
+        System.out.println("");
         for (List<Double> row: list) {
             for (Double item: row) {
-                System.out.print(String.format("%+02.1f", item) + ", ");
+                System.out.print(String.format("%+03.3e", item) + ", ");
             }   
             System.out.print("\n");
         }
