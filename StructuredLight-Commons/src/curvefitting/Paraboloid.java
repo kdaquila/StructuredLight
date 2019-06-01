@@ -1,7 +1,7 @@
 package curvefitting;
 
 import core.ArrayUtils;
-import core.HomogCoords;
+import core.CoordinateSystems;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferUShort;
@@ -110,11 +110,11 @@ public class Paraboloid {
             List<Double> xy_cart = new ArrayList<>(2);
             xy_cart.add(xArray[k]);
             xy_cart.add(yArray[k]);
-            List<Double> xy_homog = HomogCoords.toHomog_Double1D(xy_cart);
+            List<Double> xy_homog = CoordinateSystems.toHomog(xy_cart);
             RealVector XY_homog = MatrixUtils.createRealVector(ArrayUtils.ListToArray_Double(xy_homog));
             RealVector XY_homog_norm = N.operate(XY_homog);
             List<Double> xy_homog_norm = ArrayUtils.ArrayToList_Double(XY_homog_norm.toArray());
-            List<Double> xy_cart_norm = HomogCoords.toCartesian_Double1D(xy_homog_norm);
+            List<Double> xy_cart_norm = CoordinateSystems.toCartesian(xy_homog_norm);
             xArray_norm[k] = xy_cart_norm.get(0);
             yArray_norm[k] = xy_cart_norm.get(1);
         }    

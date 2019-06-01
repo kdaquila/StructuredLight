@@ -3,9 +3,9 @@ package core;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomogCoords {
+public class CoordinateSystems {
     
-    public static List<Double> toHomog_Double1D(List<Double> cartesian) {
+    public static List<Double> toHomog(List<Double> cartesian) {
         
         // Make a copy
         List<Double> homogenous = new ArrayList<>(cartesian);
@@ -16,7 +16,7 @@ public class HomogCoords {
         return homogenous;
     }
     
-    public static List<Double> toCartesian_Double1D(List<Double> homogenous) {
+    public static List<Double> toCartesian(List<Double> homogenous) {
         // Make a copy
         List<Double> cartesian = new ArrayList<>(homogenous);
         

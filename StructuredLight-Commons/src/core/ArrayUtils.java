@@ -283,6 +283,90 @@ public class ArrayUtils
         
         return array2;
     }   
+    
+    public static double mean_Double1D(List<Double> vector)
+    {
+        // convert to array
+        double[] array = ListToArray_Double(vector);
+        
+        double sum = 0;
+        int nPts = array.length;
+        for (int i = 0; i < nPts; i++)
+        {
+            double item = array[i];
+            sum += item;
+        }
+        return sum/nPts;
+    }    
+    
+    public static double mean_Double2D(List<List<Double>> matrix)
+    {
+        // convert to array
+        double[][] array = ListToArray_Double2D(matrix);
+        
+        double sum = 0;
+        int nRows = array.length;
+        int nCols = array[0].length;
+        for (int row_num = 0; row_num < nRows; row_num++)
+        {
+            for (int col_num = 0; col_num < nCols; col_num++)
+            {
+                double item = array[row_num][col_num];
+                sum += item;
+            }
+        }
+        double nPts = nRows*nCols;
+        return sum/nPts;
+    }
+
+    public static double var_Double1D(List<Double> vector)
+    {
+        // convert to array
+        double[] array = ListToArray_Double(vector);
+        
+        double mean = mean_Double1D(vector);
+        
+        double sumSqr = 0;
+        int nPts = array.length;
+        for (int i = 0; i < nPts; i++)
+        {
+            double item = array[i];
+            sumSqr += Math.pow(item - mean, 2);
+        }
+        return sumSqr/nPts;
+    }     
+    
+    public static double var_Double2D(List<List<Double>> matrix)
+    {
+        // convert to array
+        double[][] array = ListToArray_Double2D(matrix);
+        
+        double mean = mean_Double2D(matrix);
+        
+        double sumSqr = 0;
+        int nRows = array.length;
+        int nCols = array[0].length;
+        for (int row_num = 0; row_num < nRows; row_num++)
+        {
+            for (int col_num = 0; col_num < nCols; col_num++)
+            {
+                double item = array[row_num][col_num];
+                sumSqr += Math.pow(item - mean, 2);
+            }
+        }
+        double nPts = nRows*nCols;
+        return sumSqr/nPts;
+    } 
+    
+    public static double std_Double1D(List<Double> vector)
+    {
+        return Math.sqrt(var_Double1D(vector));
+    }
+    
+    public static double std_Double2D(List<List<Double>> matrix)
+    {
+        return Math.sqrt(var_Double2D(matrix));
+    }
 
     public static double max_Double2D(List<List<Double>> matrix)
     {
@@ -374,7 +458,10 @@ public class ArrayUtils
     
     public static void printList_Double2D(List<List<Double>> list) {
         for (List<Double> row: list) {
-            System.out.println(row);
+            for (Double item: row) {
+                System.out.print(String.format("%+02.1f", item) + ", ");
+            }   
+            System.out.print("\n");
         }
     }
 
