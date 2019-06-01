@@ -1,0 +1,10 @@
+<config>
+	<nRows>13</nRows>
+	<nCols>17</nCols>
+	<formatString>%.3f</formatString>
+	<imagePointsPath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Points\imagePoints.txt</imagePointsPath>
+	<worldPointsPath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Points\worldPoints.txt</worldPointsPath>
+	<KSavePath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\CameraCalibration_Matrices\K.txt</KSavePath>
+	<RSavePath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\CameraCalibration_Matrices\R.txt</RSavePath>
+	<TSavePath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\CameraCalibration_Matrices\T.txt</TSavePath>
+</config>

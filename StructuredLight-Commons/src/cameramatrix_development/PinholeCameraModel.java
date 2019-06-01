@@ -1,5 +1,6 @@
 package cameramatrix_development;
 
+import core.ArrayUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,21 +12,17 @@ import org.apache.commons.math3.linear.DecompositionSolver;
 import org.apache.commons.math3.linear.QRDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.linear.SingularValueDecomposition;
 
-public class PinholeCameraModel extends AbstractCameraModel {
+public class PinholeCameraModel {
     
-    RealMatrix M; // full projection matrix    
-    List<List<Double>> imagePts;
-    List<List<Double>> worldPts;
+    private RealMatrix M; // full projection matrix  
     
-    public PinholeCameraModel(List<List<Double>> imagePts, List<List<Double>> worldPts) {        
+    public PinholeCameraModel() {        
         M = new Array2DRowRealMatrix(3, 4);
-        this.imagePts = imagePts;
-        this.worldPts = worldPts;
     }
     
-    @Override
-    public void computeParameters() {
+    public void computeParameters(List<List<Double>> imagePts, List<List<Double>> worldPts) {
         
         int nPts = imagePts.size();
         
@@ -79,7 +76,8 @@ public class PinholeCameraModel extends AbstractCameraModel {
         }
         
         // Solve for X
-        QRDecomposition qr = new QRDecomposition(A);
+        SingularValueDecomposition qr = new SingularValueDecomposition(A);
+        System.out.println(qr.getConditionNumber());
         DecompositionSolver solver = qr.getSolver();
         RealVector X = solver.solve(B);
 
@@ -90,7 +88,6 @@ public class PinholeCameraModel extends AbstractCameraModel {
         }        
     }   
     
-    @Override
     public List<Double> project3DTo2D(List<Double> worldPt) {
         List<Double> worldPt_homogCoord = new ArrayList<>(worldPt);
         worldPt_homogCoord.add(1.0d);
@@ -103,6 +100,10 @@ public class PinholeCameraModel extends AbstractCameraModel {
         output.add(abc.getEntry(0)/abc.getEntry(2));
         output.add(abc.getEntry(1)/abc.getEntry(2));
         return output;
+    }
+    
+    public List<List<Double>> getMatrix() {
+        return ArrayUtils.ArrayToList_Double2D(M.getData());
     }
     
     public void exportToCSV(String path){
