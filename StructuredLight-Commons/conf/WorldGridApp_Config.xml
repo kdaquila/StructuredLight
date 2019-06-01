@@ -3,6 +3,6 @@
 	<nCols>17</nCols>
 	<dx>25.0</dx>
 	<dy>25.0</dy>
-	<formatStr>%.3f</formatStr>
+	<formatStr>%.6f</formatStr>
 	<saveDataPath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Points\worldPoints.txt</saveDataPath>
 </config>

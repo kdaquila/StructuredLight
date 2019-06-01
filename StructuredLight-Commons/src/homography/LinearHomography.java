@@ -108,6 +108,15 @@ public class LinearHomography {
         RealMatrix XY_normalize = MatrixUtils.createRealMatrix(XY_normalize_data);
         
         H = UV_denormalize.multiply(H_norm.multiply(XY_normalize)); 
+        
+        // Rescale H so bottom right is 1
+        double bottomLeft = H.getEntry(2, 2);
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                H.setEntry(row, col, H.getEntry(row, col)/bottomLeft);
+            }
+        }
+        
                 
     }
     

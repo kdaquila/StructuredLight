@@ -1,7 +1,7 @@
 <config>
 	<nRows>13</nRows>
 	<nCols>17</nCols>
-	<formatString>%.3f</formatString>
+	<formatString>%.6e</formatString>
 	<rgbImagePath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Images\0142.png</rgbImagePath>
 	<saveDataPath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Points\imagePoints.txt</saveDataPath>
 	<isSubPixel>true</isSubPixel>
