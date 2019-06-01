@@ -1,6 +1,6 @@
 package apps;
 
-import cameracalibration.PlanarTarget;
+import cameracalibration.LinearHomography;
 import cameramatrix_development.CameraMatrixDecomposition;
 import cameramatrix_development.PinholeCameraModel;
 import core.ArrayUtils;
@@ -8,7 +8,7 @@ import core.TXT;
 import core.XML;
 import java.util.List;
 
-public class CameraCalibrationApp {
+public class LinearHomographyApp {
     
     public static void main(String[] args) {
         
@@ -43,12 +43,20 @@ public class CameraCalibrationApp {
         List<List<Double>> worldPts = TXT.loadMatrix(worldPointsPath, Double.class);
         
         // Compute the homography
-        PlanarTarget plane = new PlanarTarget();
-        plane.computeHomography(imagePts, worldPts);
+        System.out.print("Compute the homography ... ");
+        
+        LinearHomography plane = new LinearHomography(imagePts, worldPts);
+        plane.computeHomography();
+        
+        System.out.println("Done");
         
         // Save the homography
         List<List<Double>> H = plane.getHomography();
         TXT.saveMatrix(H, Double.class, HSavePath, formatString);
+        
+        System.out.println("The reprojection error is: " + String.format("%.3f", plane.computeReprojectError()));
+                
+                
         
 //        // Compute the full camera calibration matrix
 //        PinholeCameraModel camera = new PinholeCameraModel();

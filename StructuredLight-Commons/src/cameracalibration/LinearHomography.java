@@ -1,6 +1,7 @@
 package cameracalibration;
 
 import core.ArrayUtils;
+import core.CoordinateSystems;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
@@ -11,11 +12,21 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
-public class PlanarTarget {
+public class LinearHomography {
     
     private RealMatrix H;
+    private List<List<Double>> imagePts;
+    private List<List<Double>> worldPts;
+    private int nPts;
+    
+    public LinearHomography(List<List<Double>> imagePts, List<List<Double>> worldPts) {
+        this.imagePts = imagePts;
+        this.worldPts = worldPts;
+        nPts = imagePts.size();
+        H = MatrixUtils.createRealMatrix(1, 1);
+    }
 
-    public void computeHomography(List<List<Double>> imagePts, List<List<Double>> worldPts) {
+    public void computeHomography() {
         
         int nPts = imagePts.size();
         
@@ -107,5 +118,40 @@ public class PlanarTarget {
     
     public List<List<Double>> getHomography() {
         return ArrayUtils.ArrayToList_Double2D(H.getData());
+    }
+    
+    public double computeReprojectError() {
+        
+        // Convert to homogenous coordinates
+        List<List<Double>> worldPts_homog = new ArrayList<>();
+        for (List<Double> pt: worldPts) {
+            worldPts_homog.add(CoordinateSystems.toHomog(pt.subList(0, 2)));
+        }                
+        
+        // Set XY points as Matrix
+        RealMatrix XY_homog = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(worldPts_homog));
+        RealMatrix XY_homog_tr = XY_homog.transpose();        
+        
+        // Do the projection
+        RealMatrix UV_homog_project_tr = H.multiply(XY_homog_tr);
+        RealMatrix UV_homog_project = UV_homog_project_tr.transpose();
+        
+        // Convert to cartesian coordinates
+        List<List<Double>> imagePts_proj = new ArrayList<>();
+        for (double[] pt: UV_homog_project.getData()) {
+            List<Double> pt_list = ArrayUtils.ArrayToList_Double(pt);
+            imagePts_proj.add(CoordinateSystems.toCartesian(pt_list));
+        }  
+        
+        // Compute the errors
+        double sumSqrDiff = 0;
+        for (int i = 0; i < nPts; i++) {
+            double xDiff = imagePts_proj.get(i).get(0) - imagePts.get(i).get(0);
+            double yDiff = imagePts_proj.get(i).get(1) - imagePts.get(i).get(1);
+            sumSqrDiff += Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+        }
+        double error = sumSqrDiff/nPts;
+        
+        return error;
     }
 }
