@@ -358,14 +358,8 @@ public class Contours {
             int height = box.get(3);
             Rectangle contourBox = new Rectangle(x, y, width, height);
             
-            // Find the contour's center point
-            List<Double> contourCenter = Contours.computeCenter(contour);    
-            
             // Find the contour's area
             double contourArea = Contours.computeArea(contour);
-            
-            // Find the contour's bounding box area
-            double contourBoxArea = width*height;
             
             // Check each candidate parent contour
             Double minArea = Double.MAX_VALUE;
@@ -384,21 +378,10 @@ public class Contours {
                 // Stop if the candidate parent is not a contour
                 if (candidateParentContour == null) {
                     continue;
-                }
-                
-                // Find the parent contour's bounding box
-                List<Integer> parentBox = Contours.computeBoundingBox(candidateParentContour);
-                int parentX = parentBox.get(0);
-                int parentY = parentBox.get(1);
-                int parentW = parentBox.get(2);
-                int parentH = parentBox.get(3);
-                Rectangle candiateParentBox = new Rectangle(parentX, parentY, parentW, parentH);
+                }                
                 
                 // Find the parent contours's area
                 double parentContourArea = Contours.computeArea(candidateParentContour);
-                
-                // Find the contour's bounding box area
-                double parentBoxArea = parentW*parentH;
                 
                 // Store the candidate parent contour as a path
                 Path2D candidateParentContourPath = new Path2D.Double();
