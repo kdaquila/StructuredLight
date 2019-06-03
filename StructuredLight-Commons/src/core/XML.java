@@ -5,6 +5,8 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import org.dom4j.Node;
 
 public class XML {
@@ -54,6 +56,21 @@ public class XML {
             throw new RuntimeException("Could not find " + xPath + " in the configuration file");
         }        
         return Double.parseDouble(valueNode.getText());
+    }
+    
+    public List<String> getStringList(String xPath) {
+        
+        
+        List<Node> nodes = root.selectNodes(xPath);
+        if (nodes.isEmpty()) {
+            throw new RuntimeException("Could not find " + xPath + " in the configuration file");
+        } 
+        List<String> outputStrings = new ArrayList<>(nodes.size());
+        for (Node n: nodes) {
+            outputStrings.add(n.getText());
+        }
+
+        return outputStrings;
     }
 
     public static Element loadXML(String path) {
