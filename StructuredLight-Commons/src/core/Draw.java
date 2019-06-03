@@ -58,7 +58,7 @@ public class Draw {
         return rgbImage;
     }
     
-    public static BufferedImage drawContours(BufferedImage img, List<List<List<Integer>>> contours)
+    public static BufferedImage drawContours(BufferedImage img, List<List<List<Integer>>> contours, Integer colorHex)
     {
         // Create an new rgb image
         int width = img.getWidth();
@@ -75,10 +75,14 @@ public class Draw {
         
         // Define colors
         List<Integer> colors = new ArrayList<>();
-        colors.add(0xFF00FF);
-        colors.add(0xFFFF00);
-        colors.add(0x00FFFF);
         int color_index = 0;
+        if (colorHex == null) {        
+            colors.add(0xFF00FF);
+            colors.add(0xFFFF00);
+            colors.add(0x00FFFF);
+        } else {
+            colors.add(colorHex);
+        }
         
         // Write colors to buffer pixels
         for (List<List<Integer>> contour: contours)

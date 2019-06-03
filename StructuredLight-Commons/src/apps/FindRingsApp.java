@@ -6,8 +6,14 @@ import core.ImageUtils;
 import core.TXT;
 import core.XML;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class FindRingsApp {
     
@@ -29,95 +35,127 @@ public class FindRingsApp {
         int nRows = conf.getInt("/config/nRows");
         int nCols = conf.getInt("/config/nCols");        
         String formatString = conf.getString("/config/formatString"); 
-        String rgbImagePath = conf.getString("/config/rgbImagePath"); 
-        String saveDataPath = conf.getString("/config/saveDataPath");
-        String subPixelSaveDataPath = conf.getString("/config/subPixelSaveDataPath");
+        String rgbImageDir = conf.getString("/config/rgbImageDir"); 
+        String saveDataDir = conf.getString("/config/saveDataDir");
         boolean isSubPixel = conf.getBool("/config/isSubPixel");
         
         System.out.println("Done");
         
-        // Compute the number of rings
-        int nRings = nRows*nCols;
+        // Find the image paths
+        File rgbDir = new File(rgbImageDir);
+        String[] rgbImageNames = rgbDir.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String name) {
+                String lowerName = name.toLowerCase();
+                boolean isValid = lowerName.endsWith(".png") ||
+                                  lowerName.endsWith(".jpg") ||
+                                  lowerName.endsWith(".jpeg") ||
+                                  lowerName.endsWith(".tif") ||
+                                  lowerName.endsWith(".tiff"); 
+                return isValid;
+            }
+        });
         
-        // Load the RGB image
-        System.out.print("Loading the RGB image ... ");        
-        
-        BufferedImage rgbImage = ImageUtils.load(rgbImagePath);
-        
-        System.out.println("Done");
-        
-        // Convert RGB to gray        
-        BufferedImage grayImage = ImageUtils.color2Gray(rgbImage);
-
-        // Adaptive threshold to black and white        
-        System.out.print("Thresholding to black and white ... "); 
-        
-        int windowSize = 21;
-        int offset = 5;
-        BufferedImage bwImage = ImageUtils.adaptiveThreshold(grayImage, windowSize, offset);
-        
-        System.out.println("Done");
-        
-        // Find all contours
-        System.out.print("Searching for contours ... ");
-        Contours contours = new Contours(bwImage);   
-        int minArea = 200; 
-        List<List<List<Integer>>> edges = contours.findContours(minArea);  
-        
-        System.out.println("Done");
-
-        // Organize the edges into a hierarchy
-        System.out.print("Indexing the contours ... ");
-        
-        Map<Integer, List<Integer>> hierarchy = Contours.findHierarchy(edges); 
-        
-        System.out.println("Done");
-        
-        // Find the rings centers    
-        System.out.print("Computing the ring centers ... ");        
-           
-        List<List<Double>> ringCenters = ImageRings.computeCenters(edges, hierarchy, nRings);
-        
-        System.out.println("Done"); 
-        
-        // Sort ring centers as row-major on a grid
-        System.out.print("Sorting the ring centers as grid... ");
-        
-//        List<List<Double>> ringCenters_sort = ringCenters;
-        List<List<Double>> ringCenters_sort = ImageRings.sortCentersRowMajor(ringCenters, nRows, nCols);
-        
-        System.out.println("Done");
-        
-        // Save the point data
-        System.out.print("Saving the ring centers data... ");
-
-        TXT.saveMatrix(ringCenters_sort, Double.class, saveDataPath, formatString);
-
-        System.out.println("Done");
-        
-        // Refine ring centers to sub pixel accuracy
-        System.out.print("Refining ring centers to subPixel Accuracy... ");
-        
-        if (isSubPixel) {
-            // Compute the average ring outer radius
-            Map<String,Double> averageWidths = ImageRings.findAvgRingWidths(edges, hierarchy, nRings);
-            double ringOuterRadius = averageWidths.get("Outer");
-            double ringInnerRadius = averageWidths.get("Inner");            
+        List<String> skipped = new ArrayList<>();
+        List<String> successful = new ArrayList<>();
+        for (String rgbImageName: rgbImageNames) 
+        {
+            System.out.println("\n\nNow Processing Image: " + rgbImageDir + "//" + rgbImageName + "\n");
             
-            // Find the ring centers to subPixel accuracy  
-            List<List<Double>> subPixelRingCenters = ImageRings.refineCenters(ringCenters_sort, grayImage,
-                                                                              ringOuterRadius, ringInnerRadius);
+//            if (!rgbImageName.equals("5407.png")) {
+//                continue;
+//            }
+            
+            // Compute the number of rings
+            int nRings = nRows*nCols;
+
+            // Load the RGB image
+            System.out.print("Loading the RGB image ... "); 
+            Path rgbImageFullPath = Paths.get(rgbImageDir).resolve(rgbImageName);
+            BufferedImage rgbImage = ImageUtils.load(rgbImageFullPath.toString());
 
             System.out.println("Done");
 
-            // Save the point data
-            System.out.print("Saving the subPixel ring centers data... ");
+            // Convert RGB to gray        
+            BufferedImage grayImage = ImageUtils.color2Gray(rgbImage);
 
-            TXT.saveMatrix(subPixelRingCenters, Double.class, subPixelSaveDataPath, formatString);
+            // Adaptive threshold to black and white        
+            System.out.print("Thresholding to black and white ... "); 
 
-            System.out.println("Done");                        
-        }      
+            int windowSize = 21;
+            int offset = 5;
+            BufferedImage bwImage = ImageUtils.adaptiveThreshold(grayImage, windowSize, offset);
+
+            System.out.println("Done");
+            
+            // Find all contours
+            System.out.print("Searching for contours ... ");
+            Contours contours = new Contours(bwImage);   
+            int minArea = 300; 
+            List<List<List<Integer>>> edges = contours.findContours(minArea);  
+
+            System.out.println("Done");
+
+            // Organize the edges into a hierarchy
+            System.out.print("Indexing the contours ... ");
+
+            Map<Integer, List<Integer>> hierarchy = Contours.findHierarchy(edges); 
+
+            System.out.println("Done");
+
+            // Find the rings centers    
+            System.out.print("Computing the ring centers ... ");        
+
+            List<List<Double>> ringCenters;
+            try {
+                ringCenters = ImageRings.computeCenters(edges, hierarchy, nRings);
+            } catch (RuntimeException e) {
+                skipped.add(rgbImageName);                
+                continue;                
+            }
+
+            System.out.println("Done"); 
+
+            // Sort ring centers as row-major on a grid
+            System.out.print("Sorting the ring centers as grid... ");
+
+            ringCenters = ImageRings.sortCentersRowMajor(ringCenters, nRows, nCols);
+
+            System.out.println("Done");
+
+            if (isSubPixel) {
+                
+                // Refine ring centers to sub pixel accuracy
+                System.out.print("Refining ring centers to subPixel Accuracy... ");
+            
+                // Compute the average ring outer radius
+                Map<String,Double> averageWidths = ImageRings.findAvgRingWidths(edges, hierarchy, nRings);
+                double ringOuterRadius = averageWidths.get("Outer");
+                double ringInnerRadius = averageWidths.get("Inner");            
+
+                // Find the ring centers to subPixel accuracy  
+                ringCenters = ImageRings.refineCenters(ringCenters, grayImage,ringOuterRadius, ringInnerRadius);
+
+                System.out.println("Done");                       
+            }  
+            
+            // Save the point centers
+            System.out.print("Saving the ring centers data... ");
+            String imageRootName = rgbImageName.split(Pattern.quote("."))[0];
+            String saveDataName = imageRootName + "_ImagePoints.txt";
+            Path saveDataFullPath = Paths.get(saveDataDir).resolve(saveDataName);
+            TXT.saveMatrix(ringCenters, Double.class, saveDataFullPath.toString(), formatString);
+            
+            // add to success list
+            successful.add(rgbImageName);
+            
+        }
         
+        System.out.println("\n\nSkipped " + skipped.size() + " images: ");
+        System.out.println(skipped);
+        
+        System.out.println("\n\nSuccessful " + successful.size() + " images: ");
+        System.out.println(successful);
     }
 
 }

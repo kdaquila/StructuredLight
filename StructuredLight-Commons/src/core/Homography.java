@@ -54,28 +54,28 @@ public class Homography {
     
     private RealMatrix createA(List<List<Double>> in, List<List<Double>> out)
     {
-        RealMatrix A = MatrixUtils.createRealMatrix(2*n, 8);
+        RealMatrix matrixA = MatrixUtils.createRealMatrix(2*n, 8);
         for (int i = 0; i < n; i++)
         {
-            A.setEntry(i, 0, in.get(i).get(0));
-            A.setEntry(i, 1, in.get(i).get(1));
-            A.setEntry(i, 2, 1.0);
-            A.setEntry(i, 3, 0.0);
-            A.setEntry(i, 4, 0.0);
-            A.setEntry(i, 5, 0.0);
-            A.setEntry(i, 6, -1*in.get(i).get(0)*out.get(i).get(0));
-            A.setEntry(i, 7, -1*in.get(i).get(1)*out.get(i).get(0));
+            matrixA.setEntry(i, 0, in.get(i).get(0));
+            matrixA.setEntry(i, 1, in.get(i).get(1));
+            matrixA.setEntry(i, 2, 1.0);
+            matrixA.setEntry(i, 3, 0.0);
+            matrixA.setEntry(i, 4, 0.0);
+            matrixA.setEntry(i, 5, 0.0);
+            matrixA.setEntry(i, 6, -1*in.get(i).get(0)*out.get(i).get(0));
+            matrixA.setEntry(i, 7, -1*in.get(i).get(1)*out.get(i).get(0));
             
-            A.setEntry(i+n, 0, 0.0);
-            A.setEntry(i+n, 1, 0.0);
-            A.setEntry(i+n, 2, 0.0);
-            A.setEntry(i+n, 3, in.get(i).get(0));
-            A.setEntry(i+n, 4, in.get(i).get(1));
-            A.setEntry(i+n, 5, 1.0);
-            A.setEntry(i+n, 6, -1*in.get(i).get(0)*out.get(i).get(1));
-            A.setEntry(i+n, 7, -1*in.get(i).get(1)*out.get(i).get(1));
+            matrixA.setEntry(i+n, 0, 0.0);
+            matrixA.setEntry(i+n, 1, 0.0);
+            matrixA.setEntry(i+n, 2, 0.0);
+            matrixA.setEntry(i+n, 3, in.get(i).get(0));
+            matrixA.setEntry(i+n, 4, in.get(i).get(1));
+            matrixA.setEntry(i+n, 5, 1.0);
+            matrixA.setEntry(i+n, 6, -1*in.get(i).get(0)*out.get(i).get(1));
+            matrixA.setEntry(i+n, 7, -1*in.get(i).get(1)*out.get(i).get(1));
         }
-        return A;
+        return matrixA;
     }
     
     private RealVector createB(List<List<Double>> out)
@@ -86,15 +86,15 @@ public class Homography {
             bData[i] = out.get(i).get(0);
             bData[i+n] = out.get(i).get(1);
         }
-        RealVector B = MatrixUtils.createRealVector(bData);
-        return B;
+        RealVector vectorB = MatrixUtils.createRealVector(bData);
+        return vectorB;
     }
     
     private RealVector computeX(RealMatrix A, RealVector B)
     {       
         DecompositionSolver solver = new QRDecomposition(A).getSolver();
-        RealVector X = solver.solve(B);        
-        return X;
+        RealVector vectorX = solver.solve(B);        
+        return vectorX;
     }
     
     public List<List<Double>> projectForward(List<List<Double>> pts)

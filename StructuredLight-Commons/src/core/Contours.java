@@ -35,6 +35,7 @@ public class Contours {
         newTag = INITIALTAG;
         WIDTH = bwImage.getWidth();
         HEIGHT = bwImage.getHeight();
+        ImageUtils.fillBoundary(bwImage, 255);
         bwImg = bwImage;
         bwImgData = ((DataBufferByte)bwImg.getData().getDataBuffer()).getData();
         
@@ -343,7 +344,7 @@ public class Contours {
             hierarchy.put(index, new ArrayList<>());
         }
         
-        // Find the direct of each contour
+        // Find the direct parent of each contour
         for (int contourIndex = 0; contourIndex < contours.size(); contourIndex++) {
             
             // Get the contour
@@ -357,10 +358,24 @@ public class Contours {
             int height = box.get(3);
             Rectangle contourBox = new Rectangle(x, y, width, height);
             
+            // Find the contour's center point
+            List<Double> contourCenter = Contours.computeCenter(contour);    
+            
+            // Find the contour's area
+            double contourArea = Contours.computeArea(contour);
+            
+            // Find the contour's bounding box area
+            double contourBoxArea = width*height;
+            
             // Check each candidate parent contour
             Double minArea = Double.MAX_VALUE;
             Integer parentIndex = null;
             for (int candidateParentIndex = 0; candidateParentIndex < contours.size(); candidateParentIndex++) {
+                
+                // Skip the contour itself
+                if (candidateParentIndex == contourIndex) {
+                    continue;
+                }
                 
                 // Get the candidate parent contour
                 List<List<Integer>> candidateParentContour = contours.get(candidateParentIndex);
@@ -370,7 +385,21 @@ public class Contours {
                 if (candidateParentContour == null) {
                     continue;
                 }
-
+                
+                // Find the parent contour's bounding box
+                List<Integer> parentBox = Contours.computeBoundingBox(candidateParentContour);
+                int parentX = parentBox.get(0);
+                int parentY = parentBox.get(1);
+                int parentW = parentBox.get(2);
+                int parentH = parentBox.get(3);
+                Rectangle candiateParentBox = new Rectangle(parentX, parentY, parentW, parentH);
+                
+                // Find the parent contours's area
+                double parentContourArea = Contours.computeArea(candidateParentContour);
+                
+                // Find the contour's bounding box area
+                double parentBoxArea = parentW*parentH;
+                
                 // Store the candidate parent contour as a path
                 Path2D candidateParentContourPath = new Path2D.Double();
                 List<Integer> firstPt = candidateParentContour.get(0);
@@ -381,7 +410,8 @@ public class Contours {
                 }
                 
                 // check if candidate parent contour contains the contour
-                if (candidateParentContourPath.contains(contourBox)) {
+                if (parentContourArea > contourArea &&
+                    candidateParentContourPath.contains(contourBox)) {
                     
                     // check if candidate parent is smaller than previous candidate parents
                     double candidateParentArea = Contours.computeArea(candidateParentContour);

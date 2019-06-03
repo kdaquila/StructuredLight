@@ -6,7 +6,6 @@ import core.FilterKernal;
 import core.Homography;
 import core.ImageUtils;
 import core.Quad;
-import core.TXT;
 import curvefitting.Paraboloid;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -112,7 +111,6 @@ public class ImageRings {
 
         // Compute the corners-only homography
         Homography h = new Homography(corners, normalPts);
-        System.out.println("Forward Projection Error: " + h.computeForwardProjectionError());
 
         // Project all contour centers to normalized plane using the corners-only homography
         List<List<Double>> centers_proj = h.projectForward(centers);        
@@ -157,9 +155,7 @@ public class ImageRings {
         
         // Project the contour centers grid to image plane using the corners-only homography
         List<List<Double>> centers_sort = h.projectBackward(centers_proj_2D);
-        
-        TXT.saveMatrix(centers_sort, Double.class, "C:\\Users\\kfd18\\OneDrive\\kdaquila_SoftwareDev\\Structured-Light\\StructuredLight-Commons\\Test_Resources\\Debug\\debug.txt", "%.3f");
-        
+                
         return centers_sort;
     }
 
