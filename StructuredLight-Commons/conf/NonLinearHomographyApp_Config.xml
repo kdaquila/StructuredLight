@@ -1,9 +1,0 @@
-<config>
-	<nRows>13</nRows>
-	<nCols>17</nCols>
-	<formatString>%+07e</formatString>
-	<imagePointsPath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Points\imagePoints_subPixel.txt</imagePointsPath>
-	<worldPointsPath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Points\worldPoints.txt</worldPointsPath>	
-	<linearHSavePath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\CameraCalibration_Matrices\linearH.txt</linearHSavePath>
-	<nonlinearHSavePath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\CameraCalibration_Matrices\nonlinearH.txt</nonlinearHSavePath>
-</config>

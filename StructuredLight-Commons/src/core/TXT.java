@@ -32,7 +32,7 @@ public class TXT {
             }
         }
         catch(IOException exp){
-            throw new RuntimeException("Could not read a line from the file");
+            throw new RuntimeException("Could not read a line from the file at: " + path);
         }
         return output;
     }
