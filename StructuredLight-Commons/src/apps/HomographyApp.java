@@ -69,9 +69,9 @@ public class HomographyApp {
             // Compute the linear homography
             System.out.print("Compute the linear homography ... ");
 
-            LinearHomography plane = new LinearHomography(xyPts, uvPts);
-            plane.computeHomography();
-            List<List<Double>> H = plane.getHomography();
+            LinearHomography linHomog = new LinearHomography(xyPts, uvPts);
+            List<List<Double>> H = linHomog.getHomography();
+            List<List<Double>> H_norm = linHomog.getNormalizedHomography();
 
             System.out.println("Done");
             
@@ -84,7 +84,7 @@ public class HomographyApp {
                 System.out.print("Compute the nonlinear homography ... ");
 
                 NonLinearHomography nonLinHomog = new NonLinearHomography();
-                nonLinHomog.computeHomography(xyPts, uvPts, H);
+                nonLinHomog.computeHomography(xyPts, uvPts, H_norm);
                 H = nonLinHomog.getHomography();
 
                 System.out.println("Done");
