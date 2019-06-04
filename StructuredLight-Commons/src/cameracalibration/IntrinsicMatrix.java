@@ -1,17 +1,24 @@
 package cameracalibration;
 
 import core.ArrayUtils;
-import homography.NormalizationMatrix;
-import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.math3.linear.CholeskyDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.NonPositiveDefiniteMatrixException;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 public class IntrinsicMatrix {
         
-    public static List<List<Double>> compute(List<List<List<Double>>> homographies_norm, List<List<Double>> N_uv_inv) {
+    /**
+     * This computes the camera intrinsic calibration matrix using a list of homography matrices.
+     * @param homographies_norm A list of homographies, one for each view.
+     * @param N_xy_matrix The normalization matrix for XY world points
+     * @param N_uv_matrix The inverse normalization matrix for UV image points
+     * @return The intrinsic camera calibration matrix
+     */
+    public static List<List<Double>> compute(List<List<List<Double>>> homographies_norm, List<List<Double>> N_xy_matrix, List<List<Double>> N_uv_matrix) {
         
         int nViews = homographies_norm.size();
         
@@ -42,16 +49,24 @@ public class IntrinsicMatrix {
         // Compute vector X (AX=zero)
         SingularValueDecomposition decomp = new SingularValueDecomposition(A);
         RealMatrix V = decomp.getV();
-        RealVector X_norm = V.getColumnVector(V.getColumnDimension() - 1);    
-        List<List<Double>> X_list_norm = ArrayUtils.reshape(ArrayUtils.addDim_1Dto2D(ArrayUtils.ArrayToList_Double(X_norm.toArray())), 3, 3);
-        RealMatrix B_norm = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(X_list_norm));
+        RealVector X_norm = V.getColumnVector(V.getColumnDimension() - 1);   
+        RealMatrix B_norm = MatrixUtils.createRealMatrix(3,3);
+        B_norm.setEntry(0, 0, X_norm.getEntry(0));
+        B_norm.setEntry(0, 1, X_norm.getEntry(1));
+        B_norm.setEntry(0, 2, X_norm.getEntry(3));
+        B_norm.setEntry(1, 0, X_norm.getEntry(1));
+        B_norm.setEntry(1, 1, X_norm.getEntry(2));
+        B_norm.setEntry(1, 2, X_norm.getEntry(4));
+        B_norm.setEntry(2, 0, X_norm.getEntry(3));
+        B_norm.setEntry(2, 1, X_norm.getEntry(4));
+        B_norm.setEntry(2, 2, X_norm.getEntry(5));
         
         // Report to console        
         System.out.println("The condition number is : " + String.format("%.3e", decomp.getConditionNumber())); 
         
         // Denormalize B
-        RealMatrix N_inv = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(N_uv_inv));    
-        RealMatrix B = N_inv.transpose().multiply(B_norm.multiply(N_inv));
+        RealMatrix N_uv = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(N_uv_matrix));    
+        RealMatrix B = N_uv.transpose().multiply(B_norm.multiply(N_uv));
         
         // Get B's data in array for convenience
         double[] b = new double[6];

@@ -342,6 +342,17 @@ public class ArrayUtils
         double nPts = nRows*nCols;
         return sum/nPts;
     }
+    
+    public static double avgDist(List<Double> xList, List<Double> yList, double xMean, double yMean) {
+        int nPts = xList.size();
+        double distSum = 0;
+        for (int pt_num = 0; pt_num < nPts; pt_num++) {
+            double xDistSqr = Math.pow(xList.get(pt_num) - xMean, 2);
+            double yDistSqr = Math.pow(yList.get(pt_num) - yMean, 2);
+            distSum += Math.sqrt(xDistSqr + yDistSqr );       
+        }        
+        return distSum/nPts;
+    }
 
     public static double var_Double1D(List<Double> vector)
     {

@@ -23,7 +23,9 @@ public class LinearHomography {
     public final List<Double> uPts_norm;
     public final List<Double> vPts_norm;
     
-    public LinearHomography(List<List<Double>> xyPts, List<List<Double>> uvPts) {
+    public LinearHomography(List<List<Double>> xyPts, List<List<Double>> uvPts,
+                            List<List<Double>> n_uv, List<List<Double>> n_xy,
+                            List<List<Double>> n_uv_inv) {
         int nPts = uvPts.size();
         
         H = MatrixUtils.createRealMatrix(3, 3);   
@@ -46,16 +48,14 @@ public class LinearHomography {
         }
         
         // normalize (u,v) points
-        NormalizationMatrix normalizeUV = new NormalizationMatrix(uPts, vPts);
         uPts_norm = new ArrayList<>(uPts);
         vPts_norm = new ArrayList<>(vPts);
-        normalizeUV.normalizePts(uPts_norm, vPts_norm);  
+        NormalizationMatrix.normalizePts(uPts_norm, vPts_norm, n_uv);  
         
         // normalize (x,y) points
-        NormalizationMatrix normalizeXY = new NormalizationMatrix(xPts, yPts);
         xPts_norm = new ArrayList<>(xPts);
         yPts_norm = new ArrayList<>(yPts);
-        normalizeXY.normalizePts(xPts_norm, yPts_norm);         
+        NormalizationMatrix.normalizePts(xPts_norm, yPts_norm, n_xy);         
         
         // build matrix A and vector B
         RealVector B = new ArrayRealVector(2*nPts);
@@ -108,11 +108,9 @@ public class LinearHomography {
         } 
         
         // Denormalize H
-        double[][] UV_denormalize_data = ArrayUtils.ListToArray_Double2D(normalizeUV.getInvMatrix());
-        RealMatrix UV_denormalize = MatrixUtils.createRealMatrix(UV_denormalize_data);        
-        double[][] XY_normalize_data = ArrayUtils.ListToArray_Double2D(normalizeXY.getMatrix());
-        RealMatrix XY_normalize = MatrixUtils.createRealMatrix(XY_normalize_data);        
-        H = UV_denormalize.multiply(H_norm.multiply(XY_normalize)); 
+        RealMatrix N_UV_inv = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(n_uv_inv));        
+        RealMatrix N_XY = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(n_xy));        
+        H = N_UV_inv.multiply(H_norm.multiply(N_XY)); 
         
         // Rescale H so bottom right is 1
         double H_bottomRight = H.getEntry(2, 2);

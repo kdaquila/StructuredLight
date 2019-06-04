@@ -35,7 +35,11 @@ public class HomographyApp {
         String worldPointsPath = conf.getString("/config/worldPointsPath");
         String formatString = conf.getString("/config/formatString");
         String homographySaveDir = conf.getString("/config/homographySaveDir");
-        boolean isRefine = conf.getBool("/config/isRefine");
+        boolean isRefine = conf.getBool("/config/isRefine");        
+        String N_Dir = conf.getString("/config/N_Dir");
+        String N_xy_Filename = conf.getString("/config/N_xy_Filename");
+        String N_uv_Filename = conf.getString("/config/N_uv_Filename");
+        String N_uv_inv_Filename = conf.getString("/config/N_uv_inv_Filename");
         
         System.out.println("Done");
         
@@ -66,11 +70,21 @@ public class HomographyApp {
 
             // Load the world points
             List<List<Double>> xyPts = TXT.loadMatrix(worldPointsPath, Double.class);
+            
+            // Load the normalization matrices
+            String N_uv_FullPath = Paths.get(N_Dir).resolve(N_uv_Filename).toString();
+            List<List<Double>> N_uv = TXT.loadMatrix(N_uv_FullPath, Double.class);
+            
+            String N_xy_FullPath = Paths.get(N_Dir).resolve(N_xy_Filename).toString();
+            List<List<Double>> N_xy = TXT.loadMatrix(N_xy_FullPath, Double.class);
+            
+            String N_uv_inv_FullPath = Paths.get(N_Dir).resolve(N_uv_inv_Filename).toString();
+            List<List<Double>> N_uv_inv = TXT.loadMatrix(N_uv_inv_FullPath, Double.class);
 
             // Compute the linear homography
             System.out.print("Compute the linear homography ... ");
 
-            LinearHomography linHomog = new LinearHomography(xyPts, uvPts);
+            LinearHomography linHomog = new LinearHomography(xyPts, uvPts, N_uv, N_xy, N_uv_inv);
             List<List<Double>> H = linHomog.getHomography();
             List<List<Double>> H_norm = linHomog.getNormalizedHomography();
 
@@ -84,7 +98,7 @@ public class HomographyApp {
                 // Compute the nonlinear homography
                 System.out.print("Compute the nonlinear homography ... ");
 
-                NonLinearHomography nonLinHomog = new NonLinearHomography(xyPts, uvPts, H_norm);
+                NonLinearHomography nonLinHomog = new NonLinearHomography(xyPts, uvPts, H_norm, N_uv, N_xy, N_uv_inv);
                 H = nonLinHomog.getHomography();
                 H_norm = nonLinHomog.getNormalizedHomography();
                         

@@ -62,10 +62,6 @@ public class FindRingsApp {
         {
             System.out.println("\n\nNow Processing Image: " + rgbImageDir + "//" + rgbImageName + "\n");
             
-//            if (!rgbImageName.equals("5407.png")) {
-//                continue;
-//            }
-            
             // Compute the number of rings
             int nRings = nRows*nCols;
 

@@ -30,7 +30,10 @@ public class IntrinsicMatrixApp {
         XML conf = new XML(configPath);          
         String homographyDir = conf.getString("/config/homographyDir"); 
         String intrinsicMatrixPath = conf.getString("/config/intrinsicMatrixPath");
-        String formatStr = conf.getString("/conf/formatString");
+        String formatStr = conf.getString("/config/formatStr");        
+        String N_Dir = conf.getString("/config/N_Dir");        
+        String N_xy_Filename = conf.getString("/config/N_xy_Filename");
+        String N_uv_Filename = conf.getString("/config/N_uv_Filename");
         System.out.println("Done");
         
         // Find the homography paths
@@ -57,14 +60,17 @@ public class IntrinsicMatrixApp {
             homographies.add(TXT.loadMatrix(homographyFullPath, Double.class));            
         }         
         
+        // Load the normalization matrix
+        String n_uv_fullpath = Paths.get(N_Dir).resolve(N_uv_Filename).toString();
+        List<List<Double>> N_uv = TXT.loadMatrix(n_uv_fullpath, Double.class);
+        
+        String n_xy_fullPath = Paths.get(N_Dir).resolve(N_xy_Filename).toString();
+        List<List<Double>> N_xy = TXT.loadMatrix(n_xy_fullPath, Double.class);
+        
         // Compute the intrinsic matrix
         System.out.print("Computing the intrinsic camera matrix ... ");
-        List<List<Double>> K = IntrinsicMatrix.compute(homographies);
-        System.out.println("Done");
-        
-        // TODO remove after debug
-        System.out.println("Matrix K: ");
-        ArrayUtils.printList_Double2D(ArrayUtils.ArrayToList_Double2D(K.getData()), "%+010.3f");     
+        List<List<Double>> K = IntrinsicMatrix.compute(homographies, N_xy, N_uv);
+        System.out.println("Done"); 
         
         // Save the intrinsic matrix
         TXT.saveMatrix(K, Double.class, intrinsicMatrixPath, formatStr);

@@ -13,7 +13,7 @@ public class NormalizationMatrix {
     private final RealMatrix N;
     private final RealMatrix N_inv;
     
-    public NormalizationMatrix(List<Double> x, List<Double> y) {        
+    public NormalizationMatrix(List<Double> x, List<Double> y, double factor) {        
      
         // compute the means
         double xMean = ArrayUtils.mean_Double1D(x);
@@ -24,8 +24,8 @@ public class NormalizationMatrix {
         double yVar = ArrayUtils.var_Double1D(y);
         
         // define matrix parameters
-        double alphaX = 1.0/Math.sqrt(xVar + yVar);
-        double alphaY = 1.0/Math.sqrt(xVar + yVar);
+        double alphaX = factor/ArrayUtils.avgDist(x, y, xMean, yMean);
+        double alphaY = factor/ArrayUtils.avgDist(x, y, xMean, yMean);
         double betaX = -alphaX*xMean;
         double betaY = -alphaY*yMean;
         
@@ -62,8 +62,10 @@ public class NormalizationMatrix {
         return ArrayUtils.ArrayToList_Double2D(N_inv.getData());
     }
 
-    public void normalizePts(List<Double> x, List<Double> y) {
+    public static void normalizePts(List<Double> x, List<Double> y, List<List<Double>> N_matrix) {
 
+        RealMatrix N = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(N_matrix));
+        
         for (int k = 0; k < x.size(); k++) {
             List<Double> xy_cart = new ArrayList<>(2);
             xy_cart.add(x.get(k));

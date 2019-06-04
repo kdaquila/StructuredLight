@@ -32,7 +32,12 @@ public class NormalizationMatrixApp {
         String imagePointsDir = conf.getString("/config/imagePointsDir"); 
         String worldPointsPath = conf.getString("/config/worldPointsPath");
         String formatString = conf.getString("/config/formatString");
-        String normalizationMatrixSaveDir = conf.getString("/config/normalizationMatrixSaveDir");
+        String N_Dir = conf.getString("/config/N_Dir");
+        String N_xy_Filename = conf.getString("/config/N_xy_Filename");
+        String N_xy_inv_Filename = conf.getString("/config/N_xy_inv_Filename");
+        String N_uv_Filename = conf.getString("/config/N_uv_Filename");
+        String N_uv_inv_Filename = conf.getString("/config/N_uv_inv_Filename");
+        double factor = conf.getDouble("/config/factor");
         System.out.println("Done");
 
         // Find the image point paths
@@ -62,13 +67,13 @@ public class NormalizationMatrixApp {
         List<Double> xPts = new ArrayList<>();
         List<Double> yPts = new ArrayList<>();
         ArrayUtils.unzipList(xyPts, xPts, yPts);
-        NormalizationMatrix N_xy = new NormalizationMatrix(xPts, yPts);
+        NormalizationMatrix N_xy = new NormalizationMatrix(xPts, yPts, factor);
         System.out.println("Done");
         
         // Save the world points normalization matrix
         System.out.print("Saving the world points normalization matrices... ");
-        TXT.saveMatrix(N_xy.getMatrix(), Double.class, normalizationMatrixSaveDir, "N_xy.txt", formatString);
-        TXT.saveMatrix(N_xy.getInvMatrix(), Double.class, normalizationMatrixSaveDir, "N_xy_inv.txt", formatString);
+        TXT.saveMatrix(N_xy.getMatrix(), Double.class, N_Dir, N_xy_Filename, formatString);
+        TXT.saveMatrix(N_xy.getInvMatrix(), Double.class, N_Dir, N_xy_inv_Filename, formatString);
         System.out.println("Done");
         
         // Load the image points
@@ -92,13 +97,13 @@ public class NormalizationMatrixApp {
         List<Double> uPts = new ArrayList<>();
         List<Double> vPts = new ArrayList<>();
         ArrayUtils.unzipList(uvPts, uPts, vPts);
-        NormalizationMatrix N_uv = new NormalizationMatrix(uPts, vPts);
+        NormalizationMatrix N_uv = new NormalizationMatrix(uPts, vPts, factor);
         System.out.println("Done"); 
         
         // Save the image points normalization matrix
         System.out.print("Saving the image points normalization matrices... ");
-        TXT.saveMatrix(N_uv.getMatrix(), Double.class, normalizationMatrixSaveDir, "N_uv.txt", formatString);
-        TXT.saveMatrix(N_uv.getInvMatrix(), Double.class, normalizationMatrixSaveDir, "N_uv_inv.txt", formatString);
+        TXT.saveMatrix(N_uv.getMatrix(), Double.class, N_Dir, N_uv_Filename, formatString);
+        TXT.saveMatrix(N_uv.getInvMatrix(), Double.class, N_Dir, N_uv_inv_Filename, formatString);
         System.out.println("Done");    
     }
 }

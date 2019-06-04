@@ -26,7 +26,10 @@ public class NonLinearHomography {
     public final List<Double> uPts_norm;
     public final List<Double> vPts_norm;
     
-    public NonLinearHomography(List<List<Double>> xyPts, List<List<Double>> uvPts, List<List<Double>> h_guess_norm) {
+    public NonLinearHomography(List<List<Double>> xyPts, List<List<Double>> uvPts, 
+                               List<List<Double>> h_guess_norm,
+                               List<List<Double>> n_uv, List<List<Double>> n_xy,
+                               List<List<Double>> n_uv_inv) {
                 
         int nPts = xyPts.size();
         
@@ -50,16 +53,14 @@ public class NonLinearHomography {
         }
         
         // normalize (u,v) points
-        NormalizationMatrix normalizeUV = new NormalizationMatrix(uPts, vPts);
         uPts_norm = new ArrayList<>(uPts);
         vPts_norm = new ArrayList<>(vPts);
-        normalizeUV.normalizePts(uPts_norm, vPts_norm);  
+        NormalizationMatrix.normalizePts(uPts_norm, vPts_norm, n_uv);  
         
         // normalize (x,y) points
-        NormalizationMatrix normalizeXY = new NormalizationMatrix(xPts, yPts);
         xPts_norm = new ArrayList<>(xPts);
         yPts_norm = new ArrayList<>(yPts);
-        normalizeXY.normalizePts(xPts_norm, yPts_norm); 
+        NormalizationMatrix.normalizePts(xPts_norm, yPts_norm, n_xy); 
 
         // Create the builder
         LeastSquaresBuilder builder = new LeastSquaresBuilder();
@@ -109,11 +110,8 @@ public class NonLinearHomography {
         } 
         
         // Denormalize H
-        double[][] UV_denormalize_data = ArrayUtils.ListToArray_Double2D(normalizeUV.getInvMatrix());
-        RealMatrix UV_denormalize = MatrixUtils.createRealMatrix(UV_denormalize_data);
-        
-        double[][] XY_normalize_data = ArrayUtils.ListToArray_Double2D(normalizeXY.getMatrix());
-        RealMatrix XY_normalize = MatrixUtils.createRealMatrix(XY_normalize_data);
+        RealMatrix UV_denormalize = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(n_uv_inv));        
+        RealMatrix XY_normalize = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(n_xy));
         
         H = UV_denormalize.multiply(H_norm.multiply(XY_normalize)); 
         
