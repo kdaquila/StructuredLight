@@ -6,5 +6,4 @@
 	<imagePointsDir>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_ImagePoints</imagePointsDir>
 	<worldPointsPath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_WorldPoints\worldPoints.txt</worldPointsPath>	
 	<homographySaveDir>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Homography</homographySaveDir>
-
 </config>

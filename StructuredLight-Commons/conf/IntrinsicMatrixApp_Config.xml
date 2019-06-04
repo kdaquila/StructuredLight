@@ -1,0 +1,5 @@
+<config>
+	<formatString>%+07e</formatString>
+	<homographyDir>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Homography</homographyDir>
+	<intrinsicMatrixDir>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_CameraCalibration\intrinsic.txt</intrinsicMatrixDir>
+</config>

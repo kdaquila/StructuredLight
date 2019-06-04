@@ -481,13 +481,24 @@ public class ArrayUtils
     }
     
     public static void printList_Double2D(List<List<Double>> list) {
-        System.out.println("");
-        for (List<Double> row: list) {
-            for (Double item: row) {
-                System.out.print(String.format("%+03.3e", item) + ", ");
-            }   
+        printList_Double2D(list, "%+03.3e");
+    }
+    
+    public static void printList_Double2D(List<List<Double>> list, String formatStr) {
+        for (int row_ind = 0; row_ind < list.size(); row_ind++) {      
+            List<Double> row = list.get(row_ind);
+            System.out.print("row " + String.format("%02d", row_ind) + ": ");
+            for (int col_ind = 0; col_ind < row.size(); col_ind++) {
+                Double item = row.get(col_ind);                
+                if (col_ind == row.size() - 1) {
+                    System.out.print(String.format(formatStr, item));
+                } else {
+                    System.out.print(String.format(formatStr, item) + ",");
+                } 
+            }  
             System.out.print("\n");
         }
+        
     }
 
 }
