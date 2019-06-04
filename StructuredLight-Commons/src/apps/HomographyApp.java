@@ -83,10 +83,10 @@ public class HomographyApp {
                 // Compute the nonlinear homography
                 System.out.print("Compute the nonlinear homography ... ");
 
-                NonLinearHomography nonLinHomog = new NonLinearHomography();
-                nonLinHomog.computeHomography(xyPts, uvPts, H_norm);
+                NonLinearHomography nonLinHomog = new NonLinearHomography(xyPts, uvPts, H_norm);
                 H = nonLinHomog.getHomography();
-
+                H_norm = nonLinHomog.getNormalizedHomography();
+                        
                 System.out.println("Done");
                 
                 // Compute non-linear reprojection error
@@ -98,7 +98,7 @@ public class HomographyApp {
             String baseFilename = imagePointFilename.split(Pattern.quote("."))[0];
             String homgraphyFilename = baseFilename + "_Homography.txt";
             String homgraphyFullPath = Paths.get(homographySaveDir).resolve(homgraphyFilename).toString();
-            TXT.saveMatrix(H, Double.class, homgraphyFullPath, formatString);
+            TXT.saveMatrix(H_norm, Double.class, homgraphyFullPath, formatString);
         }
     }
 }

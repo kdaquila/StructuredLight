@@ -26,6 +26,9 @@ public class LinearHomography {
     public LinearHomography(List<List<Double>> xyPts, List<List<Double>> uvPts) {
         int nPts = uvPts.size();
         
+        H = MatrixUtils.createRealMatrix(3, 3);   
+        H_norm = MatrixUtils.createRealMatrix(3, 3); 
+        
         // unpack the (u,v) points
         uPts = new ArrayList<>(nPts);
         vPts = new ArrayList<>(nPts);
@@ -41,9 +44,6 @@ public class LinearHomography {
             xPts.add(pt.get(0));
             yPts.add(pt.get(1));
         }
-        
-        H = MatrixUtils.createRealMatrix(3, 3);   
-        H_norm = MatrixUtils.createRealMatrix(3, 3);   
         
         // normalize (u,v) points
         NormalizationMatrix normalizeUV = new NormalizationMatrix(uPts, vPts);
