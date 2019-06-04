@@ -20,12 +20,12 @@ public class NormalizationMatrix {
         double yMean = ArrayUtils.mean_Double1D(y);
         
         // compute the standard deviations for normalization
-        double xStd = ArrayUtils.std_Double1D(x);
-        double yStd = ArrayUtils.std_Double1D(y);
+        double xVar = ArrayUtils.var_Double1D(x);
+        double yVar = ArrayUtils.var_Double1D(y);
         
         // define matrix parameters
-        double alphaX = 1.0/xStd;
-        double alphaY = 1.0/yStd;
+        double alphaX = 1.0/Math.sqrt(xVar + yVar);
+        double alphaY = 1.0/Math.sqrt(xVar + yVar);
         double betaX = -alphaX*xMean;
         double betaY = -alphaY*yMean;
         

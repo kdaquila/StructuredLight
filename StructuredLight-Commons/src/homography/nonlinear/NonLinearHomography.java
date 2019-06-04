@@ -26,7 +26,7 @@ public class NonLinearHomography {
     public final List<Double> uPts_norm;
     public final List<Double> vPts_norm;
     
-    public NonLinearHomography(List<List<Double>> xyPts, List<List<Double>> uvPts, List<List<Double>> hMatrix_guess) {
+    public NonLinearHomography(List<List<Double>> xyPts, List<List<Double>> uvPts, List<List<Double>> h_guess_norm) {
                 
         int nPts = xyPts.size();
         
@@ -70,7 +70,7 @@ public class NonLinearHomography {
         builder.model(projValues_norm, projJacob_norm);
 
         // Set the intial guess
-        List<Double> h_guess_1D = ArrayUtils.reshape(hMatrix_guess, 1, 9).get(0);
+        List<Double> h_guess_1D = ArrayUtils.reshape(h_guess_norm, 1, 9).get(0);
         builder.start(ArrayUtils.ListToArray_Double(h_guess_1D));
 
         // Set the target data

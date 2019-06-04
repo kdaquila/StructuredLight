@@ -51,6 +51,7 @@ public class HomographyApp {
             }
         });
         
+        // Validate file names
         if (imagePointFilenames == null || imagePointFilenames.length == 0) {
             throw new RuntimeException("No suitables files found in the input directory.");
         }
