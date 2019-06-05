@@ -1,6 +1,6 @@
 package homography.nonlinear;
 
-import homography.NormalizationMatrix;
+import homography.Normalization;
 import core.ArrayUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,12 +55,12 @@ public class NonLinearHomography {
         // normalize (u,v) points
         uPts_norm = new ArrayList<>(uPts);
         vPts_norm = new ArrayList<>(vPts);
-        NormalizationMatrix.normalizePts(uPts_norm, vPts_norm, n_uv);  
+        Normalization.normalizePts(uPts_norm, vPts_norm, n_uv);  
         
         // normalize (x,y) points
         xPts_norm = new ArrayList<>(xPts);
         yPts_norm = new ArrayList<>(yPts);
-        NormalizationMatrix.normalizePts(xPts_norm, yPts_norm, n_xy); 
+        Normalization.normalizePts(xPts_norm, yPts_norm, n_xy); 
 
         // Create the builder
         LeastSquaresBuilder builder = new LeastSquaresBuilder();

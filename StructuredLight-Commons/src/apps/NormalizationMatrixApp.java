@@ -3,7 +3,7 @@ package apps;
 import core.ArrayUtils;
 import core.TXT;
 import core.XML;
-import homography.NormalizationMatrix;
+import homography.Normalization;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.file.Paths;
@@ -67,7 +67,7 @@ public class NormalizationMatrixApp {
         List<Double> xPts = new ArrayList<>();
         List<Double> yPts = new ArrayList<>();
         ArrayUtils.unzipList(xyPts, xPts, yPts);
-        NormalizationMatrix N_xy = new NormalizationMatrix(xPts, yPts, factor);
+        Normalization N_xy = new Normalization(xPts, yPts, factor);
         System.out.println("Done");
         
         // Save the world points normalization matrix
@@ -97,7 +97,7 @@ public class NormalizationMatrixApp {
         List<Double> uPts = new ArrayList<>();
         List<Double> vPts = new ArrayList<>();
         ArrayUtils.unzipList(uvPts, uPts, vPts);
-        NormalizationMatrix N_uv = new NormalizationMatrix(uPts, vPts, factor);
+        Normalization N_uv = new Normalization(uPts, vPts, factor);
         System.out.println("Done"); 
         
         // Save the image points normalization matrix
