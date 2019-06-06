@@ -126,7 +126,7 @@ public class HomographyApp {
             
             // Save the homography matrix
             String baseFilename = imagePointFilename.split(Pattern.quote("."))[0];
-            String homgraphyFilename = baseFilename + "_Homography.txt";
+            String homgraphyFilename = baseFilename + ".txt";
             String homgraphyFullPath = Paths.get(homographySaveDir).resolve(homgraphyFilename).toString();
             TXT.saveMatrix(H_norm, Double.class, homgraphyFullPath, formatString);
         }

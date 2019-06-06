@@ -139,7 +139,7 @@ public class FindRingsApp {
             System.out.print("Saving the ring centers data... ");
             
             String imageRootName = rgbImageName.split(Pattern.quote("."))[0];
-            String saveDataName = imageRootName + "_ImagePoints.txt";
+            String saveDataName = imageRootName + ".txt";
             Path saveDataFullPath = Paths.get(saveDataDir).resolve(saveDataName);
             TXT.saveMatrix(ringCenters, Double.class, saveDataFullPath.toString(), formatString);
             
