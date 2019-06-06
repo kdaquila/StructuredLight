@@ -13,23 +13,15 @@ import org.apache.commons.math3.linear.SingularValueDecomposition;
 public class LinearHomography {
     
     private RealMatrix H;
-    private RealMatrix H_norm;
     public final List<Double> xPts;
     public final List<Double> yPts;
     public final List<Double> uPts;
     public final List<Double> vPts;
-    public final List<Double> xPts_norm;
-    public final List<Double> yPts_norm;
-    public final List<Double> uPts_norm;
-    public final List<Double> vPts_norm;
     
-    public LinearHomography(List<List<Double>> xyPts, List<List<Double>> uvPts,
-                            List<List<Double>> n_uv, List<List<Double>> n_xy,
-                            List<List<Double>> n_uv_inv) {
+    public LinearHomography(List<List<Double>> xyPts, List<List<Double>> uvPts) {
         int nPts = uvPts.size();
         
         H = MatrixUtils.createRealMatrix(3, 3);   
-        H_norm = MatrixUtils.createRealMatrix(3, 3); 
         
         // unpack the (u,v) points
         uPts = new ArrayList<>(nPts);
@@ -45,17 +37,7 @@ public class LinearHomography {
         for (List<Double> pt: xyPts) {
             xPts.add(pt.get(0));
             yPts.add(pt.get(1));
-        }
-        
-        // normalize (u,v) points
-        uPts_norm = new ArrayList<>(uPts);
-        vPts_norm = new ArrayList<>(vPts);
-        Normalization.normalizePts(uPts_norm, vPts_norm, n_uv);  
-        
-        // normalize (x,y) points
-        xPts_norm = new ArrayList<>(xPts);
-        yPts_norm = new ArrayList<>(yPts);
-        Normalization.normalizePts(xPts_norm, yPts_norm, n_xy);         
+        }        
         
         // build matrix A and vector B
         RealVector B = new ArrayRealVector(2*nPts);
@@ -63,10 +45,10 @@ public class LinearHomography {
         for (int i = 0; i < nPts; i++) {
             
            
-            Double ui = uPts_norm.get(i);
-            Double vi = vPts_norm.get(i);
-            Double xi = xPts_norm.get(i);
-            Double yi = yPts_norm.get(i);
+            Double ui = uPts.get(i);
+            Double vi = vPts.get(i);
+            Double xi = xPts.get(i);
+            Double yi = yPts.get(i);
             
             // set vector B elements
             B.setEntry(i, 0);
@@ -99,44 +81,24 @@ public class LinearHomography {
         RealVector X = V.getColumnVector(V.getColumnDimension() - 1);        
         
         // Report to console        
-        System.out.println("\nThe condition number is : " + String.format("%.3e", decomp.getConditionNumber()));
+        System.out.println("\nThe condition number for Homography is : " + String.format("%.3e", decomp.getConditionNumber()));
 
         // Reshape into homography matrix H
-        H_norm = MatrixUtils.createRealMatrix(3, 3);
+        H = MatrixUtils.createRealMatrix(3, 3);
         for (int row_num = 0; row_num < 3; row_num++) {
-           H_norm.setRowVector(row_num, X.getSubVector(3*row_num, 3));
+           H.setRowVector(row_num, X.getSubVector(3*row_num, 3));
         } 
-        
-        // Denormalize H
-        RealMatrix N_UV_inv = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(n_uv_inv));        
-        RealMatrix N_XY = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(n_xy));        
-        H = N_UV_inv.multiply(H_norm.multiply(N_XY)); 
-        
+                
         // Rescale H so bottom right is 1
         double H_bottomRight = H.getEntry(2, 2);
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 H.setEntry(row, col, H.getEntry(row, col)/H_bottomRight);
             }
-        }
-        
-        // Rescale H_norm so bottom right is 1
-        double H_norm_bottomRight = H_norm.getEntry(2, 2);
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 3; col++) {
-                H_norm.setEntry(row, col, H_norm.getEntry(row, col)/H_norm_bottomRight);
-            }
-        }
-        
-                
+        }       
     }
     
     public List<List<Double>> getHomography() {
         return ArrayUtils.ArrayToList_Double2D(H.getData());
-    }
-    
-    public List<List<Double>> getNormalizedHomography() {
-        return ArrayUtils.ArrayToList_Double2D(H_norm.getData());
-    }
-    
+    }    
 }

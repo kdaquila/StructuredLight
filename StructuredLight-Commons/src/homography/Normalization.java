@@ -14,25 +14,26 @@ public class Normalization {
     private final RealMatrix N_xy_inv;
     private final RealMatrix N_uv;
     private final RealMatrix N_uv_inv;
+    private final double normScaleFactor;
     
-    public Normalization(List<List<Double>> N_xy, List<List<Double>> N_xy_inv,
-                         List<List<Double>> N_uv, List<List<Double>> N_uv_inv) {
-        this.N_xy = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(N_xy));
-        this.N_xy_inv = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(N_xy_inv));
-        this.N_uv = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(N_uv));
-        this.N_uv_inv = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(N_uv_inv));
-    }
-    
-    public Normalization(List<Double> x, List<Double> y, 
-                         List<Double> u, List<Double> v, double factor) {        
+    public Normalization(List<List<Double>> xy, List<List<Double>> uv) {    
+        
+        normScaleFactor = 0.07;
+        
+        List<Double> x = new ArrayList<>();
+        List<Double> y = new ArrayList<>();
+        ArrayUtils.unzipList(xy, x, y);
+        List<Double> u = new ArrayList<>();
+        List<Double> v = new ArrayList<>();
+        ArrayUtils.unzipList(uv, u, v);
      
         // compute the xy means
         double xMean = ArrayUtils.mean_Double1D(x);
         double yMean = ArrayUtils.mean_Double1D(y);
                 
         // define xy matrix parameters
-        double alphaX = factor/ArrayUtils.avgDist(x, y, xMean, yMean);
-        double alphaY = factor/ArrayUtils.avgDist(x, y, xMean, yMean);
+        double alphaX = normScaleFactor/ArrayUtils.avgDist(x, y, xMean, yMean);
+        double alphaY = normScaleFactor/ArrayUtils.avgDist(x, y, xMean, yMean);
         double betaX = -alphaX*xMean;
         double betaY = -alphaY*yMean;
         
@@ -65,8 +66,8 @@ public class Normalization {
         double vMean = ArrayUtils.mean_Double1D(v);
                 
         // define xy matrix parameters
-        double alphaU = factor/ArrayUtils.avgDist(u, v, uMean, vMean);
-        double alphaV = factor/ArrayUtils.avgDist(u, v, uMean, vMean);
+        double alphaU = normScaleFactor/ArrayUtils.avgDist(u, v, uMean, vMean);
+        double alphaV = normScaleFactor/ArrayUtils.avgDist(u, v, uMean, vMean);
         double betaU = -alphaU*uMean;
         double betaV= -alphaV*vMean;
         
@@ -94,29 +95,13 @@ public class Normalization {
         N_uv_inv.setEntry(2, 1, 0);
         N_uv_inv.setEntry(2, 2, 1); 
     }
-    
-    public List<List<Double>> get_N_xy() {
-        return ArrayUtils.ArrayToList_Double2D(N_xy.getData());
-    }
-    
-    public List<List<Double>> get_N_xy_inv() {
-        return ArrayUtils.ArrayToList_Double2D(N_xy_inv.getData());
-    }
-    
-    public List<List<Double>> get_N_uv() {
-        return ArrayUtils.ArrayToList_Double2D(N_uv.getData());
-    }
-    
-    public List<List<Double>> get_N_uv_inv() {
-        return ArrayUtils.ArrayToList_Double2D(N_uv_inv.getData());
-    }
-
+        
     public List<List<Double>> normalizePointsXY(List<List<Double>> xy_cart_list) {              
         return normalizePoints(xy_cart_list, N_xy);
     }  
     
-    public List<List<Double>> normalizePointsUV(List<List<Double>> xy_cart_list) {              
-        return normalizePoints(xy_cart_list, N_uv);
+    public List<List<Double>> normalizePointsUV(List<List<Double>> uv_cart_list) {              
+        return normalizePoints(uv_cart_list, N_uv);
     } 
     
     private List<List<Double>> normalizePoints(List<List<Double>> xy_cart_list, RealMatrix N) {        

@@ -16,25 +16,17 @@ import org.apache.commons.math3.optim.SimplePointChecker;
 public class NonLinearHomography {
     
     private RealMatrix H;
-    private RealMatrix H_norm;
     public final List<Double> xPts;
     public final List<Double> yPts;
     public final List<Double> uPts;
     public final List<Double> vPts;
-    public final List<Double> xPts_norm;
-    public final List<Double> yPts_norm;
-    public final List<Double> uPts_norm;
-    public final List<Double> vPts_norm;
     
     public NonLinearHomography(List<List<Double>> xyPts, List<List<Double>> uvPts, 
-                               List<List<Double>> h_guess_norm,
-                               List<List<Double>> n_uv, List<List<Double>> n_xy,
-                               List<List<Double>> n_uv_inv) {
+                               List<List<Double>> h_guess) {
                 
         int nPts = xyPts.size();
         
         H = MatrixUtils.createRealMatrix(3, 3);   
-        H_norm = MatrixUtils.createRealMatrix(3, 3); 
         
         // unpack the (u,v) points
         uPts = new ArrayList<>(nPts);
@@ -50,32 +42,22 @@ public class NonLinearHomography {
         for (List<Double> pt: xyPts) {
             xPts.add(pt.get(0));
             yPts.add(pt.get(1));
-        }
-        
-        // normalize (u,v) points
-        uPts_norm = new ArrayList<>(uPts);
-        vPts_norm = new ArrayList<>(vPts);
-        Normalization.normalizePts(uPts_norm, vPts_norm, n_uv);  
-        
-        // normalize (x,y) points
-        xPts_norm = new ArrayList<>(xPts);
-        yPts_norm = new ArrayList<>(yPts);
-        Normalization.normalizePts(xPts_norm, yPts_norm, n_xy); 
+        }        
 
         // Create the builder
         LeastSquaresBuilder builder = new LeastSquaresBuilder();
         
         // Set the model
-        ProjectionValues projValues_norm = new ProjectionValues(xPts_norm, yPts_norm);
-        ProjectionJacobian projJacob_norm = new ProjectionJacobian(xPts_norm, yPts_norm);
+        ProjectionValues projValues_norm = new ProjectionValues(xPts, yPts);
+        ProjectionJacobian projJacob_norm = new ProjectionJacobian(xPts, yPts);
         builder.model(projValues_norm, projJacob_norm);
 
         // Set the intial guess
-        List<Double> h_guess_1D = ArrayUtils.reshape(h_guess_norm, 1, 9).get(0);
+        List<Double> h_guess_1D = ArrayUtils.reshape(h_guess, 1, 9).get(0);
         builder.start(ArrayUtils.ListToArray_Double(h_guess_1D));
 
         // Set the target data
-        List<Double> uvPts_1D_norm = ArrayUtils.reshape(ArrayUtils.zipLists(uPts_norm, vPts_norm), 1, 2*nPts).get(0);
+        List<Double> uvPts_1D_norm = ArrayUtils.reshape(ArrayUtils.zipLists(uPts, vPts), 1, 2*nPts).get(0);
         builder.target(ArrayUtils.ListToArray_Double(uvPts_1D_norm));
 
         // Set the options
@@ -106,38 +88,19 @@ public class NonLinearHomography {
         
         // Reshape into homography matrix H
         for (int row_num = 0; row_num < 3; row_num++) {
-           H_norm.setRowVector(row_num, X.getSubVector(3*row_num, 3));
+           H.setRowVector(row_num, X.getSubVector(3*row_num, 3));
         } 
-        
-        // Denormalize H
-        RealMatrix UV_denormalize = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(n_uv_inv));        
-        RealMatrix XY_normalize = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(n_xy));
-        
-        H = UV_denormalize.multiply(H_norm.multiply(XY_normalize)); 
-        
+               
         // Rescale H so bottom right is 1
         double H_bottomRight = H.getEntry(2, 2);
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 H.setEntry(row, col, H.getEntry(row, col)/H_bottomRight);
             }
-        }
-        
-        // Rescale H_norm so bottom right is 1
-        double H_norm_bottomRight = H_norm.getEntry(2, 2);
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 3; col++) {
-                H_norm.setEntry(row, col, H_norm.getEntry(row, col)/H_norm_bottomRight);
-            }
-        }
+        }        
     }
     
     public List<List<Double>> getHomography() {
         return ArrayUtils.ArrayToList_Double2D(H.getData());
-    }
-    
-    public List<List<Double>> getNormalizedHomography() {
-        return ArrayUtils.ArrayToList_Double2D(H_norm.getData());
-    }
-
+    }    
 }

@@ -1,9 +1,11 @@
 package apps;
 
 import cameracalibration.IntrinsicMatrix;
+import cameracalibration.SymmetricMatrix;
 import core.ArrayUtils;
 import core.TXT;
 import core.XML;
+import homography.Normalization;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.file.Paths;
@@ -28,12 +30,11 @@ public class IntrinsicMatrixApp {
         // Load the configuration variables
         System.out.print("Loading the configuration ... ");
         XML conf = new XML(configPath);          
+        String imagePointsDir = conf.getString("/config/imagePointsDir"); 
+        String worldPointsPath = conf.getString("/config/worldPointsPath");
         String homographyDir = conf.getString("/config/homographyDir"); 
         String intrinsicMatrixPath = conf.getString("/config/intrinsicMatrixPath");
         String formatStr = conf.getString("/config/formatStr");        
-        String N_Dir = conf.getString("/config/N_Dir");        
-        String N_xy_Filename = conf.getString("/config/N_xy_Filename");
-        String N_uv_Filename = conf.getString("/config/N_uv_Filename");
         System.out.println("Done");
         
         // Find the homography paths
@@ -48,7 +49,7 @@ public class IntrinsicMatrixApp {
             }
         });
         
-        // Validate filenames
+        // Validate homography filenames
         if (homographyFilenames == null || homographyFilenames.length == 0) {
             throw new RuntimeException("No suitables files found in the input directory.");
         }
@@ -58,18 +59,57 @@ public class IntrinsicMatrixApp {
         for (String homographyFilename: homographyFilenames) {
             String homographyFullPath = Paths.get(homographyDir).resolve(homographyFilename).toString();
             homographies.add(TXT.loadMatrix(homographyFullPath, Double.class));            
-        }         
+        }
         
-        // Load the normalization matrix
-        String n_uv_fullpath = Paths.get(N_Dir).resolve(N_uv_Filename).toString();
-        List<List<Double>> N_uv = TXT.loadMatrix(n_uv_fullpath, Double.class);
+        // Compute the symmetric matrix
+        List<List<Double>> B_norm = SymmetricMatrix.compute(homographies);
         
-        String n_xy_fullPath = Paths.get(N_Dir).resolve(N_xy_Filename).toString();
-        List<List<Double>> N_xy = TXT.loadMatrix(n_xy_fullPath, Double.class);
+        // Load the world xyz points
+        List<List<Double>> xyzPts = TXT.loadMatrix(worldPointsPath, Double.class);   
+
+        // Convert world xyz to xy points (drop Z, since it is constant)
+        List<List<Double>> xyPts = ArrayUtils.dropZ(xyzPts);
+        
+        // Find the image point paths
+        File imagePointsDir_file = new File(imagePointsDir);
+        String[] imagePointFilenames = imagePointsDir_file.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String name) {
+                String lowerName = name.toLowerCase();
+                boolean isValid = lowerName.endsWith(".txt") ||
+                                  lowerName.endsWith(".csv"); 
+                return isValid;
+            }
+        });
+        
+        // Validate image point file names
+        if (imagePointFilenames == null || imagePointFilenames.length == 0) {
+            throw new RuntimeException("No suitables files found in the input directory.");
+        }
+        
+        // Merge all the image point sets
+        List<List<Double>> uvPts_allViews = new ArrayList<>();
+        for (String imagePointFilename: imagePointFilenames) {
+            
+            // Load the image points
+            String imagePointsFullPath = Paths.get(imagePointsDir).resolve(imagePointFilename).toString();
+            List<List<Double>> uvPts = TXT.loadMatrix(imagePointsFullPath, Double.class);
+            
+            // Append to master list
+            for (List<Double> pt: uvPts) {
+                uvPts_allViews.add(pt);
+            }            
+        }
+        
+        // Create the normalization matrices
+        Normalization norm = new Normalization(xyPts, uvPts_allViews); 
+        
+        // Denormalize the symmetric matrix
+        List<List<Double>> B = norm.denormalizeSymmetricIntrinsicMatrix(B_norm);
         
         // Compute the intrinsic matrix
         System.out.print("Computing the intrinsic camera matrix ... ");
-        List<List<Double>> K = IntrinsicMatrix.compute(homographies, N_xy, N_uv);
+        List<List<Double>> K = IntrinsicMatrix.compute(B);
         System.out.println("Done"); 
         
         // Save the intrinsic matrix

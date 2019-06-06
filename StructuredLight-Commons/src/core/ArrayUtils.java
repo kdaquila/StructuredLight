@@ -6,6 +6,14 @@ import java.util.List;
 
 public class ArrayUtils
 {
+    public static List<List<Double>> dropZ(List<List<Double>> xyz_list) {
+        List<List<Double>> xy_list = new ArrayList<>(xyz_list.size());
+        for (List<Double> xyz: xyz_list) {
+            xy_list.add(xyz.subList(0, 2));
+        }
+        return xy_list;
+    } 
+    
     public static List<List<Integer>> castArrayDouble_To_Integer(List<List<Double>> input) {
         List<List<Integer>> output = new ArrayList<>();
         for (List<Double> oldRow: input) {

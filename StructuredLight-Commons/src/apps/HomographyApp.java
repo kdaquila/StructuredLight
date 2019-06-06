@@ -1,13 +1,16 @@
 package apps;
 
+import core.ArrayUtils;
 import homography.HomographyError;
 import homography.LinearHomography;
 import core.TXT;
 import core.XML;
+import homography.Normalization;
 import homography.nonlinear.NonLinearHomography;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -36,16 +39,17 @@ public class HomographyApp {
         String formatString = conf.getString("/config/formatString");
         String homographySaveDir = conf.getString("/config/homographySaveDir");
         boolean isRefine = conf.getBool("/config/isRefine");        
-        String N_Dir = conf.getString("/config/N_Dir");
-        String N_xy_Filename = conf.getString("/config/N_xy_Filename");
-        String N_uv_Filename = conf.getString("/config/N_uv_Filename");
-        String N_uv_inv_Filename = conf.getString("/config/N_uv_inv_Filename");
         
         System.out.println("Done");
         
+        // Load the world xyz points
+        List<List<Double>> xyzPts = TXT.loadMatrix(worldPointsPath, Double.class);   
+
+        // Convert world xyz to xy points (drop Z, since it is constant)
+        List<List<Double>> xyPts = ArrayUtils.dropZ(xyzPts);
+        
         // Find the image point paths
-        File imagePointsDir_file = new File(imagePointsDir);
-        String[] imagePointFilenames = imagePointsDir_file.list(new FilenameFilter() {
+        String[] imagePointFilenames = (new File(imagePointsDir)).list(new FilenameFilter() {
             @Override
             public boolean accept(File file, String name) {
                 String lowerName = name.toLowerCase();
@@ -60,33 +64,44 @@ public class HomographyApp {
             throw new RuntimeException("No suitables files found in the input directory.");
         }
         
+        // Merge all the image point sets
+        List<List<Double>> uvPts_allViews = new ArrayList<>();
         for (String imagePointFilename: imagePointFilenames) {
             
-            System.out.println("\n\nNow Processing Points from: " + imagePointFilename + "\n");
-
             // Load the image points
             String imagePointsFullPath = Paths.get(imagePointsDir).resolve(imagePointFilename).toString();
             List<List<Double>> uvPts = TXT.loadMatrix(imagePointsFullPath, Double.class);
-
-            // Load the world points
-            List<List<Double>> xyPts = TXT.loadMatrix(worldPointsPath, Double.class);
             
-            // Load the normalization matrices
-            String N_uv_FullPath = Paths.get(N_Dir).resolve(N_uv_Filename).toString();
-            List<List<Double>> N_uv = TXT.loadMatrix(N_uv_FullPath, Double.class);
+            // Append to master list
+            for (List<Double> pt: uvPts) {
+                uvPts_allViews.add(pt);
+            }            
+        }
+        
+        // Create the normalization matrices
+        Normalization norm = new Normalization(xyPts, uvPts_allViews);  
+        
+        // Normalize the world xy points
+        List<List<Double>> xyPts_norm = norm.normalizePointsXY(xyPts);        
             
-            String N_xy_FullPath = Paths.get(N_Dir).resolve(N_xy_Filename).toString();
-            List<List<Double>> N_xy = TXT.loadMatrix(N_xy_FullPath, Double.class);
+        // Compute the homography for each view
+        for (String imagePointFilename: imagePointFilenames) { 
             
-            String N_uv_inv_FullPath = Paths.get(N_Dir).resolve(N_uv_inv_Filename).toString();
-            List<List<Double>> N_uv_inv = TXT.loadMatrix(N_uv_inv_FullPath, Double.class);
-
+            System.out.println("\n\nNow Processing Points from: " + imagePointFilename + "\n");
+            
+            // Load the image points for this view
+            String imagePointsFullPath = Paths.get(imagePointsDir).resolve(imagePointFilename).toString();
+            List<List<Double>> uvPts = TXT.loadMatrix(imagePointsFullPath, Double.class);
+            
+            // Normalize the image points
+            List<List<Double>> uvPts_norm = norm.normalizePointsUV(uvPts);
+            
             // Compute the linear homography
             System.out.print("Compute the linear homography ... ");
 
-            LinearHomography linHomog = new LinearHomography(xyPts, uvPts, N_uv, N_xy, N_uv_inv);
-            List<List<Double>> H = linHomog.getHomography();
-            List<List<Double>> H_norm = linHomog.getNormalizedHomography();
+            LinearHomography linHomog = new LinearHomography(xyPts_norm, uvPts_norm);
+            List<List<Double>> H_norm = linHomog.getHomography();
+            List<List<Double>> H = norm.denormalizeHomographyMatrix(H_norm);    
 
             System.out.println("Done");
             
@@ -98,9 +113,9 @@ public class HomographyApp {
                 // Compute the nonlinear homography
                 System.out.print("Compute the nonlinear homography ... ");
 
-                NonLinearHomography nonLinHomog = new NonLinearHomography(xyPts, uvPts, H_norm, N_uv, N_xy, N_uv_inv);
-                H = nonLinHomog.getHomography();
-                H_norm = nonLinHomog.getNormalizedHomography();
+                NonLinearHomography nonLinHomog = new NonLinearHomography(xyPts_norm, uvPts_norm, H_norm);
+                H_norm = nonLinHomog.getHomography();
+                H = norm.denormalizeHomographyMatrix(H_norm);
                         
                 System.out.println("Done");
                 
