@@ -210,9 +210,13 @@ public class Contours {
     public static Integer findParentID(Map<Integer, List<Integer>> hierarchy, int nChildren) {
         int parentID = 0;
         boolean isChildrenFound = false;
+        int maxFound = 0;
         for (Integer id: hierarchy.keySet()) {            
-            
-            if (hierarchy.get(id).size() == nChildren) {
+            int numFound = hierarchy.get(id).size();
+            if (numFound > maxFound) {
+                maxFound = numFound;
+            }
+            if (numFound == nChildren) {
                 parentID = id;
                 isChildrenFound = true;
                 break;
@@ -220,7 +224,8 @@ public class Contours {
         } 
         
         if (!isChildrenFound) {
-            throw new RuntimeException("Could not find a parent contour with the correct number of child contours.");
+            String message = "Could not find a parent contour with the correct number of child contours. Found: " + maxFound; 
+            throw new RuntimeException(message);
         }
         return parentID;
     }
@@ -349,17 +354,16 @@ public class Contours {
             
             // Get the contour
             List<List<Integer>> contour = contours.get(contourIndex);
+                        
+            // Find the contour's convex hull
+//            List<List<Integer>> hull = Contours.findConvexHull(contour);
             
-            // Find the contour's bounding box
-            List<Integer> box = Contours.computeBoundingBox(contour);
-            int x = box.get(0);
-            int y = box.get(1);
-            int width = box.get(2);
-            int height = box.get(3);
-            Rectangle contourBox = new Rectangle(x, y, width, height);
+            // Find the contours' min enclosed quad
+//            List<List<Integer>> quad = Quad.findMaxAreaQuad(hull);            
             
             // Find the contour's area
             double contourArea = Contours.computeArea(contour);
+            
             
             // Check each candidate parent contour
             Double minArea = Double.MAX_VALUE;
@@ -382,7 +386,7 @@ public class Contours {
                 
                 // Find the parent contours's area
                 double parentContourArea = Contours.computeArea(candidateParentContour);
-                
+                                
                 // Store the candidate parent contour as a path
                 Path2D candidateParentContourPath = new Path2D.Double();
                 List<Integer> firstPt = candidateParentContour.get(0);
@@ -394,7 +398,7 @@ public class Contours {
                 
                 // check if candidate parent contour contains the contour
                 if (parentContourArea > contourArea &&
-                    candidateParentContourPath.contains(contourBox)) {
+                    candidateParentContourPath.contains(contour.get(0).get(0), contour.get(0).get(1)) ) {
                     
                     // check if candidate parent is smaller than previous candidate parents
                     double candidateParentArea = Contours.computeArea(candidateParentContour);

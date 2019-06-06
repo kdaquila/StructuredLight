@@ -2,6 +2,8 @@ package apps;
 
 import calibrationpattern.rings.ImageRings;
 import core.Contours;
+import core.Draw;
+import core.FilterKernal;
 import core.ImageUtils;
 import core.TXT;
 import core.XML;
@@ -87,7 +89,7 @@ public class FindRingsApp {
             // Find all contours
             System.out.print("Searching for contours ... ");
             Contours contours = new Contours(bwImage);   
-            int minArea = 300; 
+            int minArea = 100; 
             List<List<List<Integer>>> edges = contours.findContours(minArea);  
 
             System.out.println("Done");
@@ -97,8 +99,8 @@ public class FindRingsApp {
 
             Map<Integer, List<Integer>> hierarchy = Contours.findHierarchy(edges); 
 
-            System.out.println("Done");
-
+            System.out.println("Done");            
+                      
             // Find the rings centers    
             System.out.print("Computing the ring centers ... ");        
 
@@ -106,6 +108,7 @@ public class FindRingsApp {
             try {
                 ringCenters = ImageRings.computeCenters(edges, hierarchy, nRings);
             } catch (RuntimeException e) {
+                System.out.println(e.getMessage());
                 skipped.add(rgbImageName);                
                 continue;                
             }
@@ -126,11 +129,11 @@ public class FindRingsApp {
             
                 // Compute the average ring outer radius
                 Map<String,Double> averageWidths = ImageRings.findAvgRingWidths(edges, hierarchy, nRings);
-                double ringOuterRadius = averageWidths.get("Outer");
-                double ringInnerRadius = averageWidths.get("Inner");            
-
+                double ringOuterWidth = averageWidths.get("Outer");
+                double ringInnerWidth = averageWidths.get("Inner");    
+                
                 // Find the ring centers to subPixel accuracy  
-                ringCenters = ImageRings.refineCenters(ringCenters, grayImage,ringOuterRadius, ringInnerRadius);
+                ringCenters = ImageRings.refineCenters(ringCenters, grayImage,ringOuterWidth, ringInnerWidth);
 
                 System.out.println("Done");                       
             }  
