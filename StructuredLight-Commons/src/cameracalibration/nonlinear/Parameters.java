@@ -18,8 +18,8 @@ public class Parameters {
     public Parameters(List<Double> X) {
         
         int nViews;
-        if ((X.size()-6)%7 == 0) {
-            nViews = (X.size()-6)/7;
+        if ((X.size()-7)%6 == 0) {
+            nViews = (X.size()-7)/6;
         } else {
             throw new IllegalArgumentException("The parameters list must be of the form 6*M+7, with M as the number of views");
         }

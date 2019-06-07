@@ -17,9 +17,9 @@ import org.apache.commons.math3.optim.SimplePointChecker;
 
 public class NonLinearOptimization {
 
-    public final List<RealMatrix> RT_allViews_refined;
-    public final RealMatrix K_refined;
-    public final List<Double> radialCoeffs_refined;
+    private final List<RealMatrix> RT_allViews_refined;   
+    private final RealMatrix K_refined;
+    private final List<Double> radialCoeffs_refined;
     
     public NonLinearOptimization(List<List<Double>> xyzPts, List<List<Double>> uvPts_allViews, 
                                  List<List<Double>> K_matrix, List<Double> radialCoeffs, List<List<List<Double>>> RT_allViews) {
@@ -90,7 +90,7 @@ public class NonLinearOptimization {
         builder.start(guess);
 
         // Set the target data
-        double[] uvTarget = ArrayUtils.ListToArray_Double(ArrayUtils.reshape(uvPts_allViews, 1, 2*nPts).get(0));
+        double[] uvTarget = ArrayUtils.ListToArray_Double(ArrayUtils.reshape(uvPts_allViews, 1, 2*uvPts_allViews.size()).get(0));
         builder.target(uvTarget);
 
         // Set the options
@@ -125,4 +125,20 @@ public class NonLinearOptimization {
         radialCoeffs_refined = parameters.radialCoeffs;
         RT_allViews_refined = parameters.RT_allViews;
     } 
+    
+    public List<List<List<Double>>> getRT_allViews_refined() {
+        List<List<List<Double>>> output = new ArrayList<>();
+        for (RealMatrix RT: RT_allViews_refined) {
+            output.add(ArrayUtils.ArrayToList_Double2D(RT.getData()));
+        }
+        return output;
+    }
+
+    public List<List<Double>> getK_refined() {
+        return ArrayUtils.ArrayToList_Double2D(K_refined.getData());
+    }
+
+    public List<Double> getRadialCoeffs_refined() {
+        return radialCoeffs_refined;
+    }
 }
