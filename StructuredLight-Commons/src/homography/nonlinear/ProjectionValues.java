@@ -1,11 +1,7 @@
 package homography.nonlinear;
 
 import core.ArrayUtils;
-import core.TXT;
-import homography.HomographyError;
-import homography.Normalization;
 import homography.Projection;
-import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.math3.analysis.MultivariateVectorFunction;
 

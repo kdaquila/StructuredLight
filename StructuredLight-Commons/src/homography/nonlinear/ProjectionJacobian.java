@@ -4,8 +4,6 @@ import core.ArrayUtils;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.math3.analysis.MultivariateMatrixFunction;
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 public class ProjectionJacobian implements MultivariateMatrixFunction {
     
