@@ -1,20 +1,22 @@
 package apps;
 
 import cameracalibration.Projection;
-import cameracalibration.ProjectionError;
-import cameracalibration.nonlinear.NonLinearOptimization;
+import core.ImageUtils;
 import core.TXT;
 import core.XML;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import rectify.RectifyImage;
 
-public class OptimizeProjectionApp {
+public class RectifyImageApp {
+
     public static void main(String[] args) {
-        System.out.println("Running the OptimizeProjectionApp:");
+        System.out.println("Running the RectifyImageApp:");
 
         // Validate arguments
         if (args.length == 0) {
@@ -38,6 +40,8 @@ public class OptimizeProjectionApp {
         String kSavePath = conf.getString("/config/kSavePath");
         String radialDistSavePath = conf.getString("/config/radialDistSavePath");
         String extrinsicMatrixSaveDir = conf.getString("/config/extrinsicMatrixSaveDir");
+        String rectifiedImagesDir = conf.getString("/config/rectifiedImagesDir");
+        String originalImagesDir = conf.getString("/config/originalImagesDir");
         
         System.out.println("Done");
         
@@ -72,81 +76,38 @@ public class OptimizeProjectionApp {
         List<List<List<Double>>> RT_allViews = new ArrayList<>();
         for (String imagePointFilename: imagePointFilenames) {
             
+            // Get the view's base name
+            String baseFilename = imagePointFilename.split(Pattern.quote("."))[0];
+            
+            System.out.println("Now processing image: " + baseFilename);
+            
             // Load the observed image points
             String imagePointsFullPath = Paths.get(imagePointsDir).resolve(imagePointFilename).toString();
             List<List<Double>> uvPts_observed = TXT.loadMatrix(imagePointsFullPath, Double.class);
             
             // Append to master list of observed image points
-            for (List<Double> pt: uvPts_observed) {
-                uvPts_observed_allViews.add(pt);
-            }
-
-            // Get the view's base name
-            String baseFilename = imagePointFilename.split(Pattern.quote("."))[0]; 
+            uvPts_observed_allViews.addAll(uvPts_observed);
             
             // Load the extrinsic matrix
             String extrinsicMatrixFilename = baseFilename + ".txt";
             String extrinsicMatrixFullPath = Paths.get(extrinsicMatrixDir).resolve(extrinsicMatrixFilename).toString();
             List<List<Double>> RT = TXT.loadMatrix(extrinsicMatrixFullPath, Double.class);
-            RT_allViews.add(RT);
+            RT_allViews.add(RT);  
             
-            // Project the world points into this view
-            List<List<Double>> uvPts_projected = Projection.projectPoints(xyzPts, K, RT);  
-        }
-        
-        System.out.println("Done");
-        
-        // Run the optimiation
-        System.out.print("Running the optimization ... ");
-        NonLinearOptimization optimization = new NonLinearOptimization(xyzPts, uvPts_observed_allViews, K, radialCoeffs, RT_allViews);
-        System.out.println("Done");
-        
-        // Get the results
-        List<List<Double>> K_refined = optimization.getK_refined();
-        List<List<List<Double>>> RT_refined_allViews = optimization.getRT_allViews_refined();
-        List<Double> radialCoeffs_refined = optimization.getRadialCoeffs_refined();
-        
-        // Save the results
-        System.out.print("Saving the results ... ");
-        TXT.saveMatrix(K_refined, Double.class, kSavePath, formatStr);
-        TXT.saveVector(radialCoeffs_refined, Double.class, radialDistSavePath, false, formatStr, ",");
-        for (int view_num = 0; view_num < RT_refined_allViews.size(); view_num++) {
+            // Load the original image
+            String originalImageFilename = baseFilename + ".png";
+            String originalImageFullPath = Paths.get(originalImagesDir).resolve(originalImageFilename).toString();
+            BufferedImage originalImage = ImageUtils.load(originalImageFullPath);
+            
+            // Rectify the image
+            RectifyImage rectifier = new RectifyImage(K, radialCoeffs);
+            BufferedImage rectifiedImage = rectifier.rectify(originalImage, RT);
 
-            // Get the view's base name
-            String imagePointFilename = imagePointFilenames[view_num];
-            String baseFilename = imagePointFilename.split(Pattern.quote("."))[0]; 
+            // Save the image
+            String rectifiedImageFullPath = Paths.get(rectifiedImagesDir).resolve(originalImageFilename).toString();
+            ImageUtils.save(rectifiedImage, rectifiedImageFullPath);
             
-            // Save the extrinsic matrix
-            String extrinsicMatrixFilename = baseFilename + ".txt";
-            String extrinsicMatrixFullSavePath = Paths.get(extrinsicMatrixSaveDir).resolve(extrinsicMatrixFilename).toString();
-            List<List<Double>> RT_refined = RT_refined_allViews.get(view_num);
-            TXT.saveMatrix(RT_refined, Double.class, extrinsicMatrixFullSavePath, formatStr);
-        }
-        
-        System.out.println("Done");
-        
-        // Compute the reprojection error for each view
-        for (int view_num = 0; view_num < RT_refined_allViews.size(); view_num++) {
             
-            // Get the view's image points name
-            String imagePointFilename = imagePointFilenames[view_num];
-            
-            // Load the observed image points
-            String imagePointsFullPath = Paths.get(imagePointsDir).resolve(imagePointFilename).toString();
-            List<List<Double>> uvPts_observed = TXT.loadMatrix(imagePointsFullPath, Double.class);
-            
-            List<List<Double>> RT = RT_allViews.get(view_num);
-            List<List<Double>> RT_refined = RT_refined_allViews.get(view_num);
-            
-            String baseFilename = imagePointFilename.split(Pattern.quote("."))[0];
-            
-            double error_beforeOptim = ProjectionError.computeReprojectError(xyzPts, uvPts_observed, K, RT, radialCoeffs);
-            System.out.println("Image " + baseFilename + ": Error before optimization: " + String.format("%5.3f", error_beforeOptim));
-            
-            double error_afterOptim = ProjectionError.computeReprojectError(xyzPts, uvPts_observed, K_refined, RT_refined, radialCoeffs_refined);
-            System.out.println("Image " + baseFilename + ": Error after optimization:  " + String.format("%5.3f", error_afterOptim));
-            
-            System.out.println("");
         }
         
         

@@ -2,8 +2,6 @@ package apps;
 
 import calibrationpattern.rings.ImageRings;
 import core.Contours;
-import core.Draw;
-import core.FilterKernal;
 import core.ImageUtils;
 import core.TXT;
 import core.XML;

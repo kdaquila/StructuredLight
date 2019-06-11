@@ -1,0 +1,13 @@
+<config>
+	<formatStr>%+07e</formatStr>
+	<intrinsicMatrixPath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_IntrinsicMatrix\intrinsic.txt</intrinsicMatrixPath>
+	<extrinsicMatrixDir>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_ExtrinsicMatrices</extrinsicMatrixDir>	
+	<imagePointsDir>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_ImagePoints</imagePointsDir>	
+	<worldPointsPath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_WorldPoints\worldPoints.txt</worldPointsPath>
+	<radialDistPath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Distortions\radialDistortionCoeffs.txt</radialDistPath>
+	<kSavePath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_IntrinsicMatrix_Refined\intrinsic.txt</kSavePath>
+	<radialDistSavePath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Distortions_Refined\radialDistortionCoeffs.txt</radialDistSavePath>
+	<extrinsicMatrixSaveDir>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_ExtrinsicMatrices_Refined</extrinsicMatrixSaveDir>
+	<originalImagesDir>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_Images</originalImagesDir>
+	<rectifiedImagesDir>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_ImagesRectified</rectifiedImagesDir>
+</config>
