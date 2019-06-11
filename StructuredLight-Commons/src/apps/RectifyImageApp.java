@@ -8,7 +8,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import rectify.RectifyImage;
@@ -32,7 +31,6 @@ public class RectifyImageApp {
         System.out.print("Loading the configuration ... ");
         XML conf = new XML(configPath);                  
         String intrinsicMatrixPath = conf.getString("/config/intrinsicMatrixPath");
-        String worldPointsPath = conf.getString("/config/worldPointsPath");
         String extrinsicMatrixDir = conf.getString("/config/extrinsicMatrixDir");          
         String imagePointsDir = conf.getString("/config/imagePointsDir");     
         String radialDistPath = conf.getString("/config/radialDistPath");
@@ -47,9 +45,6 @@ public class RectifyImageApp {
         System.out.println("Done");
         
         System.out.print("Loading the input data ... ");
-        
-        // Load the world xyz points
-        List<List<Double>> xyzPts = TXT.loadMatrix(worldPointsPath, Double.class); 
         
         // Load the intrinsic matrix
         List<List<Double>> K = TXT.loadMatrix(intrinsicMatrixPath, Double.class);
@@ -75,8 +70,6 @@ public class RectifyImageApp {
         System.out.println("Done");
         
         // Load the image points and RT matrices
-        List<List<Double>> uvPts_observed_allViews = new ArrayList<>();
-        List<List<List<Double>>> RT_allViews = new ArrayList<>();
         for (String imagePointFilename: imagePointFilenames) {
             
             // Get the view's base name
@@ -88,7 +81,6 @@ public class RectifyImageApp {
             String extrinsicMatrixFilename = baseFilename + ".txt";
             String extrinsicMatrixFullPath = Paths.get(extrinsicMatrixDir).resolve(extrinsicMatrixFilename).toString();
             List<List<Double>> RT = TXT.loadMatrix(extrinsicMatrixFullPath, Double.class);
-            RT_allViews.add(RT);  
             
             // Load the original image
             String originalImageFilename = baseFilename + ".png";
