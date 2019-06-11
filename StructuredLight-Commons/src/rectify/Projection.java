@@ -103,10 +103,6 @@ public class Projection {
             xy_distorted_cart.add(CoordinateSystems.toCartesian(ArrayUtils.ArrayToList_Double(pt)));
         }
         
-        // Set bounds on camera coordinate points
-        double rMin = 0;
-        double rMax = 1.2*ArrayUtils.max_Double2D(xy_distorted_cart);
-        
         // Remove distortions
         List<List<Double>> xy_unDistored_cart = new ArrayList<>();
         for (List<Double> pt: xy_distorted_cart) {

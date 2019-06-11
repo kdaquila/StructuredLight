@@ -6,6 +6,18 @@ import java.util.List;
 
 public class ArrayUtils
 {
+    public static double computeAverageError(List<List<Double>> list1, List<List<Double>> list2) {
+        int nPts = list1.size();
+        
+        double sumSqr = 0.0;
+        for (int pt_num = 0; pt_num < nPts; pt_num++) {
+            for (int i = 0; i < list1.get(0).size(); i++) {
+                sumSqr += Math. pow(list1.get(pt_num).get(i) - list2.get(pt_num).get(i),2);
+            }
+        }
+        return Math.sqrt(sumSqr/nPts);
+    }
+    
     public static List<List<Double>> dropZ(List<List<Double>> xyz_list) {
         List<List<Double>> xy_list = new ArrayList<>(xyz_list.size());
         for (List<Double> xyz: xyz_list) {
