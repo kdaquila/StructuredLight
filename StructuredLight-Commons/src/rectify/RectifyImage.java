@@ -19,16 +19,11 @@ public class RectifyImage {
         this.radialCoeffs = radialCoeffs;
     }
     
-    public BufferedImage rectify(BufferedImage inputImg,List<List<Double>> RT_matrix) {
+    public BufferedImage rectify(BufferedImage inputImg,List<List<Double>> RT_matrix, double xMin, double xMax, double yMin, double yMax, double incr) {
         
         // Store the original image corners
         int vMax = inputImg.getHeight();
-        int uMax = inputImg.getWidth();
-        double[][] imageCornersArray = new double[][] {{0.0, 0.0}, {uMax, 0.0}, {uMax, vMax}, {0.0, vMax}};
-        List<List<Double>> imageCorners = ArrayUtils.ArrayToList_Double2D(imageCornersArray);
-        
-        // Project the corners to world space
-        List<List<Double>> worldCorners = Projection.toWorldPlane(imageCorners, K_matrix, RT_matrix, radialCoeffs);        
+        int uMax = inputImg.getWidth();           
         
         // Convert RGB to gray
         BufferedImage grayImg = ImageUtils.color2Gray(inputImg);
@@ -52,17 +47,11 @@ public class RectifyImage {
         BicubicInterpolator interp = new BicubicInterpolator();
         BicubicInterpolatingFunction interpFunc = interp.interpolate(imageGrid_U, imageGrid_V, imageGrid_F_trans);
         
-        // Compute interpolated colors for each world space grid point
-        double xMax = worldCorners.get(1).get(0);
-        double xMin = worldCorners.get(0).get(0);
-        double yMax = worldCorners.get(3).get(1);
-        double yMin = worldCorners.get(0).get(1);
-        double xInc = (xMax - xMin)/uMax;
-        double yInc = (yMax - yMin)/vMax;
+        // Compute interpolated colors for each world space grid point   
         List<List<Integer>> grayInterp = new ArrayList<>(uMax*vMax);
-        for (double y = yMin; y < yMax; y += yInc) {
+        for (double y = yMin; y < yMax; y += incr) {
             List<Integer> grayInterpRow = new ArrayList<>();
-            for (double x = xMin; x < xMax; x += xInc) {
+            for (double x = xMin; x < xMax; x += incr) {
                 
                 List<List<Double>> xyPt_list = new ArrayList<>();
                 List<Double> xyPt = new ArrayList<>(2);
@@ -83,7 +72,7 @@ public class RectifyImage {
             }
             grayInterp.add(grayInterpRow);
         }
-        
+                
         BufferedImage rectifiedImage = ImageUtils.ListToGrayImage_Integer(grayInterp);
         
         

@@ -251,8 +251,8 @@ public class ImageUtils {
     public static BufferedImage ListToGrayImage_Double(List<List<Double>> array)
     {        
         // create the output image
-        int width = array.size();
-        int height = array.get(0).size();
+        int height = array.size();
+        int width = array.get(0).size();
         int type = BufferedImage.TYPE_BYTE_GRAY;
         BufferedImage grayImage = new BufferedImage(width, height, type);
         
@@ -272,9 +272,6 @@ public class ImageUtils {
         {
             for (int col_num = 0; col_num < nCols; col_num++)
             {
-                // compute position within linear array
-                int offset = row_num*nCols + col_num;
-
                 // get the gray value
                 double value = array.get(row_num).get(col_num);
 
@@ -287,6 +284,9 @@ public class ImageUtils {
                 
                 // cast int to byte using only least significant bits
                 byte valueByte = (byte)(valueInt&0xFF);
+                
+                // compute position within linear array
+                int offset = row_num*nCols + col_num;
                 
                 // store the color value as byte
                 grayData[offset] = valueByte;                                

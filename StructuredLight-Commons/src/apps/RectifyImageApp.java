@@ -1,6 +1,6 @@
 package apps;
 
-import cameracalibration.Projection;
+import core.ArrayUtils;
 import core.ImageUtils;
 import core.TXT;
 import core.XML;
@@ -31,17 +31,18 @@ public class RectifyImageApp {
         // Load the configuration variables
         System.out.print("Loading the configuration ... ");
         XML conf = new XML(configPath);                  
-        String formatStr = conf.getString("/config/formatStr"); 
         String intrinsicMatrixPath = conf.getString("/config/intrinsicMatrixPath");
         String worldPointsPath = conf.getString("/config/worldPointsPath");
         String extrinsicMatrixDir = conf.getString("/config/extrinsicMatrixDir");          
         String imagePointsDir = conf.getString("/config/imagePointsDir");     
         String radialDistPath = conf.getString("/config/radialDistPath");
-        String kSavePath = conf.getString("/config/kSavePath");
-        String radialDistSavePath = conf.getString("/config/radialDistSavePath");
-        String extrinsicMatrixSaveDir = conf.getString("/config/extrinsicMatrixSaveDir");
         String rectifiedImagesDir = conf.getString("/config/rectifiedImagesDir");
-        String originalImagesDir = conf.getString("/config/originalImagesDir");
+        String originalImagesDir = conf.getString("/config/originalImagesDir");              
+        int nRows = conf.getInt("/config/nRows");
+        int nCols = conf.getInt("/config/nCols");
+        double dx = conf.getDouble("/config/dx_mm");
+        double dy = conf.getDouble("/config/dy_mm");
+        double incr = conf.getDouble("/config/rectifyImg_mmPerPixel");
         
         System.out.println("Done");
         
@@ -71,6 +72,8 @@ public class RectifyImageApp {
             throw new RuntimeException("No suitables files found in the input directory.");
         }
         
+        System.out.println("Done");
+        
         // Load the image points and RT matrices
         List<List<Double>> uvPts_observed_allViews = new ArrayList<>();
         List<List<List<Double>>> RT_allViews = new ArrayList<>();
@@ -79,14 +82,7 @@ public class RectifyImageApp {
             // Get the view's base name
             String baseFilename = imagePointFilename.split(Pattern.quote("."))[0];
             
-            System.out.println("Now processing image: " + baseFilename);
-            
-            // Load the observed image points
-            String imagePointsFullPath = Paths.get(imagePointsDir).resolve(imagePointFilename).toString();
-            List<List<Double>> uvPts_observed = TXT.loadMatrix(imagePointsFullPath, Double.class);
-            
-            // Append to master list of observed image points
-            uvPts_observed_allViews.addAll(uvPts_observed);
+            System.out.println("Now processing image: " + baseFilename);           
             
             // Load the extrinsic matrix
             String extrinsicMatrixFilename = baseFilename + ".txt";
@@ -101,11 +97,19 @@ public class RectifyImageApp {
             
             // Rectify the image
             RectifyImage rectifier = new RectifyImage(K, radialCoeffs);
-            BufferedImage rectifiedImage = rectifier.rectify(originalImage, RT);
+            double xMin = -dx;
+            double xMax = nCols*dx;
+            double yMin = -dy;
+            double yMax = nRows*dy;            
+            BufferedImage rectifiedImage = rectifier.rectify(originalImage, RT, xMin, xMax, yMin, yMax, incr);
+            
+            // Normalize the image
+            List<List<Double>> rectifiedImageData = ImageUtils.GrayImageToList(rectifiedImage);
+            BufferedImage rectifiedImage_norm = ImageUtils.ListToGrayImage_Double(ArrayUtils.normalizeDoubleList(rectifiedImageData));
 
             // Save the image
             String rectifiedImageFullPath = Paths.get(rectifiedImagesDir).resolve(originalImageFilename).toString();
-            ImageUtils.save(rectifiedImage, rectifiedImageFullPath);
+            ImageUtils.save(rectifiedImage_norm, rectifiedImageFullPath);
             
             
         }

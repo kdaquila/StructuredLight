@@ -1,4 +1,9 @@
 <config>
+	<nRows>13</nRows>
+	<nCols>17</nCols>
+	<dx_mm>25.0</dx_mm>
+	<dy_mm>25.0</dy_mm>
+	<rectifyImg_mmPerPixel>0.32</rectifyImg_mmPerPixel>
 	<formatStr>%+07e</formatStr>
 	<intrinsicMatrixPath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_IntrinsicMatrix\intrinsic.txt</intrinsicMatrixPath>
 	<extrinsicMatrixDir>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_ExtrinsicMatrices</extrinsicMatrixDir>	

@@ -198,10 +198,9 @@ public class ArrayUtils
         return output;
     }
     
-    
-    public static double[][] ListToArray_Double2D(List<List<Double>> input)
+    public static int[][] ListToArray_Integer2D(List<List<Integer>> input)
     {
-        double[][] output = new double[input.size()][input.get(0).size()];
+        int[][] output = new int[input.size()][input.get(0).size()];
         for(int i = 0; i < input.size(); i++)
         {
             for(int j = 0; j < input.get(0).size(); j++)
@@ -212,9 +211,9 @@ public class ArrayUtils
         return output;
     }
     
-    public static int[][] ListToArray_Integer2D(List<List<Integer>> input)
+    public static double[][] ListToArray_Double2D(List<List<Double>> input)
     {
-        int[][] output = new int[input.size()][input.get(0).size()];
+        double[][] output = new double[input.size()][input.get(0).size()];
         for(int i = 0; i < input.size(); i++)
         {
             for(int j = 0; j < input.get(0).size(); j++)
@@ -276,6 +275,16 @@ public class ArrayUtils
         int closestIndex = in.indexOf(closest_item);
         return closestIndex;
     }
+    
+    
+    public static List<List<Integer>> normalizeIntegerList2D(List<List<Integer>> matrix){
+        
+        List<List<Double>> list2D = ArrayUtils.castArrayInteger_To_Double(matrix);
+        List<List<Double>> list2D_norm = normalizeDoubleList(list2D);
+        List<List<Integer>> output = ArrayUtils.castArrayDouble_To_Integer(list2D_norm);
+        return output;
+    } 
+    
     
     public static float[] normalizeFloatArray(float[] input, float newMax, float newMin) {
         
@@ -422,6 +431,28 @@ public class ArrayUtils
     {
         return Math.sqrt(var_Double2D(matrix));
     }
+    
+    public static int max_Integer2D(List<List<Integer>> matrix)
+    {
+        // convert to array
+        int[][] array = ListToArray_Integer2D(matrix);
+        
+        int maxValue = Integer.MIN_VALUE;
+        int nRows = array.length;
+        int nCols = array[0].length;
+        for (int row_num = 0; row_num < nRows; row_num++)
+        {
+            for (int col_num = 0; col_num < nCols; col_num++)
+            {
+                int item = array[row_num][col_num];
+                if (item > maxValue)
+                {
+                    maxValue = item;
+                }
+            }
+        }
+        return maxValue;
+    }
 
     public static double max_Double2D(List<List<Double>> matrix)
     {
@@ -444,6 +475,28 @@ public class ArrayUtils
         }
         return maxValue;
     }
+    
+    public static int min_Integer2D(List<List<Integer>> matrix)
+    {        
+        // convert to array
+        int[][] array = ListToArray_Integer2D(matrix);
+        
+        int minValue = Integer.MAX_VALUE;
+        int nRows = array.length;
+        int nCols = array[0].length;
+        for (int row_num = 0; row_num < nRows; row_num++)
+        {
+            for (int col_num = 0; col_num < nCols; col_num++)
+            {
+                int item = array[row_num][col_num];
+                if (item < minValue)
+                {
+                    minValue = item;
+                }
+            }
+        }
+        return minValue;
+    }
 
     public static double min_Double2D(List<List<Double>> matrix)
     {        
@@ -465,7 +518,7 @@ public class ArrayUtils
             }
         }
         return minValue;
-    }
+    }   
 
     public static List<List<Double>> scalarAdd_Double2D(List<List<Double>> matrix, double addend)
     {
