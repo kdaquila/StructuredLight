@@ -1,4 +1,4 @@
-package rectify;
+package frontoparallel;
 
 import core.ArrayUtils;
 import core.CoordinateSystems;

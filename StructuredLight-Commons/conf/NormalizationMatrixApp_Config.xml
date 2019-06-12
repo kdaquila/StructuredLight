@@ -1,6 +1,0 @@
-<config>
-	<formatString>%+07e</formatString>	
-	<normScaleFactor>0.1</normScaleFactor>
-	<imagePointsDir>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_ImagePoints</imagePointsDir>
-	<worldPointsPath>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\RingGrid\RingGrid_WorldPoints\worldPoints.txt</worldPointsPath>	
-</config>

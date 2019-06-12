@@ -10,9 +10,9 @@ import java.io.FilenameFilter;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.regex.Pattern;
-import rectify.RectifyImage;
+import frontoparallel.FrontoParallelImage;
 
-public class RectifyImageApp {
+public class FrontoParallelImageApp {
 
     public static void main(String[] args) {
         System.out.println("Running the RectifyImageApp:");
@@ -88,7 +88,7 @@ public class RectifyImageApp {
             BufferedImage originalImage = ImageUtils.load(originalImageFullPath);
             
             // Rectify the image
-            RectifyImage rectifier = new RectifyImage(K, radialCoeffs);
+            FrontoParallelImage rectifier = new FrontoParallelImage(K, radialCoeffs);
             double xMin = -dx;
             double xMax = nCols*dx;
             double yMin = -dy;

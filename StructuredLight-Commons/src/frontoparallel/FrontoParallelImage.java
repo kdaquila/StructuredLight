@@ -1,4 +1,4 @@
-package rectify;
+package frontoparallel;
 
 import core.ArrayUtils;
 import core.ImageUtils;
@@ -9,12 +9,12 @@ import org.apache.commons.math3.analysis.interpolation.BicubicInterpolatingFunct
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolator;
 import org.apache.commons.math3.linear.MatrixUtils;
 
-public class RectifyImage {
+public class FrontoParallelImage {
     
     List<List<Double>> K_matrix;
     List<Double> radialCoeffs;
     
-    public RectifyImage(List<List<Double>> K_matrix, List<Double> radialCoeffs) {
+    public FrontoParallelImage(List<List<Double>> K_matrix, List<Double> radialCoeffs) {
         this.K_matrix = K_matrix;
         this.radialCoeffs = radialCoeffs;
     }

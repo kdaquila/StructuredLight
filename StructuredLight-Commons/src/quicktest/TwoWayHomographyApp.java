@@ -3,7 +3,7 @@ package quicktest;
 import core.ArrayUtils;
 import core.TXT;
 import java.util.List;
-import rectify.Projection;
+import frontoparallel.Projection;
 
 public class TwoWayHomographyApp {
     
