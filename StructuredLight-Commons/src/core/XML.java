@@ -6,7 +6,9 @@ import org.dom4j.io.SAXReader;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.dom4j.Node;
 
 public class XML {
@@ -86,5 +88,36 @@ public class XML {
             throw new RuntimeException("Could not open the XML configuration document from " + path);
         }
         return rootElement;
+    }
+    
+    public static Map<String, Object> loadMap(String path, String rootTag) {        
+        Element root = loadXML(path);
+        Map<String, Object> map = new HashMap<>();
+        List<Node> nodes = root.selectNodes("/" + rootTag + "/*");
+        for (Node node: nodes) {
+            Element e = (Element) node;
+            String typeValue = e.attributeValue("type");
+            String stringValue = node.getText();
+            String tagName = node.getName();
+            Object parsedValue;
+            switch (typeValue) {
+                case "int":
+                    parsedValue = Integer.parseInt(stringValue, 10);
+                    break;
+                case "hex":
+                    parsedValue = Integer.parseInt(stringValue, 16);
+                    break;
+                case "double":
+                    parsedValue = Double.parseDouble(stringValue);
+                    break;
+                case "string":
+                    parsedValue = stringValue;
+                    break;
+                default:
+                    parsedValue = null;
+            }
+            map.put(tagName, parsedValue);
+        }
+        return map;        
     }
 }

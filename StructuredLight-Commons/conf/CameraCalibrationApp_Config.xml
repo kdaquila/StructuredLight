@@ -1,32 +1,32 @@
 <config>
-	<nRows>13</nRows>
-	<nCols>17</nCols>
-	<dx_mm>25.0</dx_mm>
-	<dy_mm>25.0</dy_mm>
-	<frontParallelImage_mmPerPixel>0.32</frontParallelImage_mmPerPixel>
-	<saveDataFormatString>%+07e</saveDataFormatString>
-	<saveDataDelimiter>,</saveDataDelimiter>
-	<saveDataEndOfLine>\n</saveDataEndOfLine>
-	<baseDir>C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\2019_06_12_Dataset1</baseDir>
-	<intrinsicMatrixDir>intrinsic_matrix</intrinsicMatrixDir>
-	<intrinsicMatrixRefinedDir>intrinsic_matrix_refined</intrinsicMatrixRefinedDir>
-	<intrinsicMatrixFilename>intrinsic.txt</intrinsicMatrixFilename>
-	<worldPointsDir>world_points</worldPointsDir>
-	<worldPointsFilename>worldPoints.txt</worldPointsFilename>
-	<distortionsDir>distortion_coefficients</distortionsDir>
-	<distortionsRefinedDir>distortion_coefficients_refined</distortionsRefinedDir>
-	<distortionsFilename>radialCoeffs.txt</distortionsFilename>
-	<extrinsicMatrixDir>extrinsic_matrices</extrinsicMatrixDir>	
-	<extrinsicMatrixRefinedDir>extrinsic_matrices_refined</extrinsicMatrixRefinedDir>	
-	<imagesRGBDir>images_rgb</imagesRGBDir>
-	<imagesGrayDir>images_gray</imagesGrayDir>
-	<imagesBWDir>images_bw</imagesBWDir>
-	<imagesLaplacianDir>images_laplacian</imagesLaplacianDir>
-	<imagesGrayFrontoParallelDir>images_gray_frontoparallel</imagesGrayFrontoParallelDir>
-	<imagesContoursAllDir>images_contours_all</imagesContoursAllDir>
-	<imagesContoursSelectDir>images_contours_select</imagesContoursSelectDir>
-	<imagePointsDir>image_points</imagePointsDir>
-	<imagePointsRefinedDir>image_points_refined</imagePointsRefinedDir>	
-	<contourPointsDir>contour_points</contourPointsDir>
-	<contourHierarchyDir>contour_hierarchy</contourHierarchyDir>
+	<nRows type="int">13</nRows>
+	<nCols type="int">17</nCols>
+	<dx_mm type="double">25.0</dx_mm>
+	<dy_mm type="double">25.0</dy_mm>
+	<frontParallelImage_mmPerPixel type="double">0.32</frontParallelImage_mmPerPixel>
+	<saveDataFormatString type="string">%+07e</saveDataFormatString>
+	<saveDataDelimiter type="string">,</saveDataDelimiter>
+	<saveDataEndOfLine type="string">\n</saveDataEndOfLine>
+	<baseDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\2019_06_12_Dataset1</baseDir>
+	<intrinsicMatrixDir type="string">intrinsic_matrix</intrinsicMatrixDir>
+	<intrinsicMatrixRefinedDir type="string">intrinsic_matrix_refined</intrinsicMatrixRefinedDir>
+	<intrinsicMatrixFilename type="string">intrinsic.txt</intrinsicMatrixFilename>
+	<worldPointsDir type="string">world_points</worldPointsDir>
+	<worldPointsFilename type="string">worldPoints.txt</worldPointsFilename>
+	<distortionsDir type="string">distortion_coefficients</distortionsDir>
+	<distortionsRefinedDir type="string">distortion_coefficients_refined</distortionsRefinedDir>
+	<distortionsFilename type="string">radialCoeffs.txt</distortionsFilename>
+	<extrinsicMatrixDir type="string">extrinsic_matrices</extrinsicMatrixDir>	
+	<extrinsicMatrixRefinedDir type="string">extrinsic_matrices_refined</extrinsicMatrixRefinedDir>	
+	<imagesRGBDir type="string">images_rgb</imagesRGBDir>
+	<imagesGrayDir type="string">images_gray</imagesGrayDir>
+	<imagesBWDir type="string">images_bw</imagesBWDir>
+	<imagesLaplacianDir type="string">images_laplacian</imagesLaplacianDir>
+	<imagesGrayFrontoParallelDir type="string">images_gray_frontoparallel</imagesGrayFrontoParallelDir>
+	<imagesContoursAllDir type="string">images_contours_all</imagesContoursAllDir>
+	<imagesContoursSelectDir type="string">images_contours_select</imagesContoursSelectDir>
+	<imagePointsDir type="string">image_points</imagePointsDir>
+	<imagePointsRefinedDir type="string">image_points_refined</imagePointsRefinedDir>	
+	<contourPointsDir type="string">contour_points</contourPointsDir>
+	<contourHierarchyDir type="string">contour_hierarchy</contourHierarchyDir>
 </config>
