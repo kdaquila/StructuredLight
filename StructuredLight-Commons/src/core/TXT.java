@@ -7,8 +7,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.io.FileUtils;
 
 public class TXT {
@@ -106,6 +108,16 @@ public class TXT {
             throw new RuntimeException("Could not save to the file");
         }
         
+    }
+    
+    public static <T> void saveMatrix_batch(Map<String,List<List<T>>> matrixSet, Class<T> type, 
+                                            String dir, String formatString, String delimiter, String EOL, boolean append){
+        for (String name: matrixSet.keySet()) {
+            List<List<T>> matrix = matrixSet.get(name);
+            String fileName = name + ".txt";
+            String absPath = Paths.get(dir).resolve(fileName).toString();
+            saveMatrix(matrix, type, absPath, formatString, delimiter, EOL, append);
+        }
     }
     
     public static <T> void saveVector(List<T> vector, Class<T> type, 

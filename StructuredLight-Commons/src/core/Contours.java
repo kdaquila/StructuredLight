@@ -1,6 +1,5 @@
 package core;
 
-import java.awt.Rectangle;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
@@ -58,7 +57,7 @@ public class Contours {
         return findContours(minArea);
     }
     
-    public List<List<List<Integer>>> findContours(int minArea) {
+    public List<List<List<Integer>>> findContours(double minArea) {
         
         List<List<List<Integer>>> contours = new ArrayList<>();
         
@@ -208,8 +207,7 @@ public class Contours {
     }
     
     public static Integer findParentID(Map<Integer, List<Integer>> hierarchy, int nChildren) {
-        int parentID = 0;
-        boolean isChildrenFound = false;
+        Integer parentID = null;
         int maxFound = 0;
         for (Integer id: hierarchy.keySet()) {            
             int numFound = hierarchy.get(id).size();
@@ -218,15 +216,10 @@ public class Contours {
             }
             if (numFound == nChildren) {
                 parentID = id;
-                isChildrenFound = true;
                 break;
             }
         } 
         
-        if (!isChildrenFound) {
-            String message = "Could not find a parent contour with the correct number of child contours. Found: " + maxFound; 
-            throw new RuntimeException(message);
-        }
         return parentID;
     }
     
@@ -341,6 +334,16 @@ public class Contours {
         return hull;
     }     
     
+    public static Map<String,Map<Integer,List<Integer>>> findHierarchy_batch(Map<String,List<List<List<Integer>>>> contourSets) {
+        Map<String,Map<Integer,List<Integer>>> output = new HashMap<>();
+        for (String name: contourSets.keySet()) {
+            List<List<List<Integer>>> contours = contourSets.get(name);
+            Map<Integer,List<Integer>> hierarchy = Contours.findHierarchy(contours);
+            output.put(name, hierarchy);
+        }
+        return output;
+    }
+    
     public static Map<Integer,List<Integer>> findHierarchy(List<List<List<Integer>>> contours) {
         
         // Initialize each contour as a parent
@@ -353,13 +356,7 @@ public class Contours {
         for (int contourIndex = 0; contourIndex < contours.size(); contourIndex++) {
             
             // Get the contour
-            List<List<Integer>> contour = contours.get(contourIndex);
-                        
-            // Find the contour's convex hull
-//            List<List<Integer>> hull = Contours.findConvexHull(contour);
-            
-            // Find the contours' min enclosed quad
-//            List<List<Integer>> quad = Quad.findMaxAreaQuad(hull);            
+            List<List<Integer>> contour = contours.get(contourIndex);                                  
             
             // Find the contour's area
             double contourArea = Contours.computeArea(contour);
@@ -416,7 +413,23 @@ public class Contours {
         }
         
         return hierarchy;
-    }    
+    }   
+    
+    public static Map<String,List<List<List<Integer>>>> findContours_batch(Map<String,BufferedImage> bwImages) {
+        int minArea = 0;
+        return findContours_batch(bwImages, minArea);
+    }
+    
+    public static Map<String,List<List<List<Integer>>>> findContours_batch(Map<String,BufferedImage> bwImages, double minArea) {
+        Map<String,List<List<List<Integer>>>> output = new HashMap<>();
+        for (String imgName: bwImages.keySet()) {
+            BufferedImage bwImg = bwImages.get(imgName);
+            Contours contourObj = new Contours(bwImg);
+            List<List<List<Integer>>> contourSet = contourObj.findContours(minArea);
+            output.put(imgName, contourSet);
+        }
+        return output;
+    }
     
     public class LocalPixels
     {    

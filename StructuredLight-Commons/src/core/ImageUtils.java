@@ -8,14 +8,52 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
 import java.awt.image.Kernel;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import org.apache.commons.io.FileUtils;
 
 
 public class ImageUtils {
+    
+    public static Map<String,BufferedImage> load_batch(String dir) {
+        // Find the image filenames
+        String[] fileNames = (new File(dir)).list(new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String name) {
+                String lowerName = name.toLowerCase();
+                boolean isValid = lowerName.endsWith(".png") ||
+                                  lowerName.endsWith(".jpg") ||
+                                  lowerName.endsWith(".jpeg") ||
+                                  lowerName.endsWith(".tif") ||
+                                  lowerName.endsWith(".tiff"); 
+                return isValid;
+            }
+        });
+        
+        // Validate file names
+        if (fileNames == null || fileNames.length == 0) {
+            throw new RuntimeException("No suitables files found in the input directory.");
+        }
+        
+        // Load the images
+        Map<String, BufferedImage> images = new HashMap<>();
+        for (String fileName: fileNames) {
+            
+            // Load the observed image points
+            String imageAbsPath = Paths.get(dir).resolve(fileName).toString();
+            BufferedImage img = ImageUtils.load(imageAbsPath);
+            String baseFilename = fileName.split(Pattern.quote("."))[0]; 
+            images.put(baseFilename, img);
+        }
+        return images;
+    }
     
     public static BufferedImage load(String fullpath) {
         BufferedImage output;
@@ -35,6 +73,16 @@ public class ImageUtils {
     public static BufferedImage load(String folder, String filename)
     {
         return load(folder + "\\" + filename);
+    }
+    
+    public static void save_batch(Map<String, BufferedImage> inputImages, String dir)
+    {
+        for (String imgName: inputImages.keySet()) {
+            String fileName = imgName + ".png";
+            String imageAbsPath = Paths.get(dir).resolve(fileName).toString();
+            BufferedImage img = inputImages.get(imgName);
+            save(img, imageAbsPath);
+        }
     }
     
     public static void save(BufferedImage inputImage, String fullPath)
@@ -341,6 +389,21 @@ public class ImageUtils {
         return grayImage;
     }
     
+    /**
+     *
+     * @param inputImages A map of base filename (no extension) and the associated image
+     * @return
+     */
+    public static Map<String, BufferedImage> color2Gray_batch (Map<String, BufferedImage> inputImages)
+    {
+        Map<String, BufferedImage> grayImages = new HashMap<>();
+        for (String imgName: inputImages.keySet()) {
+            BufferedImage grayImg = color2Gray(inputImages.get(imgName));
+            grayImages.put(imgName, grayImg);
+        }
+        return grayImages;
+    }
+    
     public static BufferedImage color2Gray (BufferedImage inputImage)
     {
         // draw input to TYPE_INT_RGB
@@ -517,6 +580,16 @@ public class ImageUtils {
             }
         }      
         return blurImage;
+    }
+    
+    public static Map<String,BufferedImage> adaptiveThreshold_batch(Map<String,BufferedImage> grayImages, int windowSize, int offset)
+    {
+        Map<String,BufferedImage> bwImages = new HashMap<>();
+        for (String imgName: grayImages.keySet()) {
+            BufferedImage bwImg = adaptiveThreshold(grayImages.get(imgName), windowSize, offset);
+            bwImages.put(imgName, bwImg);
+        }
+        return bwImages;
     }
     
     public static BufferedImage adaptiveThreshold(BufferedImage grayImage, int windowSize, int offset)

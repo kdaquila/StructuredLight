@@ -96,9 +96,14 @@ public class XML {
         List<Node> nodes = root.selectNodes("/" + rootTag + "/*");
         for (Node node: nodes) {
             Element e = (Element) node;
-            String typeValue = e.attributeValue("type");
+            String typeValue = e.attributeValue("type");            
             String stringValue = node.getText();
             String tagName = node.getName();
+            
+            if (typeValue == null) {
+                throw new RuntimeException("The XML element '" + tagName + "' is missing a type attribute");
+            }
+            
             Object parsedValue;
             switch (typeValue) {
                 case "int":
@@ -109,6 +114,9 @@ public class XML {
                     break;
                 case "double":
                     parsedValue = Double.parseDouble(stringValue);
+                    break;
+                case "boolean":
+                    parsedValue = Boolean.parseBoolean(stringValue);
                     break;
                 case "string":
                     parsedValue = stringValue;

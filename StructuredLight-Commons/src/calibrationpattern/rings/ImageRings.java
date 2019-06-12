@@ -42,13 +42,36 @@ public class ImageRings {
         
         return averageWidths;
     }
+    
+    public static Map<String, List<List<Double>>> computeCenters_batch(Map<String, List<List<List<Integer>>>> contourSets, 
+                                                          Map<String, Map<Integer, List<Integer>>> hierarchySets, 
+                                                          int nPts) {
+        Map<String, List<List<Double>>> output = new HashMap<>();
+        for (String name: contourSets.keySet()) {
+            List<List<List<Integer>>> contours = contourSets.get(name);
+            Map<Integer, List<Integer>> hierarchy = hierarchySets.get(name);
+            List<List<Double>> centers = ImageRings.computeCenters(contours, hierarchy, nPts);
+            if (centers.size() == 0) {
+                System.err.println("Could not find the correct number of center points in: " + name);
+                continue;
+            } else {
+                output.put(name, centers);
+            }            
+        }
+        return output;
+    }
            
     public static List<List<Double>> computeCenters(List<List<List<Integer>>> edges, Map<Integer, List<Integer>> hierarchy, int nPts) {
         
         // Find the rings' parent
         int nChildren = nPts;
-        Integer parentID = Contours.findParentID(hierarchy, nChildren);        
-
+        Integer parentID = Contours.findParentID(hierarchy, nChildren);     
+        
+        // Stop if parent was not found
+        if (parentID == null) {
+            return new ArrayList<>();
+        }
+        
         // Compute the rings' centers        
         List<Integer> ringIDs = hierarchy.get(parentID);
         List<List<Double>> ringCenters = Contours.computeCenters(edges, ringIDs);
