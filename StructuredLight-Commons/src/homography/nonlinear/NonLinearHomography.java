@@ -1,9 +1,11 @@
 package homography.nonlinear;
 
-import homography.Normalization;
 import core.ArrayUtils;
+import homography.LinearHomography;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer.Optimum;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem;
@@ -78,10 +80,6 @@ public class NonLinearHomography {
         LevenbergMarquardtOptimizer solver = new LevenbergMarquardtOptimizer();
         LeastSquaresProblem leastSqrProb = builder.build();
         Optimum solution = solver.optimize(leastSqrProb);
-        
-        // Report to console
-        int nIters = solution.getIterations();
-        System.out.println("\nSolver: Number of iterations was: " + nIters);
 
         // Get the homography coefficients from the solution
         RealVector X = solution.getPoint();
@@ -103,4 +101,16 @@ public class NonLinearHomography {
     public List<List<Double>> getHomography() {
         return ArrayUtils.ArrayToList_Double2D(H.getData());
     }    
+    
+    public static Map<String,List<List<Double>>> computeHomography_batch( List<List<Double>> xyPts,  Map<String,List<List<Double>>> uvPtSets, Map<String,List<List<Double>>> homographySets) {
+        Map<String,List<List<Double>>> output = new HashMap<>();
+        for (String name: uvPtSets.keySet()) {
+            List<List<Double>> uvPts = uvPtSets.get(name);
+            List<List<Double>> homography = homographySets.get(name);
+            NonLinearHomography homog = new NonLinearHomography(xyPts, uvPts, homography);
+            List<List<Double>> H = homog.getHomography();
+            output.put(name, H);
+        }
+        return output;
+    }
 }

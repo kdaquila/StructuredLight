@@ -3,13 +3,25 @@ package cameracalibration;
 import core.ArrayUtils;
 import core.CoordinateSystems;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 public class Projection {
     
-    public static List<List<Double>> projectPoints(List<List<Double>> xyzPts, List<List<Double>> K_matrix, List<List<Double>> RT_matrix) {
+    public static Map<String,List<List<Double>>> projectPoints_batch (List<List<Double>> xyzPts, List<List<Double>> K_matrix, Map<String,List<List<Double>>> RTMatrixSet) {
+        Map<String,List<List<Double>>> output = new HashMap<>();
+        for (String name: RTMatrixSet.keySet()) {
+            List<List<Double>> RT = RTMatrixSet.get(name);
+            List<List<Double>> uvProjPts = projectPoints(xyzPts, K_matrix, RT);
+            output.put(name, uvProjPts);
+        }
+        return output;
+    }
+    
+    public static List<List<Double>> projectPoints (List<List<Double>> xyzPts, List<List<Double>> K_matrix, List<List<Double>> RT_matrix) {
         int nPts = xyzPts.size();
 
         // Convert to homogenous coordinates

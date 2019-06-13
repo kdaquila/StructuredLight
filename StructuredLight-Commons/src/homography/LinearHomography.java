@@ -2,7 +2,9 @@ package homography;
 
 import core.ArrayUtils;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -80,8 +82,7 @@ public class LinearHomography {
         RealMatrix V = decomp.getV();
         RealVector X = V.getColumnVector(V.getColumnDimension() - 1);        
         
-        // Report to console        
-        System.out.println("\nThe condition number for Homography is : " + String.format("%.3e", decomp.getConditionNumber()));
+        
 
         // Reshape into homography matrix H
         H = MatrixUtils.createRealMatrix(3, 3);
@@ -95,10 +96,25 @@ public class LinearHomography {
             for (int col = 0; col < 3; col++) {
                 H.setEntry(row, col, H.getEntry(row, col)/H_bottomRight);
             }
-        }       
+        }         
+        
+        // Report to console        
+        System.out.println("The condition number for Homography Matrix is : " + String.format("%.3e", decomp.getConditionNumber())); 
+
     }
     
     public List<List<Double>> getHomography() {
         return ArrayUtils.ArrayToList_Double2D(H.getData());
     }    
+    
+    public static Map<String,List<List<Double>>> computeHomography_batch( List<List<Double>> xyPts,  Map<String,List<List<Double>>> uvPtSets) {
+        Map<String,List<List<Double>>> output = new HashMap<>();
+        for (String name: uvPtSets.keySet()) {
+            List<List<Double>> uvPts = uvPtSets.get(name);
+            LinearHomography homog = new LinearHomography(xyPts, uvPts);
+            List<List<Double>> H = homog.getHomography();
+            output.put(name, H);
+        }
+        return output;
+    }
 }

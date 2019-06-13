@@ -1,7 +1,9 @@
 package cameracalibration;
 
 import core.ArrayUtils;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -11,6 +13,16 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 public class ExtrinsicMatrix {   
+    
+    public static Map<String,List<List<Double>>> compute_batch(Map<String,List<List<Double>>> homographySet, List<List<Double>> intrinsicMatrix) {
+        Map<String,List<List<Double>>> output = new HashMap<>();
+        for (String name: homographySet.keySet()) {
+            List<List<Double>> H = homographySet.get(name);
+            List<List<Double>> RT = compute(H, intrinsicMatrix);
+            output.put(name, RT);
+        }
+        return output;
+    }
     
     public static List<List<Double>> compute(List<List<Double>> homographyMatrix, List<List<Double>> intrinsicMatrix) {
         // Store the intrinsic matrix 
@@ -48,10 +60,6 @@ public class ExtrinsicMatrix {
         RT.setColumnVector(1, R.getColumnVector(1));
         RT.setColumnVector(2, R.getColumnVector(2));
         RT.setColumnVector(3, T);
-        
-        // Compute camera location
-        RealVector camPos = (new QRDecomposition(R)).getSolver().getInverse().operate(T.mapMultiply(-1));
-        System.out.println("Camera at: " + camPos);
         
         return ArrayUtils.ArrayToList_Double2D(RT.getData());
     }

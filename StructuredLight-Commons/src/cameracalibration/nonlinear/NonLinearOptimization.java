@@ -112,10 +112,6 @@ public class NonLinearOptimization {
         LeastSquaresProblem leastSqrProb = builder.build();
         LeastSquaresOptimizer.Optimum solution = solver.optimize(leastSqrProb);
         
-        // Report to console
-        int nIters = solution.getIterations();
-        System.out.println("\nSolver: Number of iterations was: " + nIters);
-
         // Get the solution
         RealVector X = solution.getPoint();
         

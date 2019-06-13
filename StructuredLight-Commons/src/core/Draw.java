@@ -6,12 +6,26 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Draw {
     
+    public static Map<String,BufferedImage> drawCircles_batch(Map<String,BufferedImage> images, Map<String, List<List<Double>>> centerPtSets, int radius, double lineWidth, Integer colorHex, boolean isFill) {
+        Map<String,BufferedImage> output = new HashMap<>();
+        for (String name: images.keySet()) {
+            BufferedImage img = images.get(name);
+            List<List<Double>> centerPts_Double = centerPtSets.get(name);
+            List<List<Integer>> centerPts_Integer = ArrayUtils.castArrayDouble_To_Integer(centerPts_Double);
+            BufferedImage drawing = drawCircles(img, centerPts_Integer, radius, lineWidth, colorHex, isFill);
+            output.put(name, drawing);
+        }
+        return output;
+    }
     
-    public static BufferedImage drawCircles(BufferedImage img, List<List<Integer>> centers, int radius, float lineWidth, Integer colorHex, boolean isFill) 
+    
+    public static BufferedImage drawCircles(BufferedImage img, List<List<Integer>> centers, int radius, double lineWidth, Integer colorHex, boolean isFill) 
     {
         // Create an new rgb image
         int width = img.getWidth();
@@ -44,7 +58,7 @@ public class Draw {
             int w = radius*2;
             int h = radius*2;
             g.setColor(new Color(colors.get(color_index)));
-            g.setStroke(new BasicStroke(lineWidth));
+            g.setStroke(new BasicStroke((float)lineWidth));
             g.drawOval(x, y, w, h);
             
             if (isFill) {

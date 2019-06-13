@@ -40,7 +40,7 @@ public class RadialDistortion {
         RealVector X = decomp.getSolver().solve(B);
         
         // Report to console        
-        System.out.println("\nThe condition number for radial distortion matrix is : " + String.format("%.3e", decomp.getConditionNumber()));
+        System.out.println("The condition number for radial distortion matrix is : " + String.format("%.3e", decomp.getConditionNumber()));
         
         return ArrayUtils.ArrayToList_Double(X.toArray());
     }

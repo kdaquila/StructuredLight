@@ -115,8 +115,8 @@ public class TXT {
         for (String name: matrixSet.keySet()) {
             List<List<T>> matrix = matrixSet.get(name);
             String fileName = name + ".txt";
-            String absPath = Paths.get(dir).resolve(fileName).toString();
-            saveMatrix(matrix, type, absPath, formatString, delimiter, EOL, append);
+//            String absPath = Paths.get(dir).resolve(fileName).toString();
+            saveMatrix(matrix, type, dir, fileName, formatString, delimiter, EOL, append);
         }
     }
     

@@ -1,7 +1,6 @@
 package apps;
 
 import cameracalibration.ExtrinsicMatrix;
-import cameracalibration.Projection;
 import cameracalibration.ProjectionError;
 import core.ArrayUtils;
 import core.TXT;

@@ -118,6 +118,16 @@ public class ImageRings {
         return newCenters;
     }
     
+    public static Map<String,List<List<Double>>> sortCentersRowMajor_batch(Map<String,List<List<Double>>> centerPtSets, int nRows, int nCols) {
+        Map<String,List<List<Double>>> output = new HashMap<>();
+        for (String name: centerPtSets.keySet()) {
+            List<List<Double>> centerPts = centerPtSets.get(name);
+            List<List<Double>> centerPts_sort = sortCentersRowMajor(centerPts, nRows, nCols);
+            output.put(name, centerPts_sort);
+        }
+        return output;
+    }
+    
     public static List<List<Double>> sortCentersRowMajor(List<List<Double>> centers, int nRows, int nCols) {
         // Convert to Integer
         List<List<Integer>> centers_int = ArrayUtils.castArrayDouble_To_Integer(centers);

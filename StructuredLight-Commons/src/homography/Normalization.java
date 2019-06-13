@@ -3,7 +3,9 @@ package homography;
 import core.ArrayUtils;
 import core.CoordinateSystems;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -98,7 +100,17 @@ public class Normalization {
         
     public List<List<Double>> normalizePointsXY(List<List<Double>> xy_cart_list) {              
         return normalizePoints(xy_cart_list, N_xy);
-    }  
+    }
+    
+    public Map<String,List<List<Double>>> normalizePointsUV_batch(Map<String,List<List<Double>>> uvPtSets) {
+        Map<String,List<List<Double>>> output = new HashMap<>();
+        for (String name: uvPtSets.keySet()) {
+            List<List<Double>> uvPts = uvPtSets.get(name);
+            List<List<Double>> uvPts_norm = normalizePointsUV(uvPts);
+            output.put(name, uvPts_norm);
+        }
+        return output;
+    }
     
     public List<List<Double>> normalizePointsUV(List<List<Double>> uv_cart_list) {              
         return normalizePoints(uv_cart_list, N_uv);
@@ -115,6 +127,16 @@ public class Normalization {
         }          
         return xy_cart_list_norm;
     }  
+    
+    public Map<String,List<List<Double>>> denormalizeHomographyMatrix_batch(Map<String,List<List<Double>>> H_norm_matrix) {
+        Map<String,List<List<Double>>> output = new HashMap<>();
+        for (String name: H_norm_matrix.keySet()) {
+            List<List<Double>> H_norm = H_norm_matrix.get(name);
+            List<List<Double>> H = denormalizeHomographyMatrix(H_norm);
+            output.put(name, H);
+        }
+        return output;
+    }
 
     public List<List<Double>> denormalizeHomographyMatrix(List<List<Double>> H_norm_matrix) {
         RealMatrix H_norm = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(H_norm_matrix));
@@ -122,7 +144,7 @@ public class Normalization {
         return ArrayUtils.ArrayToList_Double2D(H.getData());
     }
     
-    public List<List<Double>> denormalizeSymmetricIntrinsicMatrix(List<List<Double>> B_norm_matrix) {
+    public List<List<Double>> denormalizeSymmetricMatrix(List<List<Double>> B_norm_matrix) {
         RealMatrix B_norm = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(B_norm_matrix));
         RealMatrix B = N_uv.transpose().multiply(B_norm.multiply(N_uv));
         return ArrayUtils.ArrayToList_Double2D(B.getData());

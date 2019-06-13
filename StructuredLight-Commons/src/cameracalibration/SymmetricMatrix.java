@@ -1,13 +1,24 @@
 package cameracalibration;
 
 import core.ArrayUtils;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 public class SymmetricMatrix {
+    
+    public static List<List<Double>> compute(Map<String,List<List<Double>>> homographySet) {
+        List<List<List<Double>>> homographies = new ArrayList<>();
+        for (String name: homographySet.keySet()) {
+            List<List<Double>> H = homographySet.get(name);
+            homographies.add(H);
+        }
+        return compute(homographies);
+    }
     
     public static List<List<Double>> compute(List<List<List<Double>>> homographies) {
         

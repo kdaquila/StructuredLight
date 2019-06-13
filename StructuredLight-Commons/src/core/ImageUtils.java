@@ -79,9 +79,9 @@ public class ImageUtils {
     {
         for (String imgName: inputImages.keySet()) {
             String fileName = imgName + ".png";
-            String imageAbsPath = Paths.get(dir).resolve(fileName).toString();
+//            String imageAbsPath = Paths.get(dir).resolve(fileName).toString();
             BufferedImage img = inputImages.get(imgName);
-            save(img, imageAbsPath);
+            save(img, dir, fileName);
         }
     }
     

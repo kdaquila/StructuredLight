@@ -105,7 +105,7 @@ public class IntrinsicMatrixApp {
         Normalization norm = new Normalization(xyPts, uvPts_allViews); 
         
         // Denormalize the symmetric matrix
-        List<List<Double>> B = norm.denormalizeSymmetricIntrinsicMatrix(B_norm);
+        List<List<Double>> B = norm.denormalizeSymmetricMatrix(B_norm);
         
         // Compute the intrinsic matrix
         System.out.print("Computing the intrinsic camera matrix ... ");
