@@ -1,6 +1,8 @@
 package cameracalibration;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProjectionError {
     
@@ -41,5 +43,16 @@ public class ProjectionError {
 
         return error;
     }
+    
+    public static Map<String,Double> computeReprojectError_batch(List<List<Double>> xyzPts, List<List<Double>> K, List<Double> radialDistCoeffs, Map<String,List<List<Double>>> uvPtSet,  Map<String,List<List<Double>>> RTMatrixSet) {
+        Map<String,Double> errors = new HashMap<>();
+        for (String name: RTMatrixSet.keySet()) {
+            List<List<Double>> RT = RTMatrixSet.get(name);
+            List<List<Double>> uvpts = uvPtSet.get(name);
+            double error = computeReprojectError(xyzPts, uvpts, K, RT, radialDistCoeffs);
+            errors.put(name,error);
+        }
+        return errors;
+    } 
 
 }

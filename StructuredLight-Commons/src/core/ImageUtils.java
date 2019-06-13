@@ -703,4 +703,20 @@ public class ImageUtils {
         return outputImage;
     }
     
+    public static BufferedImage normalize (BufferedImage inputImg, double newMin, double newMax) {
+        List<List<Double>> imageData = ImageUtils.GrayImageToList(inputImg);
+        BufferedImage normImg = ImageUtils.ListToGrayImage_Double(ArrayUtils.normalizeList_Double2D(imageData, newMin, newMax));
+        return normImg;
+    }
+    
+    public static Map<String,BufferedImage> normalize_batch (Map<String,BufferedImage> inputImgSet, double newMin, double newMax) {
+        Map<String,BufferedImage> output = new HashMap<>();
+        for (String name: inputImgSet.keySet()) {
+            BufferedImage inputImg = inputImgSet.get(name);
+            BufferedImage normImg = normalize(inputImg, newMin, newMax);
+            output.put(name, normImg);
+        }
+        return output;
+    }
+    
 }

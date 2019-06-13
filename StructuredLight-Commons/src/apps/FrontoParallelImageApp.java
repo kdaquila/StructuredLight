@@ -93,11 +93,11 @@ public class FrontoParallelImageApp {
             double xMax = nCols*dx;
             double yMin = -dy;
             double yMax = nRows*dy;            
-            BufferedImage rectifiedImage = rectifier.rectify(originalImage, RT, xMin, xMax, yMin, yMax, incr);
+            BufferedImage rectifiedImage = rectifier.projectImage(originalImage, RT, xMin, xMax, yMin, yMax, incr);
             
             // Normalize the image
             List<List<Double>> rectifiedImageData = ImageUtils.GrayImageToList(rectifiedImage);
-            BufferedImage rectifiedImage_norm = ImageUtils.ListToGrayImage_Double(ArrayUtils.normalizeDoubleList(rectifiedImageData));
+            BufferedImage rectifiedImage_norm = ImageUtils.ListToGrayImage_Double(ArrayUtils.normalizeList_Double2D(rectifiedImageData));
 
             // Save the image
             String rectifiedImageFullPath = Paths.get(rectifiedImagesDir).resolve(originalImageFilename).toString();

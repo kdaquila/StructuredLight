@@ -4,7 +4,9 @@ import core.ArrayUtils;
 import core.ImageUtils;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolatingFunction;
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolator;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -19,7 +21,7 @@ public class FrontoParallelImage {
         this.radialCoeffs = radialCoeffs;
     }
     
-    public BufferedImage rectify(BufferedImage inputImg,List<List<Double>> RT_matrix, double xMin, double xMax, double yMin, double yMax, double incr) {
+    public BufferedImage projectImage(BufferedImage inputImg,List<List<Double>> RT_matrix, double xMin, double xMax, double yMin, double yMax, double incr) {
         
         // Store the original image corners
         int vMax = inputImg.getHeight();
@@ -77,6 +79,17 @@ public class FrontoParallelImage {
         
         
         return rectifiedImage;
+    }
+    
+    public Map<String,BufferedImage> projectImage_batch(Map<String,BufferedImage> inputImgSet, Map<String,List<List<Double>>> RTMatrixSet, double xMin, double xMax, double yMin, double yMax, double incr) {
+        Map<String,BufferedImage> output = new HashMap<>();
+        for (String name: inputImgSet.keySet()) {
+            BufferedImage inputImg = inputImgSet.get(name);
+            List<List<Double>> RT = RTMatrixSet.get(name);
+            BufferedImage frontoparallelImage = projectImage(inputImg, RT, xMin, xMax, yMin, yMax, incr);
+            output.put(name, frontoparallelImage);
+        }
+        return output;
     }
 
 }

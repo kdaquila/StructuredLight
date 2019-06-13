@@ -280,7 +280,7 @@ public class ArrayUtils
     public static List<List<Integer>> normalizeIntegerList2D(List<List<Integer>> matrix){
         
         List<List<Double>> list2D = ArrayUtils.castArrayInteger_To_Double(matrix);
-        List<List<Double>> list2D_norm = normalizeDoubleList(list2D);
+        List<List<Double>> list2D_norm = normalizeList_Double2D(list2D);
         List<List<Integer>> output = ArrayUtils.castArrayDouble_To_Integer(list2D_norm);
         return output;
     } 
@@ -321,7 +321,13 @@ public class ArrayUtils
         return outputArray;
     }
     
-    public static List<List<Double>> normalizeDoubleList(List<List<Double>> matrix){
+    public static List<List<Double>> normalizeList_Double2D(List<List<Double>> matrix){
+        double newMin = 0.0;
+        double newMax = 255.0;        
+        return ArrayUtils.normalizeList_Double2D(matrix, newMin, newMax);
+    }
+    
+    public static List<List<Double>> normalizeList_Double2D(List<List<Double>> matrix, double newMin, double newMax){
         // find the min
         double min = min_Double2D(matrix);
 
@@ -332,9 +338,12 @@ public class ArrayUtils
         double max = max_Double2D(array1);
 
         // rescale all elements
-        List<List<Double>> array2 = scalarMultiply_Double2D(array1, 255.0/max);
+        List<List<Double>> array2 = scalarMultiply_Double2D(array1, (newMax-newMin)/max);
         
-        return array2;
+        // offset all elements
+        List<List<Double>> array3 = scalarAdd_Double2D(array2, newMin);
+        
+        return array3;
     }   
     
     public static double mean_Double1D(List<Double> vector)

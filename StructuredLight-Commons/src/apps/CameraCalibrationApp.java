@@ -5,6 +5,7 @@ import calibrationpattern.rings.WorldRings;
 import cameracalibration.ExtrinsicMatrix;
 import cameracalibration.IntrinsicMatrix;
 import cameracalibration.Projection;
+import cameracalibration.ProjectionError;
 import cameracalibration.RadialDistortion;
 import cameracalibration.SymmetricMatrix;
 import cameracalibration.nonlinear.NonLinearOptimization;
@@ -18,6 +19,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
 import static core.Print.println;
+import frontoparallel.FrontoParallelImage;
 import homography.LinearHomography;
 import homography.Normalization;
 import homography.nonlinear.NonLinearHomography;
@@ -26,6 +28,12 @@ import java.util.Collections;
 import java.util.HashMap;
 
 public class CameraCalibrationApp {
+    
+//    Map<String,Object> config;
+//    
+//    public CameraCalibrationApp(String configPath) {
+//        
+//    }
     
     public static void main(String[] args) {
                
@@ -271,10 +279,39 @@ public class CameraCalibrationApp {
             TXT.saveMatrix_batch(RTMatrixSet_refined, Double.class, extrinsicMatrixRefinedDir, saveDataFormatString, saveDataDelimiter, saveDataEndOfLine, saveDataAppend);
         }        
         
-        // Compute and Save front-parallel gray images
+        // Compute fronto-parallel images
+        println("Compute the fronto-parallel images");
+        FrontoParallelImage frontoParallelImager = new FrontoParallelImage(intrinsicMatrix_refined, distCoeffs_refined);
+        double xMin = -dx;
+        double xMax = nCols*dx;
+        double yMin = -dy;
+        double yMax = nRows*dy;
+        double frontParallelImageScale = (Double) config.get("frontParallelImageScale");
+        Map<String,BufferedImage> frontoParallelImageSet = frontoParallelImager.projectImage_batch(grayImages, RTMatrixSet_refined, xMin, xMax, yMin, yMax, frontParallelImageScale);
         
+        // Normalize the fronto-parallel image range
+        println("Normalizing the fronto-parallel images");
+        double normalizeMin = 0.0;
+        double normalizeMax = 255.0;
+        Map<String,BufferedImage> frontoParallelImageSet_norm = ImageUtils.normalize_batch(frontoParallelImageSet, normalizeMin, normalizeMax);
+        
+        if (isSaveImageMode) {
+            // Save the fronto-parallel images
+            String imagesGrayFrontoParallelDir = (String) config.get("imagesGrayFrontoParallelDir");
+            ImageUtils.save_batch(frontoParallelImageSet_norm, imagesGrayFrontoParallelDir);
+        }
+        
+        // Compute reprojection errors
+        println("Computing reprojection errors");
+        Map<String,Double> errorSet = ProjectionError.computeReprojectError_batch(xyzPts, intrinsicMatrix_refined, distCoeffs_refined, uvPtSets, RTMatrixSet_refined);
+        
+        // Display repojection errors
+        for (String name: errorSet.keySet()) {
+            println("Error " + name + ": " + String.format("%.4f",errorSet.get(name)));
+        }
         
     }
     
-
+    
+    
 }
