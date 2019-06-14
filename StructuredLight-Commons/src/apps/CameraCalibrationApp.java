@@ -457,7 +457,6 @@ public class CameraCalibrationApp {
         app.findImagePoints(grayImages, isSubPixel);
         
         // Compute Intrinsic/Extrinsic/Distortions
-        println("Computing the Intrinsic/Extrinsic/Distortions");
         app.computeCalibration();
         
         // Compute reprojection errors

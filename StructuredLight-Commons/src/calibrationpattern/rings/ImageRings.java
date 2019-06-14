@@ -84,7 +84,7 @@ public class ImageRings {
         
         // Compute the rings' centers        
         List<Integer> ringIDs = hierarchy.get(parentID);
-        List<List<Double>> ringCenters = Contours.computeCenters(edges, ringIDs);
+        List<List<Double>> ringCenters = Contours.computeCenters_EllipseFit(edges, ringIDs);
 
         return ringCenters;
     }    
