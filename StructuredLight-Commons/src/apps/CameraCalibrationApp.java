@@ -447,9 +447,11 @@ public class CameraCalibrationApp {
         CameraCalibrationApp app = new CameraCalibrationApp(configAbsPath);
         
         // Load RGB images
+        println("Loading RGB Images");
         Map<String, BufferedImage> rgbImages = app.loadRGBImages();
         
         // Convert RGB to Gray images
+        println("Converting RGB to Gray");
         Map<String, BufferedImage> grayImages = app.convertImages_rgbToGray(rgbImages);
         
         // Find Image Points

@@ -45,6 +45,7 @@ public class ImageUtils {
         // Load the images
         Map<String, BufferedImage> images = new HashMap<>();
         for (String fileName: fileNames) {
+            Print.println("Now loading image " + fileName);
             
             // Load the observed image points
             String imageAbsPath = Paths.get(dir).resolve(fileName).toString();
@@ -398,6 +399,8 @@ public class ImageUtils {
     {
         Map<String, BufferedImage> grayImages = new HashMap<>();
         for (String imgName: inputImages.keySet()) {
+            Print.println("Now converting image " + imgName);
+            
             BufferedImage grayImg = color2Gray(inputImages.get(imgName));
             grayImages.put(imgName, grayImg);
         }
@@ -586,6 +589,7 @@ public class ImageUtils {
     {
         Map<String,BufferedImage> bwImages = new HashMap<>();
         for (String imgName: grayImages.keySet()) {
+            Print.println("Now adaptive thresholding image " + imgName);
             BufferedImage bwImg = adaptiveThreshold(grayImages.get(imgName), windowSize, offset);
             bwImages.put(imgName, bwImg);
         }
