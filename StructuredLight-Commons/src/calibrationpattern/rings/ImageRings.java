@@ -2,9 +2,7 @@ package calibrationpattern.rings;
 
 import core.ArrayUtils;
 import core.Contours;
-import core.FilterKernal;
 import core.Homography;
-import core.ImageUtils;
 import core.Quad;
 import curvefitting.Paraboloid;
 import java.awt.image.BufferedImage;
@@ -17,6 +15,17 @@ import java.util.List;
 import java.util.Map;
 
 public class ImageRings {
+    
+    public static Map<String, Map<String,Double>> findAvgRingWidths_batch(Map<String, List<List<List<Integer>>>> contourSets, Map<String, Map<Integer, List<Integer>>> hierarchySets, int nPts) {
+        Map<String, Map<String,Double>> output = new HashMap<>();
+        for (String name: contourSets.keySet()) {
+            List<List<List<Integer>>> contours = contourSets.get(name);
+            Map<Integer, List<Integer>> hierarchy = hierarchySets.get(name);
+            Map<String,Double> avgWidth = findAvgRingWidths(contours, hierarchy, nPts);
+            output.put(name, avgWidth);
+        }        
+        return output;
+    }
     
     public static Map<String,Double> findAvgRingWidths(List<List<List<Integer>>> edges, Map<Integer, List<Integer>> hierarchy, int nPts) {
         // Find the outer rings' parent
@@ -51,12 +60,13 @@ public class ImageRings {
             List<List<List<Integer>>> contours = contourSets.get(name);
             Map<Integer, List<Integer>> hierarchy = hierarchySets.get(name);
             List<List<Double>> centers = ImageRings.computeCenters(contours, hierarchy, nPts);
-            if (centers.size() == 0) {
+            if (centers.isEmpty()) {
                 System.err.println("Could not find the correct number of center points in: " + name);
                 continue;
-            } else {
-                output.put(name, centers);
-            }            
+            }
+            
+            output.put(name, centers);
+                       
         }
         return output;
     }
@@ -79,35 +89,38 @@ public class ImageRings {
         return ringCenters;
     }    
     
-    public static List<List<Double>> refineCenters(List<List<Double>> centers, BufferedImage grayImage, double outerWidth, double innerWidth) {
+    public static Map<String,List<List<Double>>> refineCenters_batch(Map<String,List<List<Double>>> imagePtSets, Map<String,BufferedImage> laplacianImages, Map<String,Map<String,Double>> kernalParamSets) {
+        Map<String,List<List<Double>>> output = new HashMap<>();
+        for (String name: laplacianImages.keySet()) {
+            List<List<Double>> imgPts = imagePtSets.get(name);
+            BufferedImage laplacianImg = laplacianImages.get(name);
+            Map<String,Double> kernalParams = kernalParamSets.get(name);
+            List<List<Double>> imgPts_refine = refineCenters(imgPts, laplacianImg, kernalParams);
+            output.put(name, imgPts_refine);
+        }        
+        return output;
+    }
+    
+    public static List<List<Double>> refineCenters(List<List<Double>> centers, BufferedImage laplacianImages, Map<String, Double> kernalParams) {        
+                     
+        double kernalSigma = kernalParams.get("sigma");
         
-        // Compute kernal Sigma and kernal Size based on average ring dimensions
-        double kernalSigma = innerWidth/2.0;        
-        int kernalSize = (int)outerWidth;
-        if (kernalSize%2==0) {
-            kernalSize += 1;
-        }
-        
-        // Create the Laplacian filter
-        float[] kernalArray = FilterKernal.Laplacian(kernalSigma, kernalSize);
-        
-        // Run the Laplacian filter
-        BufferedImage filteredImage = ImageUtils.convolve(grayImage, kernalSize, kernalArray);    
-                  
         // Fit Paraboloid and Compute Center at each exisiting point
         List<List<Double>> newCenters = new ArrayList<>();
-        Paraboloid para = new Paraboloid(filteredImage);
+        Paraboloid para = new Paraboloid(laplacianImages);
         for (List<Double> point: centers) {
             int centerX = (int) point.get(0).doubleValue();
             int centerY = (int) point.get(1).doubleValue();
-            int width = (int) (0.2 * kernalSigma);
-            int height = (int) (0.2 * kernalSigma);
-            if (width < 2) {
-                width = 2;
-            }
-            if (height < 2) {
-                height = 2;
-            }
+            int width = 3;
+            int height = 3;            
+//            int width = (int) (0.1 * kernalSigma);
+//            int height = (int) (0.1 * kernalSigma);
+//            if (width < 2) {
+//                width = 2;
+//            }
+//            if (height < 2) {
+//                height = 2;
+//            }
             Map<String,Double> fit = para.fit(centerX, centerY, width, height);
             List<Double> newCenter = new ArrayList<>();
             newCenter.add(fit.get("x0"));

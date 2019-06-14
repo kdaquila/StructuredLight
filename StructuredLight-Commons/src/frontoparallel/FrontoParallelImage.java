@@ -2,6 +2,7 @@ package frontoparallel;
 
 import core.ArrayUtils;
 import core.ImageUtils;
+import core.Print;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,6 +85,7 @@ public class FrontoParallelImage {
     public Map<String,BufferedImage> projectImage_batch(Map<String,BufferedImage> inputImgSet, Map<String,List<List<Double>>> RTMatrixSet, double xMin, double xMax, double yMin, double yMax, double incr) {
         Map<String,BufferedImage> output = new HashMap<>();
         for (String name: inputImgSet.keySet()) {
+            Print.println("Projecting image: " + name);
             BufferedImage inputImg = inputImgSet.get(name);
             List<List<Double>> RT = RTMatrixSet.get(name);
             BufferedImage frontoparallelImage = projectImage(inputImg, RT, xMin, xMax, yMin, yMax, incr);

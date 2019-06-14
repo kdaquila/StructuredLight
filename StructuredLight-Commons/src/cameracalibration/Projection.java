@@ -21,6 +21,16 @@ public class Projection {
         return output;
     }
     
+    public static Map<String,List<List<Double>>> projectPoints_batch (List<List<Double>> xyzPts, List<List<Double>> K_matrix, Map<String,List<List<Double>>> RTMatrixSet, List<Double> radialDistCoeffs) {
+        Map<String,List<List<Double>>> output = new HashMap<>();
+        for (String name: RTMatrixSet.keySet()) {
+            List<List<Double>> RT = RTMatrixSet.get(name);
+            List<List<Double>> uvProjPts = projectPoints(xyzPts, K_matrix, RT, radialDistCoeffs);
+            output.put(name, uvProjPts);
+        }
+        return output;
+    }
+    
     public static List<List<Double>> projectPoints (List<List<Double>> xyzPts, List<List<Double>> K_matrix, List<List<Double>> RT_matrix) {
         int nPts = xyzPts.size();
 

@@ -13,6 +13,7 @@ import core.ArrayUtils;
 import core.Contours;
 import core.Draw;
 import core.ImageUtils;
+import core.LaplacianFilter;
 import core.TXT;
 import core.XML;
 import java.awt.image.BufferedImage;
@@ -29,48 +30,26 @@ import java.util.HashMap;
 
 public class CameraCalibrationApp {
     
-//    Map<String,Object> config;
-//    
-//    public CameraCalibrationApp(String configPath) {
-//        
-//    }
+    Map<String,Object> config;
+    List<List<Double>> xyzPts;
+    Map<String, List<List<Double>>> uvPtSets;
+    List<List<Double>> intrinsicMatrix;
+    Map<String,List<List<Double>>> RTMatrixSet;
+    List<Double> distCoeffs;
     
-    public static void main(String[] args) {
-               
-        println("Running the Camera Calibration App:");
-
-        // Validate arguments
-        if (args.length == 0) {
-            throw new IllegalArgumentException("Needs exactly one argument which is the path to the XML configuration file.");
-        } 
-
-        // Parse the arguments
-        String configAbsPath = args[0];
-
-        // Load the configuration variables      
-        Map<String,Object> config = XML.loadMap(configAbsPath, "config");
+    
+    public CameraCalibrationApp(String configPath) {
+        config = XML.loadMap(configPath, "config");        
+    }
+    
+    public void findImagePoints(Map<String,BufferedImage> grayImages, boolean isSubPixel) {
         
         boolean isSaveDataMode = (boolean)config.get("isSaveDataMode");
         boolean isSaveImageMode = (boolean)config.get("isSaveImageMode");
         String saveDataFormatString = (String) config.get("saveDataFormatString");
         String saveDataDelimiter = (String) config.get("saveDataDelimiter");
         String saveDataEndOfLine = "\n";
-        Boolean saveDataAppend = false;
-        
-        // Load RGB images
-        println("Loading rgb images");
-        String imagesRGBDir = (String) config.get("imagesRGBDir");
-        Map<String, BufferedImage> rgbImages = ImageUtils.load_batch(imagesRGBDir);
-        
-        // Convert RGB to Gray images
-        println("Converting rgb to gray");
-        Map<String, BufferedImage> grayImages = ImageUtils.color2Gray_batch(rgbImages);        
-        
-        if (isSaveImageMode) {
-            // Save the gray images
-            String imagesGrayDir = (String) config.get("imagesGrayDir");
-            ImageUtils.save_batch(grayImages, imagesGrayDir);
-        }
+        Boolean saveDataAppend = false;                     
         
         // Convert Gray to Black/White images
         println("Converting gray to bw");
@@ -96,11 +75,40 @@ public class CameraCalibrationApp {
         int nRows = (Integer) config.get("nRows");
         int nCols = (Integer) config.get("nCols");
         int nPts = nRows*nCols;
-        Map<String, List<List<Double>>> uvPtSets = ImageRings.computeCenters_batch(contourSets, hierarchySets, nPts);
+        uvPtSets = ImageRings.computeCenters_batch(contourSets, hierarchySets, nPts);
+        
+        if (isSaveDataMode) {
+            // Save the Image Points
+            String imagePointsDir = (String) config.get("imagePointsDir");            
+            TXT.saveMatrix_batch(uvPtSets, Double.class, imagePointsDir, saveDataFormatString, saveDataDelimiter, saveDataEndOfLine, saveDataAppend);
+        }
 
         // Sort the image points
         println("Sorting the image points");
         uvPtSets = ImageRings.sortCentersRowMajor_batch(uvPtSets, nRows, nCols);
+        
+        if (isSubPixel) {                
+            // Refine ring centers to sub pixel accuracy
+            println("Refining image points to subPixel Accuracy... ");
+
+            // Compute the average ring outer radius
+            Map<String, Map<String,Double>> avgWidthSet = ImageRings.findAvgRingWidths_batch(contourSets, hierarchySets, nPts); 
+            
+            // Compute the laplacian kernal parameters
+            Map<String, Map<String,Double>> laplacianKernalParamSets = LaplacianFilter.computeKernalParameters_batch(avgWidthSet);
+            
+            // Compute the laplacian images
+            Map<String, BufferedImage> laplacianImages = LaplacianFilter.laplacianFilter_batch(grayImages, laplacianKernalParamSets); 
+            
+            if (isSaveImageMode) {
+                // Save the laplacian images
+                String imagesLaplacianDir = (String) config.get("imagesLaplacianDir");
+                ImageUtils.save_batch(laplacianImages, imagesLaplacianDir);
+            }
+
+            // Find the ring centers to subPixel accuracy  
+            uvPtSets = ImageRings.refineCenters_batch(uvPtSets, laplacianImages, laplacianKernalParamSets);
+        }  
         
         if (isSaveDataMode) {
             // Save the Image Points
@@ -121,12 +129,73 @@ public class CameraCalibrationApp {
             String imagesDrawPointsDir = (String) config.get("imagesDrawPointsDir");
             ImageUtils.save_batch(drawPointsImages, imagesDrawPointsDir);
         }
+    }
+    
+    public void findImagePointsFromFrontoParallel (Map<String,BufferedImage> frontoParallelImages) {
+        
+        // Update the uvPtSets
+        boolean isSubPixel = false;
+        findImagePoints(frontoParallelImages, isSubPixel);
+        
+        // Correct the uvPtSets
+        double frontParallelImageScale = (Double) config.get("frontParallelImageScale");
+        Map<String, List<List<Double>>> uvPtSet_New = new HashMap<>();
+        for (String name: uvPtSets.keySet()) {
+            
+            // Get the current uvPts
+            List<List<Double>> uvPts = uvPtSets.get(name);
+            
+            // Convert Fronto-Parallel uv coordinates to world xy coordinates
+            List<List<Double>> xy = ArrayUtils.scalarMultiply_Double2D(uvPts, frontParallelImageScale);
+            double dx = (Double) config.get("dx");
+            xy =  ArrayUtils.scalarAdd_Double2D(xy, -dx);
+            
+            // Add a Z component of zero
+            List<List<Double>> xyz = new ArrayList<>(xy);
+            for (List<Double> pt: xy) {
+                pt.add(0.0);
+            }           
+            
+            // Get RT Matrix for this view
+            List<List<Double>> RT = RTMatrixSet.get(name);
+            
+            // Project world xyz coorindates to image uv coorindates
+            List<List<Double>> uvPtsNew = Projection.projectPoints(xyz, intrinsicMatrix, RT, distCoeffs);
+            
+            uvPtSet_New.put(name, uvPtsNew);
+        }
+        
+        uvPtSets = uvPtSet_New;
+        
+        boolean isSaveDataMode = (boolean)config.get("isSaveDataMode");
+        String saveDataFormatString = (String) config.get("saveDataFormatString");
+        String saveDataDelimiter = (String) config.get("saveDataDelimiter");
+        String saveDataEndOfLine = "\n";
+        Boolean saveDataAppend = false;  
+        if (isSaveDataMode) {
+            // Save the Image Points
+            String imagePointsDir = (String) config.get("imagePointsDir");            
+            TXT.saveMatrix_batch(uvPtSets, Double.class, imagePointsDir, saveDataFormatString, saveDataDelimiter, saveDataEndOfLine, saveDataAppend);
+        }
+        
+        
+    }
+    
+    public void computeCalibration() {
+        
+        int nRows = (Integer) config.get("nRows");
+        int nCols = (Integer) config.get("nCols");
+        boolean isSaveDataMode = (boolean)config.get("isSaveDataMode");
+        String saveDataFormatString = (String) config.get("saveDataFormatString");
+        String saveDataDelimiter = (String) config.get("saveDataDelimiter");
+        String saveDataEndOfLine = "\n";
+        Boolean saveDataAppend = false;  
         
         // Compute the World Points
         println("Computing the world points");
         double dx = (Double) config.get("dx");
         double dy = (Double) config.get("dy");
-        List<List<Double>> xyzPts = WorldRings.computeCenters(nRows, nCols, dx, dy);
+        xyzPts = WorldRings.computeCenters(nRows, nCols, dx, dy);
         
         if (isSaveDataMode) {
             // Save the World Points
@@ -197,7 +266,7 @@ public class CameraCalibrationApp {
         
         // Compute the intrinsic matrix
         println("Computing the intrinsic camera matrix");
-        List<List<Double>> intrinsicMatrix = IntrinsicMatrix.compute(symmetricMatrix);
+        intrinsicMatrix = IntrinsicMatrix.compute(symmetricMatrix);
         
         if (isSaveDataMode) {
             // Save the intrinsic matrix
@@ -208,7 +277,7 @@ public class CameraCalibrationApp {
         
         // Compute the extrinsic matrices
         println("Computing the extrinsic camera matrix");
-        Map<String,List<List<Double>>> RTMatrixSet = ExtrinsicMatrix.compute_batch(homographySets, intrinsicMatrix);
+        RTMatrixSet = ExtrinsicMatrix.compute_batch(homographySets, intrinsicMatrix);
         
         if (isSaveDataMode) {
             // Save the extrinsic matrices
@@ -229,7 +298,7 @@ public class CameraCalibrationApp {
         
         // Compute the radial distortion coefficients
         println("Computing radial distortions");
-        List<Double> distCoeffs = RadialDistortion.compute(intrinsicMatrix, uvPts_allViews, uvPtsProj_allViews);
+        distCoeffs = RadialDistortion.compute(intrinsicMatrix, uvPts_allViews, uvPtsProj_allViews);
         
         // Save the radial distortion coefficients
         if (isSaveDataMode) {
@@ -249,45 +318,97 @@ public class CameraCalibrationApp {
         // Compute the refined intrinsic/extrinsic/distortions
         println("Compute the refined intrinsic/extrinsic/distortions");
         NonLinearOptimization optimization = new NonLinearOptimization(xyzPts, uvPts_allViews, intrinsicMatrix, distCoeffs, RT_allViews);
-        List<List<Double>> intrinsicMatrix_refined = optimization.getK_refined();
-        List<Double> distCoeffs_refined = optimization.getRadialCoeffs_refined();
-        List<List<List<Double>>> RT_allViews_refined = optimization.getRT_allViews_refined();
+        intrinsicMatrix = optimization.getK_refined();
+        distCoeffs = optimization.getRadialCoeffs_refined();
+        RT_allViews = optimization.getRT_allViews_refined();
         
         // Store the RT matrices into a map
-        Map<String,List<List<Double>>> RTMatrixSet_refined = new HashMap<>();
-        for(int i = 0; i < RT_allViews_refined.size(); i++) {
-            RTMatrixSet_refined.put(RTMatrixSetNames.get(i), RT_allViews_refined.get(i));
+        for(int i = 0; i < RT_allViews.size(); i++) {
+            RTMatrixSet.put(RTMatrixSetNames.get(i), RT_allViews.get(i));
         }
         
         if (isSaveDataMode) {            
             // Save the refined intrinsic matrix
             String intrinsicMatrixRefinedDir = (String) config.get("intrinsicMatrixRefinedDir");
             String intrinsicMatrixFilename = (String) config.get("intrinsicMatrixFilename");
-            TXT.saveMatrix(intrinsicMatrix_refined, Double.class, intrinsicMatrixRefinedDir, intrinsicMatrixFilename, saveDataFormatString);            
+            TXT.saveMatrix(intrinsicMatrix, Double.class, intrinsicMatrixRefinedDir, intrinsicMatrixFilename, saveDataFormatString);            
         }        
         
         if (isSaveDataMode) {
             // Save the refined distortions
             String distortionsRefinedDir = (String) config.get("distortionsRefinedDir");
             String distortionsFilename = (String) config.get("distortionsFilename");
-            TXT.saveVector(distCoeffs_refined, Double.class, distortionsRefinedDir, distortionsFilename, saveDataAppend, saveDataFormatString, saveDataDelimiter);
+            TXT.saveVector(distCoeffs, Double.class, distortionsRefinedDir, distortionsFilename, saveDataAppend, saveDataFormatString, saveDataDelimiter);
         }
         
         if (isSaveDataMode) {
             // Save the refined extrinsic matrices
             String extrinsicMatrixRefinedDir = (String) config.get("extrinsicMatrixRefinedDir");
-            TXT.saveMatrix_batch(RTMatrixSet_refined, Double.class, extrinsicMatrixRefinedDir, saveDataFormatString, saveDataDelimiter, saveDataEndOfLine, saveDataAppend);
-        }        
+            TXT.saveMatrix_batch(RTMatrixSet, Double.class, extrinsicMatrixRefinedDir, saveDataFormatString, saveDataDelimiter, saveDataEndOfLine, saveDataAppend);
+        }    
+    }    
+    
+    public void computeCalibrationIterative(Map<String,BufferedImage> grayImages) {
         
-        // Compute fronto-parallel images
-        println("Compute the fronto-parallel images");
-        FrontoParallelImage frontoParallelImager = new FrontoParallelImage(intrinsicMatrix_refined, distCoeffs_refined);
+        Map<String,Double> errorSet;
+        
+        int nIter = (Integer) config.get("nIter");
+        
+        for (int i = 0; i < nIter; i++) {
+            
+            // Compute fronto-parallel images
+            println("Computing the fronto-parallel images, iteration: " + i);
+            Map<String, BufferedImage> frontoParallelImages = computeFrontoParallelImages(grayImages);
+            
+            // Find Image Points
+            findImagePointsFromFrontoParallel(frontoParallelImages);
+            
+            // Compute Intrinsic/Extrinsic/Distortions
+            println("Computing the Intrinsic/Extrinsic/Distortions");
+            computeCalibration();
+            
+            // Compute reprojection errors
+            println("Computing reprojection errors");
+            errorSet = computeErrors();
+
+            // Display repojection errors
+            for (String name: errorSet.keySet()) {
+                println("Error " + name + ": " + String.format("%.4f",errorSet.get(name)));
+            }
+        }
+    }
+    
+    public Map<String, BufferedImage> loadRGBImages() {
+        String imagesRGBDir = (String) config.get("imagesRGBDir");
+        return ImageUtils.load_batch(imagesRGBDir);
+    }
+    
+    public Map<String, BufferedImage> convertImages_rgbToGray(Map<String, BufferedImage> rgbImages) {
+        Map<String, BufferedImage> output = ImageUtils.color2Gray_batch(rgbImages);
+        
+        boolean isSaveImageMode = (Boolean) config.get("isSaveImageMode");
+        
+        if (isSaveImageMode) {
+            String imagesGrayDir = (String) config.get("imagesGrayDir");
+            ImageUtils.save_batch(output, imagesGrayDir);
+        }   
+        
+        return output;
+    }
+    
+    public Map<String, BufferedImage> computeFrontoParallelImages(Map<String, BufferedImage> grayImages) {
+        
+        FrontoParallelImage frontoParallelImager = new FrontoParallelImage(intrinsicMatrix, distCoeffs);
+        double dx = (Double) config.get("dx");
+        double dy = (Double) config.get("dy");
+        int nCols = (Integer) config.get("nCols");
+        int nRows = (Integer) config.get("nRows");        
         double xMin = -dx;
         double xMax = nCols*dx;
         double yMin = -dy;
         double yMax = nRows*dy;
         double frontParallelImageScale = (Double) config.get("frontParallelImageScale");
-        Map<String,BufferedImage> frontoParallelImageSet = frontoParallelImager.projectImage_batch(grayImages, RTMatrixSet_refined, xMin, xMax, yMin, yMax, frontParallelImageScale);
+        Map<String,BufferedImage> frontoParallelImageSet = frontoParallelImager.projectImage_batch(grayImages, RTMatrixSet, xMin, xMax, yMin, yMax, frontParallelImageScale);
         
         // Normalize the fronto-parallel image range
         println("Normalizing the fronto-parallel images");
@@ -295,23 +416,61 @@ public class CameraCalibrationApp {
         double normalizeMax = 255.0;
         Map<String,BufferedImage> frontoParallelImageSet_norm = ImageUtils.normalize_batch(frontoParallelImageSet, normalizeMin, normalizeMax);
         
+        boolean isSaveImageMode = (boolean)config.get("isSaveImageMode");
         if (isSaveImageMode) {
             // Save the fronto-parallel images
             String imagesGrayFrontoParallelDir = (String) config.get("imagesGrayFrontoParallelDir");
             ImageUtils.save_batch(frontoParallelImageSet_norm, imagesGrayFrontoParallelDir);
         }
         
+        return frontoParallelImageSet_norm;
+    }
+    
+    public Map<String,Double> computeErrors() {
+        return ProjectionError.computeReprojectError_batch(xyzPts, intrinsicMatrix, distCoeffs, uvPtSets, RTMatrixSet);
+    }
+    
+
+    
+    public static void main(String[] args) {
+               
+        println("Running the Camera Calibration App:");
+
+        // Validate arguments
+        if (args.length == 0) {
+            throw new IllegalArgumentException("Needs exactly one argument which is the path to the XML configuration file.");
+        } 
+
+        // Parse the arguments
+        String configAbsPath = args[0];
+        
+        CameraCalibrationApp app = new CameraCalibrationApp(configAbsPath);
+        
+        // Load RGB images
+        Map<String, BufferedImage> rgbImages = app.loadRGBImages();
+        
+        // Convert RGB to Gray images
+        Map<String, BufferedImage> grayImages = app.convertImages_rgbToGray(rgbImages);
+        
+        // Find Image Points
+        boolean isSubPixel = false;
+        app.findImagePoints(grayImages, isSubPixel);
+        
+        // Compute Intrinsic/Extrinsic/Distortions
+        println("Computing the Intrinsic/Extrinsic/Distortions");
+        app.computeCalibration();
+        
         // Compute reprojection errors
         println("Computing reprojection errors");
-        Map<String,Double> errorSet = ProjectionError.computeReprojectError_batch(xyzPts, intrinsicMatrix_refined, distCoeffs_refined, uvPtSets, RTMatrixSet_refined);
+        Map<String,Double> errorSet = app.computeErrors();
         
         // Display repojection errors
         for (String name: errorSet.keySet()) {
             println("Error " + name + ": " + String.format("%.4f",errorSet.get(name)));
         }
         
+        // Compute Intrinsic/Extrinsic/Distortions iteratively
+        app.computeCalibrationIterative(grayImages);
     }
-    
-    
     
 }

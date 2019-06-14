@@ -1,7 +1,7 @@
 package apps;
 
 import core.ArrayUtils;
-import core.FilterKernal;
+import core.LaplacianFilter;
 import core.ImageUtils;
 import core.TXT;
 import core.XML;
@@ -41,7 +41,7 @@ public class LaplacianFilterApp {
         
         System.out.print("Creating the kernal ... ");
         
-        float[] kernalArray = FilterKernal.Laplacian(kernalSigma, kernalSize);
+        float[] kernalArray = LaplacianFilter.createLaplacianKernal(kernalSigma, kernalSize);
         
         System.out.println("Done");
         

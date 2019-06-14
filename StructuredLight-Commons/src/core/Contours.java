@@ -1,5 +1,6 @@
 package core;
 
+import curvefitting.Ellipse;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
@@ -172,6 +173,30 @@ public class Contours {
             }
         }
         return -1; // could not find a neighbor with the correct value
+    }
+    
+    public static List<List<Double>> computeCenters_EllipseFit(List<List<List<Integer>>> contours, List<Integer> ids) {
+        
+        List<List<Double>> centers = new ArrayList<>();
+        for (Integer id: ids) {
+            List<List<Integer>> contour = contours.get(id);
+            List<Double> center = Contours.computeCenter_EllipseFit(contour);
+            centers.add(center);
+        }
+        
+        return centers;
+    }    
+    
+    
+    public static List<Double> computeCenter_EllipseFit(List<List<Integer>> contour)
+    {
+        Map<String,Double> results = Ellipse.fit(contour);
+        double x0 = results.get("x0");
+        double y0 = results.get("y0");
+        List<Double> output = new ArrayList<>(2);
+        output.add(x0);
+        output.add(y0);
+        return output;
     }
     
     public static List<Double> computeCenter(List<List<Integer>> contour)

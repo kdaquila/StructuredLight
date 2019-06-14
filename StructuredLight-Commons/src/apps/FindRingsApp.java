@@ -3,6 +3,7 @@ package apps;
 import calibrationpattern.rings.ImageRings;
 import core.Contours;
 import core.ImageUtils;
+import core.LaplacianFilter;
 import core.TXT;
 import core.XML;
 import java.awt.image.BufferedImage;
@@ -127,11 +128,15 @@ public class FindRingsApp {
             
                 // Compute the average ring outer radius
                 Map<String,Double> averageWidths = ImageRings.findAvgRingWidths(edges, hierarchy, nRings);
-                double ringOuterWidth = averageWidths.get("Outer");
-                double ringInnerWidth = averageWidths.get("Inner");    
+                
+                // Compute the kernal parameters
+                Map<String,Double> kernalParams = LaplacianFilter.computeKernalParameters(averageWidths);
+                
+                // Do the laplacian filtering
+                BufferedImage laplacianImg = LaplacianFilter.laplacianFilter(grayImage, kernalParams);
                 
                 // Find the ring centers to subPixel accuracy  
-                ringCenters = ImageRings.refineCenters(ringCenters, grayImage,ringOuterWidth, ringInnerWidth);
+                ringCenters = ImageRings.refineCenters(ringCenters, laplacianImg, kernalParams);
 
                 System.out.println("Done");                       
             }  
