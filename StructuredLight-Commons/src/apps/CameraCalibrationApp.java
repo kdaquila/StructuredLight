@@ -24,6 +24,7 @@ import frontoparallel.FrontoParallelImage;
 import homography.LinearHomography;
 import homography.Normalization;
 import homography.nonlinear.NonLinearHomography;
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -67,8 +68,11 @@ public class CameraCalibrationApp {
         double contoursMinArea = (Double) config.get("contoursMinArea");
         println("Finding contours");
         Map<String, List<List<List<Integer>>>> contourSets = Contours.findContours_batch(bwImages, contoursMinArea);
+        println("Finding contour areas");
+        Map<String, List<Double>> contourAreaSets = Contours.computeArea_batch(contourSets);
+        Map<String, List<Path2D>> contourPaths = Contours.contourToPath_batch(contourSets);
         println("Finding contour hierarchies");
-        Map<String, Map<Integer, List<Integer>>> hierarchySets = Contours.findHierarchy_batch(contourSets);
+        Map<String, Map<Integer, List<Integer>>> hierarchySets = Contours.findHierarchy_batch(contourSets, contourAreaSets, contourPaths);
         
         // Find Image Points
         println("Finding image points");
@@ -453,6 +457,8 @@ public class CameraCalibrationApp {
         // Convert RGB to Gray images
         println("Converting RGB to Gray");
         Map<String, BufferedImage> grayImages = app.convertImages_rgbToGray(rgbImages);
+        
+        
         
         // Find Image Points
         boolean isSubPixel = false;

@@ -2,10 +2,13 @@ package apps;
 
 import calibrationpattern.rings.ImageRings;
 import core.Contours;
+import static core.Contours.computeArea;
+import static core.Contours.contourToPath;
 import core.ImageUtils;
 import core.LaplacianFilter;
 import core.TXT;
 import core.XML;
+import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -92,11 +95,24 @@ public class FindRingsApp {
             List<List<List<Integer>>> edges = contours.findContours(minArea);  
 
             System.out.println("Done");
+            
+            // Compute the areas
+            List<Double> areas = new ArrayList<>();
+            for (List<List<Integer>> contour: edges) {
+                Double area = computeArea(contour);
+                areas.add(area);
+            }
+            
+            // Compute the Paths
+            List<Path2D> paths = new ArrayList<>();
+            for (List<List<Integer>> contour: edges) {
+                paths.add(contourToPath(contour));
+            }
 
             // Organize the edges into a hierarchy
             System.out.print("Indexing the contours ... ");
 
-            Map<Integer, List<Integer>> hierarchy = Contours.findHierarchy(edges); 
+            Map<Integer, List<Integer>> hierarchy = Contours.findHierarchy(edges, areas, paths); 
 
             System.out.println("Done");            
                       

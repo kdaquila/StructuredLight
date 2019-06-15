@@ -287,6 +287,20 @@ public class Contours {
         return sum/contours.size();
     }
     
+    public static  Map<String, List<Double>> computeArea_batch(Map<String, List<List<List<Integer>>>> contourSets) {
+        Map<String, List<Double>> areas = new HashMap<>();
+        for (String name: contourSets.keySet()) {
+            List<List<List<Integer>>> contours = contourSets.get(name);
+            List<Double> areaList = new ArrayList<>();
+            for (List<List<Integer>> contour: contours) {
+                Double area = computeArea(contour);
+                areaList.add(area);
+            }
+            areas.put(name, areaList);
+        }
+        return areas;
+    }
+    
     public static Double computeArea(List<List<Integer>> contour) {
         
         double area = 0.0;
@@ -359,17 +373,23 @@ public class Contours {
         return hull;
     }     
     
-    public static Map<String,Map<Integer,List<Integer>>> findHierarchy_batch(Map<String,List<List<List<Integer>>>> contourSets) {
+    public static Map<String,Map<Integer,List<Integer>>> findHierarchy_batch(Map<String,List<List<List<Integer>>>> contourSets,
+                                                                             Map<String, List<Double>> contourAreaSets,
+                                                                             Map<String, List<Path2D>> pathSets) {
         Map<String,Map<Integer,List<Integer>>> output = new HashMap<>();
         for (String name: contourSets.keySet()) {
             List<List<List<Integer>>> contours = contourSets.get(name);
-            Map<Integer,List<Integer>> hierarchy = Contours.findHierarchy(contours);
+            List<Double> contourAreas = contourAreaSets.get(name);
+            List<Path2D> contourPaths = pathSets.get(name);
+            Map<Integer,List<Integer>> hierarchy = Contours.findHierarchy(contours, contourAreas, contourPaths);
             output.put(name, hierarchy);
         }
         return output;
     }
     
-    public static Map<Integer,List<Integer>> findHierarchy(List<List<List<Integer>>> contours) {
+    public static Map<Integer,List<Integer>> findHierarchy(List<List<List<Integer>>> contours, 
+                                                           List<Double> contourAreas,
+                                                           List<Path2D> paths) {
         
         // Initialize each contour as a parent
         Map<Integer, List<Integer>> hierarchy = new HashMap<>();
@@ -384,7 +404,7 @@ public class Contours {
             List<List<Integer>> contour = contours.get(contourIndex);                                  
             
             // Find the contour's area
-            double contourArea = Contours.computeArea(contour);
+            double contourArea = contourAreas.get(contourIndex);
             
             
             // Check each candidate parent contour
@@ -407,16 +427,10 @@ public class Contours {
                 }                
                 
                 // Find the parent contours's area
-                double parentContourArea = Contours.computeArea(candidateParentContour);
+                double parentContourArea = contourAreas.get(candidateParentIndex);
                                 
                 // Store the candidate parent contour as a path
-                Path2D candidateParentContourPath = new Path2D.Double();
-                List<Integer> firstPt = candidateParentContour.get(0);
-                candidateParentContourPath.moveTo(firstPt.get(0), firstPt.get(1));
-                for (int pt_index = 1; pt_index < candidateParentContour.size(); pt_index++) {
-                    List<Integer> point = candidateParentContour.get(pt_index);
-                    candidateParentContourPath.lineTo(point.get(0), point.get(1));
-                }
+                Path2D candidateParentContourPath = paths.get(candidateParentIndex);
                 
                 // check if candidate parent contour contains the contour
                 if (parentContourArea > contourArea &&
@@ -454,6 +468,31 @@ public class Contours {
             output.put(imgName, contourSet);
         }
         return output;
+    }
+    
+    public static Map<String, List<Path2D>> contourToPath_batch (Map<String, List<List<List<Integer>>>> contourSets) {
+        Map<String, List<Path2D>> pathSet = new HashMap<>();
+        for (String name: contourSets.keySet()) {
+            List<List<List<Integer>>> contours = contourSets.get(name);
+            List<Path2D> paths = new ArrayList<>();
+            for (List<List<Integer>> contour: contours) {
+                paths.add(contourToPath(contour));
+            }
+            pathSet.put(name, paths);
+        }        
+        return pathSet;
+    }
+    
+    public static Path2D contourToPath (List<List<Integer>> contour) {
+        // Store the candidate parent contour as a path
+        Path2D path = new Path2D.Double();
+        List<Integer> firstPt = contour.get(0);
+        path.moveTo(firstPt.get(0), firstPt.get(1));
+        for (int pt_index = 1; pt_index < contour.size(); pt_index++) {
+            List<Integer> point = contour.get(pt_index);
+            path.lineTo(point.get(0), point.get(1));
+        }
+        return path;
     }
     
     public class LocalPixels

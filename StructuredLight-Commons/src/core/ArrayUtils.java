@@ -213,12 +213,14 @@ public class ArrayUtils
     
     public static double[][] ListToArray_Double2D(List<List<Double>> input)
     {
-        double[][] output = new double[input.size()][input.get(0).size()];
-        for(int i = 0; i < input.size(); i++)
+        int nRows = input.size();
+        int nCols = input.get(0).size();
+        double[][] output = new double[nRows][nCols];
+        for(int row_num = 0; row_num < nRows; row_num++)
         {
-            for(int j = 0; j < input.get(0).size(); j++)
-            {
-                output[i][j] = input.get(i).get(j);
+            for(int col_num = 0; col_num < nCols; col_num++)
+            {                
+                output[row_num][col_num] = input.get(row_num).get(col_num);
             }            
         }
         return output;
