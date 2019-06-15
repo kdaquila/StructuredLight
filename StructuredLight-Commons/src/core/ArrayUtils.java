@@ -288,18 +288,18 @@ public class ArrayUtils
     } 
     
     
-    public static float[] normalizeFloatArray(float[] input, float newMax, float newMin) {
+    public static double[] normalizeDoubleArray(double[] input, double newMax, double newMin) {
         
         int nPts = input.length;
         
         // store in a list
-        List<Float> inputList = new ArrayList<>();
-        for (float item: input) {
+        List<Double> inputList = new ArrayList<>();
+        for (double item: input) {
             inputList.add(item);
         }
 
         // find the min
-        Float minVal = Collections.min(inputList);
+        Double minVal = Collections.min(inputList);
         
         // subtract all elements by the min
         for (int i=0; i<nPts; i++) {
@@ -307,7 +307,7 @@ public class ArrayUtils
         }        
         
         // find the max
-        Float maxVal = Collections.max(inputList);
+        Double maxVal = Collections.max(inputList);
         
         // rescale
         for (int i=0; i<nPts; i++) {
@@ -315,7 +315,7 @@ public class ArrayUtils
         }
         
         // store back in array
-        float[] outputArray = new float[nPts];
+        double[] outputArray = new double[nPts];
         for (int i=0; i<nPts; i++) {
             outputArray[i] = inputList.get(i);
         } 

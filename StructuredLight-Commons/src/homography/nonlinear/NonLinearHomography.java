@@ -1,7 +1,6 @@
 package homography.nonlinear;
 
 import core.ArrayUtils;
-import homography.LinearHomography;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

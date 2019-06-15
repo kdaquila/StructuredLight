@@ -1,6 +1,6 @@
 <config>
 	<isSaveDataMode type="boolean">true</isSaveDataMode>
-	<isSaveImageMode type="boolean">false</isSaveImageMode>
+	<isSaveImageMode type="boolean">true</isSaveImageMode>
 	<drawCirclesRadius type="int">3</drawCirclesRadius>
 	<drawCirclesLineWidth type="double">1.0</drawCirclesLineWidth>
 	<drawCirclesColor type="hex">FF0000</drawCirclesColor>
@@ -12,7 +12,7 @@
 	<nCols type="int">17</nCols>
 	<dx type="double">25.0</dx>
 	<dy type="double">25.0</dy>
-	<nIter type="int">1</nIter>
+	<nIter type="int">5</nIter>
 	<frontParallelImageScale type="double">0.32</frontParallelImageScale>
 	<saveDataFormatString type="string">%+07e</saveDataFormatString>
 	<saveDataDelimiter type="string">,</saveDataDelimiter>	

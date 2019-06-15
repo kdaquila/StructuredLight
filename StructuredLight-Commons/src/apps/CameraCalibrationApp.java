@@ -50,7 +50,7 @@ public class CameraCalibrationApp {
         String saveDataFormatString = (String) config.get("saveDataFormatString");
         String saveDataDelimiter = (String) config.get("saveDataDelimiter");
         String saveDataEndOfLine = "\n";
-        Boolean saveDataAppend = false;                     
+        Boolean saveDataAppend = false;   
         
         // Convert Gray to Black/White images
         println("Converting gray to bw");
@@ -104,14 +104,19 @@ public class CameraCalibrationApp {
             // Compute the laplacian images
             Map<String, BufferedImage> laplacianImages = LaplacianFilter.laplacianFilter_batch(grayImages, laplacianKernalParamSets); 
             
+            int blurSize = (int)(((BufferedImage)grayImages.values().toArray()[0]).getWidth()*15.0/1920.0);
+            Map<String, BufferedImage> gaussianBlurImages = ImageUtils.meanFilter_batch(grayImages, blurSize);
+            
+            gaussianBlurImages = ImageUtils.normalize_batch(gaussianBlurImages, 0.0, 255.0);
+            
             if (isSaveImageMode) {
                 // Save the laplacian images
                 String imagesLaplacianDir = (String) config.get("imagesLaplacianDir");
-                ImageUtils.save_batch(laplacianImages, imagesLaplacianDir);
+                ImageUtils.save_batch(gaussianBlurImages, imagesLaplacianDir);
             }
 
             // Find the ring centers to subPixel accuracy  
-            uvPtSets = ImageRings.refineCenters_batch(uvPtSets, laplacianImages, laplacianKernalParamSets);
+            uvPtSets = ImageRings.refineCenters_batch(uvPtSets, gaussianBlurImages, laplacianKernalParamSets);
         }  
         
         if (isSaveDataMode) {
@@ -456,9 +461,7 @@ public class CameraCalibrationApp {
         
         // Convert RGB to Gray images
         println("Converting RGB to Gray");
-        Map<String, BufferedImage> grayImages = app.convertImages_rgbToGray(rgbImages);
-        
-        
+        Map<String, BufferedImage> grayImages = app.convertImages_rgbToGray(rgbImages);       
         
         // Find Image Points
         boolean isSubPixel = false;

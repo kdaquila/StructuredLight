@@ -4,6 +4,7 @@ import core.ArrayUtils;
 import core.Contours;
 import core.Homography;
 import core.Quad;
+import curvefitting.Gaussian2D;
 import curvefitting.Paraboloid;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -105,14 +106,14 @@ public class ImageRings {
                      
         double kernalSigma = kernalParams.get("sigma");
         
-        // Fit Paraboloid and Compute Center at each exisiting point
+        // Fit Gaussian2D and Compute Center at each exisiting point
         List<List<Double>> newCenters = new ArrayList<>();
-        Paraboloid para = new Paraboloid(laplacianImages);
+        Gaussian2D gaussian = new Gaussian2D(laplacianImages);
         for (List<Double> point: centers) {
             int centerX = (int) point.get(0).doubleValue();
             int centerY = (int) point.get(1).doubleValue();
-            int width = 3;
-            int height = 3;            
+            int width = 15;
+            int height = 15;            
 //            int width = (int) (0.1 * kernalSigma);
 //            int height = (int) (0.1 * kernalSigma);
 //            if (width < 2) {
@@ -121,7 +122,7 @@ public class ImageRings {
 //            if (height < 2) {
 //                height = 2;
 //            }
-            Map<String,Double> fit = para.fit(centerX, centerY, width, height);
+            Map<String,Double> fit = gaussian.fit(centerX, centerY, width, height);
             List<Double> newCenter = new ArrayList<>();
             newCenter.add(fit.get("x0"));
             newCenter.add(fit.get("y0"));

@@ -407,6 +407,30 @@ public class ImageUtils {
         return grayImages;
     }
     
+    public static Map<String,BufferedImage> toUSHORT_batch (Map<String,BufferedImage> inputImageSets) {
+        Map<String,BufferedImage> output = new HashMap<>();
+        for (String name: inputImageSets.keySet()) {
+            BufferedImage inputImg = inputImageSets.get(name);
+            BufferedImage outputImg = toUSHORT(inputImg);
+            output.put(name, outputImg);
+        }        
+        return output;        
+    }
+    
+    public static BufferedImage toUSHORT (BufferedImage inputImage)
+    {
+        // convert TYPE_INT_RGB to TYPE_BYTE_GRAY 
+        int width = inputImage.getWidth();
+        int height = inputImage.getHeight();  
+        int newType = BufferedImage.TYPE_USHORT_GRAY;
+        BufferedImage outputImage = new BufferedImage(width, height, newType);
+        Graphics2D grayGraphics = outputImage.createGraphics();
+        grayGraphics.drawImage(inputImage, 0, 0, null);
+        grayGraphics.dispose();   
+        
+        return outputImage;
+    }
+    
     public static BufferedImage color2Gray (BufferedImage inputImage)
     {
         // draw input to TYPE_INT_RGB
@@ -471,6 +495,17 @@ public class ImageUtils {
         g.drawImage(inputImage, 0, 0, null);
         g.dispose();
         return outputImage;
+    }
+    
+    public static Map<String,BufferedImage> meanFilter_batch(Map<String, BufferedImage> grayImages, int radius) {
+        Map<String,BufferedImage> output = new HashMap<>();
+        for (String name: grayImages.keySet()) {
+            BufferedImage grayImg = grayImages.get(name);
+            BufferedImage blurImg = meanFilter(grayImg, radius);
+            output.put(name, blurImg);
+        }
+        
+        return output;
     }
     
     public static BufferedImage meanFilter(BufferedImage inputGrayImage, int radius)
