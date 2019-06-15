@@ -16,13 +16,19 @@ public class Projection {
         int nPts = xyPts.size();
         
         // Convert to homogenous coordinates
-        List<List<Double>> xyPts_homog = new ArrayList<>(nPts);
-        for (List<Double> pt: xyPts) {
-            xyPts_homog.add(CoordinateSystems.toHomog(pt));
-        }                
+        double[][] xyPts_homog = new double[nPts][2];
+        for (int i = 0; i < nPts; i++) {
+            List<Double> pt = xyPts.get(i);
+            xyPts_homog[i] = CoordinateSystems.toHomog(ArrayUtils.ListToArray_Double(pt));
+        }        
+        
+//        List<List<Double>> xyPts_homog = new ArrayList<>(nPts);
+//        for (List<Double> pt: xyPts) {
+//            xyPts_homog.add(CoordinateSystems.toHomog(pt));
+//        }                
 
         // Set XYZ points as Matrix
-        RealMatrix XY_homog = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(xyPts_homog));
+        RealMatrix XY_homog = MatrixUtils.createRealMatrix(xyPts_homog);
         RealMatrix XY_homog_tr = XY_homog.transpose();     
         
         // Store the matrices
@@ -37,36 +43,38 @@ public class Projection {
         
         // Project to camera coordinates
         RealMatrix XY_unDistored_homog = RT.multiply(XY_homog_tr).transpose();
+        double[][] XY_unDistored_homog_array = XY_unDistored_homog.getData();
         
-        // Convert to cartesian coordinates
-        List<List<Double>> XY_unDistorted_cart = new ArrayList<>();
-        for (double[] pt: XY_unDistored_homog.getData()) {
-            XY_unDistorted_cart.add(CoordinateSystems.toCartesian(ArrayUtils.ArrayToList_Double(pt)));
-        }
+        // Convert to cartesian coordinates        
+        double[][] XY_unDistorted_cart = new double[nPts][2];        
+        for (int i = 0; i < nPts; i++) {
+            double[] pt = XY_unDistored_homog_array[i];
+            XY_unDistorted_cart[i] = CoordinateSystems.toCartesian(pt);
+        }               
         
-        // Apply distortions
-        List<List<Double>> XY_distored_cart = new ArrayList<>();
-        for (List<Double> pt: XY_unDistorted_cart) {
-            double x = pt.get(0);
-            double y = pt.get(1);
+        // Apply distortions        
+        double k0 = radialDistCoeffs.get(0);
+        double k1 = radialDistCoeffs.get(1);
+        double[][] XY_distorted_cart = new double[nPts][2];
+        for (int i = 0; i < nPts; i++) {
+            double x = XY_unDistorted_cart[i][0];
+            double y = XY_unDistorted_cart[i][1];
             double rSqr = Math.pow(x, 2) + Math.pow(y, 2);
-            double k0 = radialDistCoeffs.get(0);
-            double k1 = radialDistCoeffs.get(1);
-            double D = k0*rSqr + k1*Math.pow(rSqr, 2);            
-            double distortedX = x*(1 + D);
-            double distortedY = y*(1 + D);
-            List<Double> distortedPt = new ArrayList<>();
-            distortedPt.add(distortedX);
-            distortedPt.add(distortedY);
-            XY_distored_cart.add(distortedPt);
-        }
+            double D = k0*rSqr + k1*Math.pow(rSqr, 2);
+            double[] distortedPt = new double[2];
+            distortedPt[0] = x*(1 + D);
+            distortedPt[1] = y*(1 + D);
+            XY_distorted_cart[i] = distortedPt;
+        }       
         
         // Convert to homogenous coordinates
-        List<List<Double>> XY_distored_homog = new ArrayList<>(nPts);
-        for (List<Double> pt: XY_distored_cart) {
-            XY_distored_homog.add(CoordinateSystems.toHomog(pt));
-        } 
-        RealMatrix XY_distored_homog_trans = MatrixUtils.createRealMatrix(ArrayUtils.ListToArray_Double2D(XY_distored_homog)).transpose();
+        double[][] XY_distored_homog = new double[nPts][2];
+        for (int i = 0; i < nPts; i++) {
+            double[] pt = XY_distorted_cart[i];
+            XY_distored_homog[i] = CoordinateSystems.toHomog(pt);
+        }
+        
+        RealMatrix XY_distored_homog_trans = MatrixUtils.createRealMatrix(XY_distored_homog).transpose();
 
         // Do the projection        
         RealMatrix UV_homog_project_trans = K.multiply(XY_distored_homog_trans);
