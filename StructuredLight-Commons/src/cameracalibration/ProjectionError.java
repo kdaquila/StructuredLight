@@ -37,9 +37,10 @@ public class ProjectionError {
         for (int i = 0; i < nPts; i++) {
             double xDiff = uvPts_proj.get(i).get(0) - uvPts.get(i).get(0);
             double yDiff = uvPts_proj.get(i).get(1) - uvPts.get(i).get(1);
-            sumSqrDiff += Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+            sumSqrDiff += Math.pow(xDiff, 2); 
+            sumSqrDiff += Math.pow(yDiff, 2);
         }
-        double error = sumSqrDiff/nPts;
+        double error = Math.sqrt(sumSqrDiff/nPts);
 
         return error;
     }

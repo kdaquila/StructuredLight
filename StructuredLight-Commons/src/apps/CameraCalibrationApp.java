@@ -138,7 +138,7 @@ public class CameraCalibrationApp {
     public void findImagePointsFromFrontoParallel (Map<String,BufferedImage> frontoParallelImages) {
         
         // Update the uvPtSets
-        boolean isSubPixel = true;
+        boolean isSubPixel = false;
         findImagePoints(frontoParallelImages, isSubPixel);
         
         // Correct the uvPtSets
@@ -407,10 +407,10 @@ public class CameraCalibrationApp {
         double dy = (Double) config.get("dy");
         int nCols = (Integer) config.get("nCols");
         int nRows = (Integer) config.get("nRows");        
-        double xMin = -2*dx;
-        double xMax = nCols*dx + dx;
-        double yMin = -2*dy;
-        double yMax = nRows*dy + dy;
+        double xMin = -dx;
+        double xMax = nCols*dx ;
+        double yMin = -dy;
+        double yMax = nRows*dy ;
         double frontParallelImageScale = (Double) config.get("frontParallelImageScale");
         Map<String,BufferedImage> frontoParallelImageSet = frontoParallelImager.projectImage_batch(grayImages, RTMatrixSet, xMin, xMax, yMin, yMax, frontParallelImageScale);
         
@@ -459,7 +459,7 @@ public class CameraCalibrationApp {
         Map<String, BufferedImage> grayImages = app.convertImages_rgbToGray(rgbImages);       
         
         // Find Image Points
-        boolean isSubPixel = true;
+        boolean isSubPixel = false;
         app.findImagePoints(grayImages, isSubPixel);
         
         // Compute Intrinsic/Extrinsic/Distortions

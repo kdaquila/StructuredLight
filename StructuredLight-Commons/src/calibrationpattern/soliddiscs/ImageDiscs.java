@@ -5,6 +5,7 @@ import core.Contours;
 import core.Homography;
 import core.Quad;
 import curvefitting.Gaussian2D;
+import curvefitting.Paraboloid;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,13 +97,13 @@ public class ImageDiscs {
                             
         // Fit Gaussian2D and Compute Center at each exisiting point
         List<List<Double>> newCenters = new ArrayList<>();
-        Gaussian2D gaussian = new Gaussian2D(filteredImage);
+        Paraboloid paraboloid = new Paraboloid(filteredImage);
         for (List<Double> point: centers) {
             int centerX = (int) point.get(0).doubleValue();
             int centerY = (int) point.get(1).doubleValue();
             int width = searchSize;
             int height = searchSize;
-            Map<String,Double> fit = gaussian.fit(centerX, centerY, width, height);
+            Map<String,Double> fit = paraboloid.fit(centerX, centerY, width, height);
             List<Double> newCenter = new ArrayList<>();
             newCenter.add(fit.get("x0"));
             newCenter.add(fit.get("y0"));

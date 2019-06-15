@@ -14,7 +14,6 @@ import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem;
 import org.apache.commons.math3.fitting.leastsquares.LevenbergMarquardtOptimizer;
-import org.apache.commons.math3.optim.SimplePointChecker;
 import static curvefitting.Values.compute;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,13 +66,13 @@ public class Gaussian2D {
         // Set the intial guess
         double iMean = ArrayUtils.mean_Double1D(ArrayUtils.ArrayToList_Double(iArray));
         double[] guess = new double[7];
-        guess[0] = 400;
-        guess[1] = centerX;
-        guess[2] = 1.0;
-        guess[3] = centerY;
-        guess[4] = 1.0;
-        guess[5] = 1.0;
-        guess[6] = 1.0;
+        guess[0] = -200; //a
+        guess[1] = centerX; //b
+        guess[2] = 0.00045; //c
+        guess[3] = centerY; //d
+        guess[4] = 0.0015; //e
+        guess[5] = 0.0001; //f
+        guess[6] = 400; //g
         builder.start(guess);
 
         // Set the target data
@@ -110,32 +109,32 @@ public class Gaussian2D {
         RealVector I_vec = MatrixUtils.createRealVector(iArray);
         double iVar = ArrayUtils.var_Double1D(ArrayUtils.ArrayToList_Double(iArray));
         RealVector errorVec = I_comp_vec.subtract(I_vec);     
-        double residual = errorVec.getNorm();
-        double rSqr = 1 - Math.pow(residual, 2)/iVar;
+        double residualSumSqr = Math.pow(errorVec.getNorm(), 2);
+        double residualVar = residualSumSqr/(w*h);
+        double rms = Math.sqrt(residualVar);
+        double rSqr = 1 - residualVar/iVar;
         
-        String debugPath1 = "C:\\Users\\kfd18\\OneDrive\\kdaquila_SoftwareDev\\Structured-Light\\StructuredLight-Commons\\Test_Resources\\Debug\\iDataActual.txt";
-        List<Double> iList = ArrayUtils.ArrayToList_Double(iArray);
-        List<List<Double>> iMatrix = new ArrayList<>();
-        iMatrix.add(iList);
-        iMatrix = ArrayUtils.reshape(iMatrix, 65, 65);
-        TXT.saveMatrix(iMatrix, Double.class, debugPath1, "%.2f");
-        
-        String debugPath2 = "C:\\Users\\kfd18\\OneDrive\\kdaquila_SoftwareDev\\Structured-Light\\StructuredLight-Commons\\Test_Resources\\Debug\\iDataComp.txt";
-        List<Double> iList2 = ArrayUtils.ArrayToList_Double(I_comp);
-        List<List<Double>> iMatrix2 = new ArrayList<>();
-        iMatrix2.add(iList2);
-        iMatrix2 = ArrayUtils.reshape(iMatrix2, 65, 65);
-        TXT.saveMatrix(iMatrix2, Double.class, debugPath2, "%.2f");
-        
+//        String debugPath1 = "C:\\Users\\kfd18\\OneDrive\\kdaquila_SoftwareDev\\Structured-Light\\StructuredLight-Commons\\Test_Resources\\Debug\\iDataActual.txt";
+//        List<Double> iList = ArrayUtils.ArrayToList_Double(iArray);
+//        List<List<Double>> iMatrix = new ArrayList<>();
+//        iMatrix.add(iList);
+//        iMatrix = ArrayUtils.reshape(iMatrix, 15, 15);
+//        TXT.saveMatrix(iMatrix, Double.class, debugPath1, "%.2f");
+//        
+//        String debugPath2 = "C:\\Users\\kfd18\\OneDrive\\kdaquila_SoftwareDev\\Structured-Light\\StructuredLight-Commons\\Test_Resources\\Debug\\iDataComp.txt";
+//        List<Double> iList2 = ArrayUtils.ArrayToList_Double(I_comp);
+//        List<List<Double>> iMatrix2 = new ArrayList<>();
+//        iMatrix2.add(iList2);
+//        iMatrix2 = ArrayUtils.reshape(iMatrix2, 15, 15);
+//        TXT.saveMatrix(iMatrix2, Double.class, debugPath2, "%.2f");
+//        
         if (rSqr < 0.90){
             Print.println("warning low gaussian fit rSqr: " + rSqr);
-        } else {
-            Print.println("gaussian fit rSqr: " + rSqr);
         }
-        
-        Print.println("gaussian fit rms: " + solution.getRMS());
-        Print.println("gaussian fit iterations: " + solution.getIterations());
-        Print.println("gaussian fit params: " + ArrayUtils.ArrayToList_Double(params));
+//        
+//        Print.println("gaussian fit rms: " + solution.getRMS());
+//        Print.println("gaussian fit iterations: " + solution.getIterations());
+//        Print.println("gaussian fit params: " + ArrayUtils.ArrayToList_Double(params));
         
         // store the output
         Map<String, Double> output = new HashMap<>();
@@ -185,7 +184,7 @@ class Values implements MultivariateVectorFunction{
         double e = parameters[4];
         double f = parameters[5];
         double g = parameters[6];
-        double I = -a*Math.exp(-(c*Math.pow(x-b,2) + 2*f*(x-b)*(y-d)+ e*Math.pow(y-d,2))) + g;
+        double I = a*Math.exp(-(c*Math.pow(x-b,2) + 2*f*(x-b)*(y-d)+ e*Math.pow(y-d,2))) + g;
         return I;
     }
 }
