@@ -1,7 +1,7 @@
 package apps;
 
-import calibrationpattern.rings.ImageRings;
-import calibrationpattern.rings.WorldRings;
+import calibrationpattern.soliddiscs.ImageDiscs;
+import calibrationpattern.soliddiscs.WorldDiscs;
 import cameracalibration.ExtrinsicMatrix;
 import cameracalibration.IntrinsicMatrix;
 import cameracalibration.Projection;
@@ -79,7 +79,7 @@ public class CameraCalibrationApp {
         int nRows = (Integer) config.get("nRows");
         int nCols = (Integer) config.get("nCols");
         int nPts = nRows*nCols;
-        uvPtSets = ImageRings.computeCenters_batch(contourSets, hierarchySets, nPts);
+        uvPtSets = ImageDiscs.computeCenters_batch(contourSets, hierarchySets, nPts);
         
         if (isSaveDataMode) {
             // Save the Image Points
@@ -89,23 +89,17 @@ public class CameraCalibrationApp {
 
         // Sort the image points
         println("Sorting the image points");
-        uvPtSets = ImageRings.sortCentersRowMajor_batch(uvPtSets, nRows, nCols);
+        uvPtSets = ImageDiscs.sortCentersRowMajor_batch(uvPtSets, nRows, nCols);
         
         if (isSubPixel) {                
             // Refine ring centers to sub pixel accuracy
             println("Refining image points to subPixel Accuracy... ");
 
             // Compute the average ring outer radius
-            Map<String, Map<String,Double>> avgWidthSet = ImageRings.findAvgRingWidths_batch(contourSets, hierarchySets, nPts); 
-            
-            // Compute the laplacian kernal parameters
-            Map<String, Map<String,Double>> laplacianKernalParamSets = LaplacianFilter.computeKernalParameters_batch(avgWidthSet);
-            
-            // Compute the laplacian images
-            Map<String, BufferedImage> laplacianImages = LaplacianFilter.laplacianFilter_batch(grayImages, laplacianKernalParamSets); 
-            
-            int blurSize = (int)(((BufferedImage)grayImages.values().toArray()[0]).getWidth()*15.0/1920.0);
-            Map<String, BufferedImage> gaussianBlurImages = ImageUtils.meanFilter_batch(grayImages, blurSize);
+            Map<String, Map<String,Double>> avgWidthSet = ImageDiscs.findAvgDiscWidths_batch(contourSets, hierarchySets, nPts); 
+                        
+            int refineCentersBlurSize = (Integer) config.get("refineCentersBlurSize");
+            Map<String, BufferedImage> gaussianBlurImages = ImageUtils.meanFilter_batch(grayImages, refineCentersBlurSize);
             
             gaussianBlurImages = ImageUtils.normalize_batch(gaussianBlurImages, 0.0, 255.0);
             
@@ -116,7 +110,8 @@ public class CameraCalibrationApp {
             }
 
             // Find the ring centers to subPixel accuracy  
-            uvPtSets = ImageRings.refineCenters_batch(uvPtSets, gaussianBlurImages, laplacianKernalParamSets);
+            int refineCentersSearchSize = (Integer) config.get("refineCentersSearchSize");
+            uvPtSets = ImageDiscs.refineCenters_batch(uvPtSets, refineCentersSearchSize, gaussianBlurImages);
         }  
         
         if (isSaveDataMode) {
@@ -143,7 +138,7 @@ public class CameraCalibrationApp {
     public void findImagePointsFromFrontoParallel (Map<String,BufferedImage> frontoParallelImages) {
         
         // Update the uvPtSets
-        boolean isSubPixel = false;
+        boolean isSubPixel = true;
         findImagePoints(frontoParallelImages, isSubPixel);
         
         // Correct the uvPtSets
@@ -204,7 +199,7 @@ public class CameraCalibrationApp {
         println("Computing the world points");
         double dx = (Double) config.get("dx");
         double dy = (Double) config.get("dy");
-        xyzPts = WorldRings.computeCenters(nRows, nCols, dx, dy);
+        xyzPts = WorldDiscs.computeCenters(nRows, nCols, dx, dy);
         
         if (isSaveDataMode) {
             // Save the World Points
@@ -412,10 +407,10 @@ public class CameraCalibrationApp {
         double dy = (Double) config.get("dy");
         int nCols = (Integer) config.get("nCols");
         int nRows = (Integer) config.get("nRows");        
-        double xMin = -dx;
-        double xMax = nCols*dx;
-        double yMin = -dy;
-        double yMax = nRows*dy;
+        double xMin = -2*dx;
+        double xMax = nCols*dx + dx;
+        double yMin = -2*dy;
+        double yMax = nRows*dy + dy;
         double frontParallelImageScale = (Double) config.get("frontParallelImageScale");
         Map<String,BufferedImage> frontoParallelImageSet = frontoParallelImager.projectImage_batch(grayImages, RTMatrixSet, xMin, xMax, yMin, yMax, frontParallelImageScale);
         
@@ -464,7 +459,7 @@ public class CameraCalibrationApp {
         Map<String, BufferedImage> grayImages = app.convertImages_rgbToGray(rgbImages);       
         
         // Find Image Points
-        boolean isSubPixel = false;
+        boolean isSubPixel = true;
         app.findImagePoints(grayImages, isSubPixel);
         
         // Compute Intrinsic/Extrinsic/Distortions

@@ -19,6 +19,7 @@ import static curvefitting.Values.compute;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.apache.commons.math3.fitting.leastsquares.EvaluationRmsChecker;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
@@ -65,12 +66,14 @@ public class Gaussian2D {
 
         // Set the intial guess
         double iMean = ArrayUtils.mean_Double1D(ArrayUtils.ArrayToList_Double(iArray));
-        double[] guess = new double[5];
-        guess[0] = 300;
+        double[] guess = new double[7];
+        guess[0] = 400;
         guess[1] = centerX;
-        guess[2] = -11.0;
+        guess[2] = 1.0;
         guess[3] = centerY;
-        guess[4] = -50;
+        guess[4] = 1.0;
+        guess[5] = 1.0;
+        guess[6] = 1.0;
         builder.start(guess);
 
         // Set the target data
@@ -79,7 +82,8 @@ public class Gaussian2D {
         // Set the options
         double relThresh = 0.01;
         double absThresh = 1e-6;    
-        builder.checkerPair(new SimplePointChecker<>(relThresh, absThresh));
+        builder.checker(new EvaluationRmsChecker(0.001));
+//        builder.checkerPair(new SimplePointChecker<>(relThresh, absThresh));
         int maxEval = 10000;
         builder.maxEvaluations(maxEval);
         int maxIter = 100;
@@ -113,14 +117,14 @@ public class Gaussian2D {
         List<Double> iList = ArrayUtils.ArrayToList_Double(iArray);
         List<List<Double>> iMatrix = new ArrayList<>();
         iMatrix.add(iList);
-        iMatrix = ArrayUtils.reshape(iMatrix, 15, 15);
+        iMatrix = ArrayUtils.reshape(iMatrix, 65, 65);
         TXT.saveMatrix(iMatrix, Double.class, debugPath1, "%.2f");
         
         String debugPath2 = "C:\\Users\\kfd18\\OneDrive\\kdaquila_SoftwareDev\\Structured-Light\\StructuredLight-Commons\\Test_Resources\\Debug\\iDataComp.txt";
         List<Double> iList2 = ArrayUtils.ArrayToList_Double(I_comp);
         List<List<Double>> iMatrix2 = new ArrayList<>();
         iMatrix2.add(iList2);
-        iMatrix2 = ArrayUtils.reshape(iMatrix2, 15, 15);
+        iMatrix2 = ArrayUtils.reshape(iMatrix2, 65, 65);
         TXT.saveMatrix(iMatrix2, Double.class, debugPath2, "%.2f");
         
         if (rSqr < 0.90){
@@ -179,7 +183,9 @@ class Values implements MultivariateVectorFunction{
         double c = parameters[2];
         double d = parameters[3];
         double e = parameters[4];
-        double I = (e-a)*Math.exp(-(Math.pow((x-b)/c,2) + Math.pow((y-d)/c,2)))+e;
+        double f = parameters[5];
+        double g = parameters[6];
+        double I = -a*Math.exp(-(c*Math.pow(x-b,2) + 2*f*(x-b)*(y-d)+ e*Math.pow(y-d,2))) + g;
         return I;
     }
 }
@@ -199,7 +205,7 @@ class Jacobian implements MultivariateMatrixFunction {
     @Override
     public double[][] value(double[] parameters) {
         
-        double[][] J = new double[nPts][5];
+        double[][] J = new double[nPts][7];
         for (int pt_num = 0; pt_num < nPts; pt_num++) {
             
             // name the parameters
@@ -207,16 +213,20 @@ class Jacobian implements MultivariateMatrixFunction {
             double b = parameters[1];
             double c = parameters[2];
             double d = parameters[3];
+            double e = parameters[4];
+            double f = parameters[5];
             
             double x = xPts[pt_num];
             double y = yPts[pt_num];
             
             // compute the values            
             J[pt_num][0] = Values.compute(parameters, x, y);
-            J[pt_num][1] = a*Values.compute(parameters, x, y)*2*(x-b)/(c*c);
-            J[pt_num][2] = a*Values.compute(parameters, x, y)*(2*(x-b)*(x-b)/(c*c*c) + 2*(y-d)*(y-d)/(c*c*c));
-            J[pt_num][3] = a*Values.compute(parameters, x, y)*2*(y-d)/(c*c);
-            J[pt_num][4] = Values.compute(parameters, x, y) + 1.0;
+            J[pt_num][1] = a*Values.compute(parameters, x, y)*(2*c*(x-b) + 2*f*(y-d));
+            J[pt_num][2] = a*Values.compute(parameters, x, y)*-Math.pow(x-b,2);
+            J[pt_num][3] = a*Values.compute(parameters, x, y)*(2*e*(y-d) + 2*f*(x-b));
+            J[pt_num][4] = a*Values.compute(parameters, x, y)*-Math.pow(y-d,2);
+            J[pt_num][5] = a*Values.compute(parameters, x, y)*2*(x-b)*(y-d);
+            J[pt_num][6] = 1.0;
         }                
                       
         return J;
