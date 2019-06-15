@@ -61,7 +61,7 @@ public class PNG {
         {
             System.out.println("Could not set the dpi.");
         }       
-    }
+    }   
     
     public void save(BufferedImage image, String  path) {
         int dpi = 300;
