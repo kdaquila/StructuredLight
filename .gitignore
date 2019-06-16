@@ -1,3 +1,5 @@
-CameraCalibration/nbproject/
-CameraCalibration/build
-CameraCalibration/debug-resources
+/nbproject/
+/build
+/debug-resources
+/build.xml
+/manifest.mf
