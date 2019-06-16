@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class CameraCalibrationApp {
+public class IterativeCameraCalibrationApp {
     
     Map<String,Object> config;
     List<List<Double>> xyzPts;
@@ -39,7 +39,7 @@ public class CameraCalibrationApp {
     List<Double> distCoeffs;
     
     
-    public CameraCalibrationApp(String configPath) {
+    public IterativeCameraCalibrationApp(String configPath) {
         config = XML.loadMap(configPath, "config");        
     }
     
@@ -448,7 +448,7 @@ public class CameraCalibrationApp {
         // Parse the arguments
         String configAbsPath = args[0];
         
-        CameraCalibrationApp app = new CameraCalibrationApp(configAbsPath);
+        IterativeCameraCalibrationApp app = new IterativeCameraCalibrationApp(configAbsPath);
         
         // Load RGB images
         println("Loading RGB Images");

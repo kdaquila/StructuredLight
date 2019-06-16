@@ -13,10 +13,12 @@ import org.dom4j.Node;
 
 public class XML {
     
-    Element root;
+    public Element root;
+    public Map<String, Object> map;
     
     public XML(String path) {
         root = XML.loadXML(path);
+        map = XML.loadMap(path, "config");
     }
     
     public int getInt(String xPath) {
@@ -127,5 +129,14 @@ public class XML {
             map.put(tagName, parsedValue);
         }
         return map;        
+    }
+    
+    public void prependBaseDir() {
+        Node baseDirNode = root.selectSingleNode("/config/baseDir");
+        List<Node> subDirNodes = root.selectNodes("/config/*[@role='subDir']");
+        for (Node node: subDirNodes) {
+            String tagName = node.getName();
+            map.put(tagName, baseDirNode.getText() + "\\" + (String) map.get(tagName));
+        }
     }
 }
