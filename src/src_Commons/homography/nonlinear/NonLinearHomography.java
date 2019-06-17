@@ -17,10 +17,10 @@ import org.apache.commons.math3.optim.SimplePointChecker;
 public class NonLinearHomography {
     
     private RealMatrix H;
-    public final List<Double> xPts;
-    public final List<Double> yPts;
-    public final List<Double> uPts;
-    public final List<Double> vPts;
+    public List<Double> xPts;
+    public List<Double> yPts;
+    public List<Double> uPts;
+    public List<Double> vPts;
     
     public NonLinearHomography(List<List<Double>> xyPts, List<List<Double>> uvPts, 
                                List<List<Double>> h_guess) {

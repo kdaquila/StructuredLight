@@ -3,9 +3,9 @@
     <type>org.netbeans.modules.java.j2seproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
-            <name>Project_using_Ant</name>
+            <name>Build_Commons</name>
             <source-roots>
-                <root id="src.dir"/>
+                <root id="src.src_Commons.dir"/>
             </source-roots>
             <test-roots>
                 <root id="test.src.dir"/>

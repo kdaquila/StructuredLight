@@ -1,6 +1,10 @@
-CameraCalibration/nbproject/
-CameraCalibration/build
-CameraCalibration/debug-resources
-CameraCalibration/build.xml
-CameraCalibration/manifest.mf
-/Project_using_Ant/nbproject/private/
+/debug/
+/Build_CameraCalibration/nbproject/private/
+/Build_CameraCalibration/build/
+/Build_CameraCalibration/dist/
+/Build_Commons/nbproject/private/
+/Build_Commons/build/
+/Build_Commons/dist/
+/Build_CalibrationPattern/nbproject/private/
+/Build_CalibrationPattern/build/
+/Build_CalibrationPattern/dist/

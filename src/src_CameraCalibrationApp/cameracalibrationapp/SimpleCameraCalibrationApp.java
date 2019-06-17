@@ -1,4 +1,4 @@
-package apps;
+package cameracalibrationapp;
 
 import calibrationpattern.soliddiscs.ImageDiscs;
 import calibrationpattern.soliddiscs.WorldDiscs;

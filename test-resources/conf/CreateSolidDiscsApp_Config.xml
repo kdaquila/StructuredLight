@@ -1,11 +1,11 @@
 <config>
-	<nRows type="int">7</nRows>
-	<nCols type="int">9</nCols>
+	<nRows type="int">13</nRows>
+	<nCols type="int">17</nCols>
 	<borderWidth type="int">160</borderWidth>
 	<halfPitch type="int">400</halfPitch>
-	<discRadius type="int">100</discRadius>
+	<discRadius type="int">200</discRadius>
 	<borderColor type="hex">000000</borderColor>
 	<backgroundColor type="hex">FFFFFF</backgroundColor>
-	<patternDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\Structured-Light\StructuredLight-Commons\Test_Resources\Debug</patternDir>
+	<patternDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\CameraCalibration\debug\calibration_pattern</patternDir>
 	<patternFilename type="string">pattern.png</patternFilename>
 </config>
