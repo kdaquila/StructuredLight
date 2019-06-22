@@ -1,4 +1,4 @@
-# CameraCalibration
+# StructuredLight
 
 A pure-java application for structured light. The goal is to make highly accurate calibration and 3D surface scanning an easy task.
 

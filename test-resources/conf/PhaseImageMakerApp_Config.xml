@@ -1,0 +1,14 @@
+<config>
+		
+	<nRows type="int">600</nRows>
+	<nCols type="int">800</nCols>
+	<amplitude type="double">127.5</amplitude>
+	<offset type="double">127.5</offset>	
+	<waveLength type="double">40.0</waveLength>
+	<nPhaseSteps type="int">4</nPhaseSteps>
+	<waveDirection type="string">horizontal</waveDirection>	
+	
+	<baseDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\debug</baseDir>
+	<phasePatternsDir type="string" role="subDir">phase_image_patterns</phasePatternsDir>	
+	
+</config>
