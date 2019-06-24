@@ -1,0 +1,9 @@
+<config>		
+	<nRows type="int">600</nRows>
+	<nCols type="int">800</nCols>
+	<minValue type="double">35</minValue>
+	<maxValue type="double">255</maxValue>	
+	<stepValue type="double">10</stepValue>		
+	<baseDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\debug</baseDir>
+	<brightnessCalibrationPatternDir type="string" role="subDir">brightness_calibration_patterns</brightnessCalibrationPatternDir>
+</config>
