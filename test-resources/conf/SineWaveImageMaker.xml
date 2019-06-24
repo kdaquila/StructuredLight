@@ -2,8 +2,8 @@
 		
 	<nRows type="int">600</nRows>
 	<nCols type="int">800</nCols>
-	<amplitude type="double">127.5</amplitude>
-	<offset type="double">127.5</offset>	
+	<amplitude type="double">115</amplitude>
+	<offset type="double">115</offset>	
 	<waveLength type="double">40.0</waveLength>
 	<nPhaseSteps type="int">4</nPhaseSteps>
 	<waveDirection type="string">horizontal</waveDirection>		
@@ -11,7 +11,7 @@
 	<baseDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\debug</baseDir>
 	<sineWavePatternsDir type="string" role="subDir">sine_wave_patterns</sineWavePatternsDir>	
 	
-	<doBrightnessCalibration type="boolean">true</doBrightnessCalibration>
+	<doBrightnessCalibration type="boolean">false</doBrightnessCalibration>
 	<brightnessCalibrationTableDir type="string" role="subDir">brightness_calibration_data</brightnessCalibrationTableDir>
 	<brightnessCalibrationTableFilename type="string">brightness_calibration_table.txt</brightnessCalibrationTableFilename>
 	
