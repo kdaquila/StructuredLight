@@ -9,9 +9,7 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 public class Ellipse {    
-    
-    
-    
+        
     public static Map<String,Double> fit(List<List<Integer>> contour) {
         
         int nPts = contour.size();

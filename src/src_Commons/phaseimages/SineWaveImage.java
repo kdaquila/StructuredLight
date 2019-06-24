@@ -13,7 +13,6 @@ public class SineWaveImage {
             double phase = 2*Math.PI/nPhaseSteps * phase_index;
             BufferedImage newImg = makeSineWaveImage(nRows, nCols, amplitude, offset, waveLength, phase, orientation);
             String imgName = "waveLen" + String.format("%.1f", waveLength) + "_phase" + String.format("%.1f", phase);
-//            imgName = imgName.replace(".", "pt");
             imgStack.put(imgName, newImg);
         }
         return imgStack;

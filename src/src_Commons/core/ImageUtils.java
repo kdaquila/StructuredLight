@@ -223,6 +223,34 @@ public class ImageUtils {
         return output;
     }
     
+    public static List<List<Integer>> GrayImageToList_Integer(BufferedImage inputImage)
+    {        
+        // get the 1D data buffer
+        byte[] gray_Byte1D = ((DataBufferByte) inputImage.getRaster().getDataBuffer()).getData();
+                
+        // make 2D array
+        int nCols = inputImage.getWidth();
+        int nRows = inputImage.getHeight();
+        int[][] gray_Int2D = new int[nRows][nCols];
+        for (int row_num = 0; row_num < nRows; row_num++)
+        {
+            for (int col_num = 0; col_num < nCols; col_num++)
+            {
+                // compute position within linear array
+                int offset = row_num*nCols + col_num;
+                // cast byte to int's least significant bits
+                int castedInt = (int)(gray_Byte1D[offset]&0xFF);
+                // store in double array
+                gray_Int2D[row_num][col_num] = castedInt;                
+            }
+        }
+        
+        // convert to list
+        List<List<Integer>> output = ArrayUtils.ArrayToList_Integer2D(gray_Int2D);
+        
+        return output;
+    }
+    
     /**
      * Returns a BufferedImage given a 3D array of colors ordered by rows,
      *  column, and channel
