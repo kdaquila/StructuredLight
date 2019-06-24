@@ -101,7 +101,7 @@ public class BrightnessCalibration {
         return lookUpTable;
     }
     
-    public static BufferedImage applyLoopUpTable(BufferedImage inputImg, List<List<Integer>> lookUpTable) {
+    public static BufferedImage applyLookUpTable(BufferedImage inputImg, List<List<Integer>> lookUpTable) {
         
         if (inputImg.getType() != BufferedImage.TYPE_BYTE_GRAY) {
             throw new IllegalArgumentException("Image must be of type: TYPE_BYTE_GRAY");
@@ -118,12 +118,14 @@ public class BrightnessCalibration {
         List<Integer> nominalValues = lookUpTable.get(0);
         List<Integer> outputValues = lookUpTable.get(1);
         for (int row_num = 0; row_num < nRows; row_num++) {
+            List<Integer> newRow = new ArrayList<>();
             for (int col_num = 0; col_num < nCols; col_num++) {
                 int imgValue = inputImgData.get(row_num).get(col_num);
                 int indexFound = nominalValues.indexOf(imgValue);
                 int outputValue = outputValues.get(indexFound);
-                outputImgData.get(row_num).set(col_num, outputValue);
+                newRow.add(outputValue);
             }
+            outputImgData.add(newRow);
         }
         
         BufferedImage outputImage = ImageUtils.ListToGrayImage_Integer(outputImgData);

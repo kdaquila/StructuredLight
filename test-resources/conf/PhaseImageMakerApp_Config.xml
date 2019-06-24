@@ -7,10 +7,11 @@
 	<waveLength type="double">40.0</waveLength>
 	<nPhaseSteps type="int">4</nPhaseSteps>
 	<waveDirection type="string">horizontal</waveDirection>	
+	<doBrightnessCalibration type="boolean">true</doBrightnessCalibration>
 	
 	<baseDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\debug</baseDir>
 	<phasePatternsDir type="string" role="subDir">phase_image_patterns</phasePatternsDir>	
-	<brightnessCalibrationTableDir type="string" role="subDir">brightness_calibration</brightnessCalibrationTableDir>
-	<brightnessCalibrationTableFilename type="string">brightness_calibration.txt</brightnessCalibrationTableFilename>
+	<brightnessCalibrationTableDir type="string" role="subDir">brightness_calibration_data</brightnessCalibrationTableDir>
+	<brightnessCalibrationTableFilename type="string">brightness_calibration_table.txt</brightnessCalibrationTableFilename>
 	
 </config>

@@ -49,7 +49,8 @@ public class PhaseImageMakerApp {
         Map<String,BufferedImage> output = new HashMap<>();
         for (String name: images.keySet()) {
             BufferedImage oldImg = images.get(name);
-            BufferedImage newImg = BrightnessCalibration.applyLoopUpTable(oldImg, lookUpTable);
+            BufferedImage newImg = BrightnessCalibration.applyLookUpTable(oldImg, lookUpTable);
+            output.put(name, newImg);
         }
         
         return output;
@@ -79,8 +80,12 @@ public class PhaseImageMakerApp {
         Map<String,BufferedImage> phaseImages = app.drawPhaseImages();
         
         // Apply the Brightness Calibration
-        println("Applying Brightness Calibration");
-        phaseImages = app.calibrateBrightness(phaseImages);
+        boolean doBrightnessCalibration = (Boolean) app.config.get("doBrightnessCalibration");
+        if (doBrightnessCalibration) {
+            println("Applying Brightness Calibration");
+            phaseImages = app.calibrateBrightness(phaseImages);
+        }
+        
         
         // Save the images
         println("Saving Images");

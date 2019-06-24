@@ -1,7 +1,7 @@
 package phaseimages;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
+import java.awt.image.DataBufferByte;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,23 +27,22 @@ public class SineWaveImage {
         }
         
         // create a new image and get the data array
-        BufferedImage sineWaveImg = new BufferedImage(nCols, nRows, BufferedImage.TYPE_INT_RGB);
-        int[] sineWaveArray = ((DataBufferInt) sineWaveImg.getRaster().getDataBuffer()).getData();
+        BufferedImage sineWaveImg = new BufferedImage(nCols, nRows, BufferedImage.TYPE_BYTE_GRAY);
+        byte[] sineWaveArray = ((DataBufferByte) sineWaveImg.getRaster().getDataBuffer()).getData();
                 
         // write the sine values       
         for (int row = 0; row < nRows; row++){
             for (int col = 0; col < nCols; col++){ 
 
-                int gray = 0;
+                byte gray = 0;
                 if (orientation.equals("horizontal")) {
-                    gray = (int) Math.round(sineFunc(amplitude, offset, waveLength, phaseOffset, col));
+                    gray = (byte) Math.round(sineFunc(amplitude, offset, waveLength, phaseOffset, col));
                 } else if (orientation.equals("vertical")) {
-                    gray = (int) Math.round(sineFunc(amplitude, offset, waveLength, phaseOffset, row));
+                    gray = (byte) Math.round(sineFunc(amplitude, offset, waveLength, phaseOffset, row));
                 }
 
-                int rgb = (gray << 16) + (gray << 8) + gray;
                 int index = row*nCols + col;
-                sineWaveArray[index] = rgb;
+                sineWaveArray[index] = gray;
             }
         }
 
