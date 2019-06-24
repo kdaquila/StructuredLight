@@ -6,6 +6,6 @@
 	<discRadius type="int">200</discRadius>
 	<borderColor type="hex">000000</borderColor>
 	<backgroundColor type="hex">FFFFFF</backgroundColor>
-	<patternDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\CameraCalibration\debug\calibration_pattern</patternDir>
+	<patternDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\debug\calibration_pattern</patternDir>
 	<patternFilename type="string">pattern.png</patternFilename>
 </config>

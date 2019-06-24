@@ -1,6 +1,6 @@
 <config>
 	<isSaveDataMode type="boolean">true</isSaveDataMode>
-	<isSaveImageMode type="boolean">false</isSaveImageMode>
+	<isSaveImageMode type="boolean">true</isSaveImageMode>
 	
 	<drawCirclesRadius type="int">3</drawCirclesRadius>
 	<drawCirclesLineWidth type="double">1.0</drawCirclesLineWidth>
@@ -20,9 +20,9 @@
 	<saveDataFormatString type="string">%+07e</saveDataFormatString>
 	<saveDataDelimiter type="string">,</saveDataDelimiter>
 	
-	<imagesRGBDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\CameraCalibration\test-resources\image-sets\image-set-1</imagesRGBDir>	
+	<imagesRGBDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\test-resources\image-sets\image-set-1</imagesRGBDir>	
 	
-	<baseDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\CameraCalibration\debug\calibration_results</baseDir>
+	<baseDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\debug\calibration_results</baseDir>
 	<intrinsicMatrixDir type="string" role="subDir">intrinsic_matrix</intrinsicMatrixDir>
 	<worldPointsDir type="string" role="subDir">world_points</worldPointsDir>
 	<distortionsDir type="string" role="subDir">distortion_coefficients</distortionsDir>

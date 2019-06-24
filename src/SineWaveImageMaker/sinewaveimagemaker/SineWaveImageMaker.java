@@ -57,8 +57,8 @@ public class SineWaveImageMaker {
     }
     
     public void savePhaseImages(Map<String,BufferedImage> phaseImages) {
-        String phasePatternsDir = (String) config.get("phasePatternsDir");
-        ImageUtils.save_batch(phaseImages, phasePatternsDir);
+        String sineWavePatternsDir = (String) config.get("sineWavePatternsDir");
+        ImageUtils.save_batch(phaseImages, sineWavePatternsDir);
     }    
     
     public static void main(String[] args) {
