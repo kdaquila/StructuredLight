@@ -16,7 +16,7 @@ import java.util.Map;
 public class BrightnessCalibrationLookUpTable {
 
 
-    public static List<List<Integer>> computeLookUpTable(Map<String,BufferedImage> inputImageStack) {
+    public static List<List<Integer>> computeLookUpTable(Map<String,BufferedImage> inputImageStack, List<Double> values) {
         List<List<Integer>> lookUpTable = new ArrayList<>();
         
         int nCols = ((BufferedImage)(inputImageStack.values().toArray())[0]).getWidth();
@@ -24,8 +24,8 @@ public class BrightnessCalibrationLookUpTable {
         int nSlices = inputImageStack.size();
         
         int minDim = Math.min(nCols, nRows);
-        int roiW = (int) Math.round(0.02*minDim);
-        int roiH = (int) Math.round(0.02*minDim);
+        int roiW = 10;//(int) Math.round(0.01*minDim);
+        int roiH = 10;//(int) Math.round(0.01*minDim);
         int roiX = nCols/2 - roiW/2;
         int roiY = nRows/2 - roiH/2;        
         
@@ -47,21 +47,23 @@ public class BrightnessCalibrationLookUpTable {
             BufferedImage grayImage = ImageUtils.color2Gray(rgbImage);
             
             byte[] imgData = ((DataBufferByte)grayImage.getRaster().getDataBuffer()).getData();
-            double sum = 0;
+            double sum = 0.0;
             for (int y = roiY; y < (roiY + roiH); y++) {
                 for (int x = roiX; x < (roiX + roiW); x++) {
-                    int i = y*nRows + x;
-                    sum += imgData[i]&0xFF;
+                    int i = y*nCols + x;
+                    int I = imgData[i]&0xFF;
+                    sum += I;
                 }
             }
             measuredValues[slice_num] = sum/(roiW*roiH);
         }
         
         // Get the expected values (programmed values)
-        double[] requestedValues =  new double[nSlices];         
-        for (int slice_num = 0; slice_num < nSlices; slice_num++) {
-            requestedValues[slice_num] = Double.parseDouble(imgNames.get(slice_num));
-        }
+        double[] requestedValues = ArrayUtils.ListToArray_Double(values);
+//        double[] requestedValues =  new double[nSlices];         
+//        for (int slice_num = 0; slice_num < nSlices; slice_num++) {
+//            requestedValues[slice_num] = Double.parseDouble(imgNames.get(slice_num));
+//        }
         
         // Get the nominal values
         List<Integer> nominalValues = new ArrayList<>(256);

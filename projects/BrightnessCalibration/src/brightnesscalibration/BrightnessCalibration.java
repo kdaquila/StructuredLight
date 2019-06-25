@@ -6,6 +6,7 @@ import static core.Print.println;
 import core.TXT;
 import core.XML;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +27,15 @@ public class BrightnessCalibration {
     
     public List<List<Integer>> computeLookUpTable() {
         String brightnessCalibrationImageDir = (String) config.get("brightnessCalibrationImageDir");
-        Map<String,BufferedImage> imgStack = ImageUtils.load_batch(brightnessCalibrationImageDir);        
-        return BrightnessCalibrationLookUpTable.computeLookUpTable(imgStack);
+        double minValue = (Double) config.get("minValue");
+        double maxValue = (Double) config.get("maxValue");
+        double stepValue = (Double) config.get("stepValue");
+        List<Double> values = new ArrayList<>();
+        for (double value = minValue; value <= maxValue; value += stepValue) {
+            values.add(value);
+        }
+        Map<String,BufferedImage> imgStack = ImageUtils.load_batch(brightnessCalibrationImageDir);  
+        return BrightnessCalibrationLookUpTable.computeLookUpTable(imgStack, values);
     }
     
     public void saveLookUpTable(List<List<Integer>> lookUpTable) {
