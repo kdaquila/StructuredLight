@@ -40,10 +40,10 @@ public class InverseRodbard {
         
         // Set the intial guess
         double[] guess = new double[4];
-        guess[0] = 100; //a
-        guess[1] = 1.0; //b
-        guess[2] = 255; //c
-        guess[3] = 3.0; //d
+        guess[0] = 255.0; //a
+        guess[1] = 0.0; //b
+        guess[2] = 255.0; //c
+        guess[3] = 1.0; //d
         builder.start(guess);
         
         // TODO debug remove
@@ -65,8 +65,8 @@ public class InverseRodbard {
 
         // Set special features
         builder.lazyEvaluation(false);
-        builder.parameterValidator(null);
-//        builder.parameterValidator(new InverseRodbard_ParameterValidator());
+//        builder.parameterValidator(null);
+        builder.parameterValidator(new InverseRodbard_ParameterValidator());
         builder.weight(null);   
                 
         // Create the least squares problem

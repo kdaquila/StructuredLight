@@ -55,7 +55,7 @@ public class BrightnessCalibrationImageMaker {
             Graphics2D g = (Graphics2D) singleColorImg.getGraphics();
             
             // set the font
-            int hText = 25;
+            int hText = 100;
             g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, hText));
             
             // draw the background rect

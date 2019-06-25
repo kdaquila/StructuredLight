@@ -47,6 +47,49 @@ public class InverseRodbard_Jacobian implements MultivariateMatrixFunction {
 //        return J_Matrix.getData();
         
         
+//        for (int pt_num = 0; pt_num < nPts; pt_num++) {
+//            // name the parameters
+//            double a = parameter_array[0];
+//            double b = parameter_array[1];
+//            double c = parameter_array[2];
+//            double d = parameter_array[3];
+//            double x = xPts[pt_num];
+//            // compute the values
+//            if ((x - b) / (c - x) < 0) {
+//                J[pt_num][0] = Math.pow(-1.0*(x - b)/(c - x), 1.0 / d);
+//            } else {
+//                J[pt_num][0] = Math.pow((x - b)/(c - x), 1.0 / d);
+//            }
+//            
+//            if ((c-x) < 0 && (x-b) < 0) {
+//                J[pt_num][1] = a / Math.pow(-1.0*(c - x), 1.0 / d) * (1.0 / d) * Math.pow(-1.0*(x - b), 1.0 / d - 1) * -1.0;
+//            } else if ((c-x) < 0) {
+//                J[pt_num][1] = a / Math.pow(-1.0*(c - x), 1.0 / d) * (1.0 / d) * Math.pow(x - b, 1.0 / d - 1) * -1.0;
+//            } else if ((x-b) < 0) {
+//                J[pt_num][1] = a / Math.pow(c - x, 1.0 / d) * (1.0 / d) * Math.pow(-1.0*(x - b), 1.0 / d - 1) * -1.0;
+//            } else {
+//                J[pt_num][1] = a / Math.pow(c - x, 1.0 / d) * (1.0 / d) * Math.pow(x - b, 1.0 / d - 1) * -1.0;
+//            }
+//            
+//            if ((c-x) < 0 && (x-b) < 0) {
+//                J[pt_num][2] = a * Math.pow(-1.0*(x - b), 1.0 / d) * (-1.0 / d) * Math.pow(-1.0*(c - x), -1.0 / d - 1.0);
+//            } else if ((c-x) < 0) {
+//                J[pt_num][2] = a * Math.pow(x - b, 1.0 / d) * (-1.0 / d) * Math.pow(-1.0*(c - x), -1.0 / d - 1.0);
+//            } else if ((x-b) < 0) {
+//                J[pt_num][2] = a * Math.pow(-1.0*(x - b), 1.0 / d) * (-1.0 / d) * Math.pow(c - x, -1.0 / d - 1.0);
+//            } else {
+//                J[pt_num][2] = a * Math.pow(x - b, 1.0 / d) * (-1.0 / d) * Math.pow(c - x, -1.0 / d - 1.0);
+//            }
+//            
+//            if ((x - b) / (c - x) < 0) {
+//                J[pt_num][3] = a * Math.log(-1.0*(x - b) / (c - x)) * Math.pow(-1.0*(x - b) / (c - x), 1.0/d) * (-1.0 / Math.pow(d, 2));
+//            } else {
+//                J[pt_num][3] = a * Math.log((x - b) / (c - x)) * Math.pow((x - b) / (c - x), 1.0/d) * (-1.0 / Math.pow(d, 2));
+//            }
+//            
+//        }
+//        return J;
+
         for (int pt_num = 0; pt_num < nPts; pt_num++) {
             // name the parameters
             double a = parameter_array[0];
@@ -54,41 +97,17 @@ public class InverseRodbard_Jacobian implements MultivariateMatrixFunction {
             double c = parameter_array[2];
             double d = parameter_array[3];
             double x = xPts[pt_num];
-            // compute the values
-            if ((x - b) / (c - x) < 0) {
-                J[pt_num][0] = Math.pow(-1.0*(x - b)/(c - x), 1.0 / d);
-            } else {
-                J[pt_num][0] = Math.pow((x - b)/(c - x), 1.0 / d);
-            }
             
-            if ((c-x) < 0 && (x-b) < 0) {
-                J[pt_num][1] = a / Math.pow(-1.0*(c - x), 1.0 / d) * (1.0 / d) * Math.pow(-1.0*(x - b), 1.0 / d - 1) * -1.0;
-            } else if ((c-x) < 0) {
-                J[pt_num][1] = a / Math.pow(-1.0*(c - x), 1.0 / d) * (1.0 / d) * Math.pow(x - b, 1.0 / d - 1) * -1.0;
-            } else if ((x-b) < 0) {
-                J[pt_num][1] = a / Math.pow(c - x, 1.0 / d) * (1.0 / d) * Math.pow(-1.0*(x - b), 1.0 / d - 1) * -1.0;
-            } else {
-                J[pt_num][1] = a / Math.pow(c - x, 1.0 / d) * (1.0 / d) * Math.pow(x - b, 1.0 / d - 1) * -1.0;
-            }
-            
-            if ((c-x) < 0 && (x-b) < 0) {
-                J[pt_num][2] = a * Math.pow(-1.0*(x - b), 1.0 / d) * (-1.0 / d) * Math.pow(-1.0*(c - x), -1.0 / d - 1.0);
-            } else if ((c-x) < 0) {
-                J[pt_num][2] = a * Math.pow(x - b, 1.0 / d) * (-1.0 / d) * Math.pow(-1.0*(c - x), -1.0 / d - 1.0);
-            } else if ((x-b) < 0) {
-                J[pt_num][2] = a * Math.pow(-1.0*(x - b), 1.0 / d) * (-1.0 / d) * Math.pow(c - x, -1.0 / d - 1.0);
-            } else {
-                J[pt_num][2] = a * Math.pow(x - b, 1.0 / d) * (-1.0 / d) * Math.pow(c - x, -1.0 / d - 1.0);
-            }
-            
-            if ((x - b) / (c - x) < 0) {
-                J[pt_num][3] = a * Math.log(-1.0*(x - b) / (c - x)) * Math.pow(-1.0*(x - b) / (c - x), 1.0/d) * (-1.0 / Math.pow(d, 2));
-            } else {
-                J[pt_num][3] = a * Math.log((x - b) / (c - x)) * Math.pow((x - b) / (c - x), 1.0/d) * (-1.0 / Math.pow(d, 2));
-            }
-            
+            // compute the values    
+            J[pt_num][0] = Math.pow((x - b)/(c - x), 1.0 / d);            
+            J[pt_num][1] = a / Math.pow(c - x, 1.0 / d) * (1.0 / d) * Math.pow(x - b, 1.0 / d - 1) * -1.0;
+            J[pt_num][2] = a * Math.pow(x - b, 1.0 / d) * (-1.0 / d) * Math.pow(c - x, -1.0 / d - 1.0);
+            J[pt_num][3] = a * Math.log((x - b) / (c - x)) * Math.pow((x - b) / (c - x), 1.0/d) * (-1.0 / Math.pow(d, 2));
+                        
         }
         return J;
+
+
     }
 
 }
