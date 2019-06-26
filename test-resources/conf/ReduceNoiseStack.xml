@@ -1,0 +1,8 @@
+<config>
+	
+	<baseDir type="string">C:\Users\kfd18\kfd18_Downloads</baseDir>
+	<imagesDir type="string" role="subDir">AllStack</imagesDir>	
+	<reducedNoiseImageDir type="string" role="subDir">reduced_noise</reducedNoiseImageDir>
+	<reducedNoiseImageFilename type="string">reduced_noise_all.png</reducedNoiseImageFilename>
+	
+</config>
