@@ -54,6 +54,32 @@ public class TXT {
         return output;
     }
     
+    public static void saveMatrix(int[][] matrix, String formatString,
+                                      String folder, String filename) {
+        
+        createFolder(folder);
+        String path = folder + "\\" + filename;
+        try {
+            // open the file
+            File newFile = new File(path);
+            
+            // open the writer
+            FileWriter writer = new FileWriter(newFile, false);
+            BufferedWriter buffWriter = new BufferedWriter(writer);
+            
+            // write the string
+            String matrixString = MatrixToString(matrix, formatString);            
+            buffWriter.write(matrixString);
+            
+            // close the writer
+            buffWriter.close();
+        }
+        catch (IOException e){
+            throw new RuntimeException("Could not save to the file." + e.getMessage());
+        }
+        
+    }
+    
     public static <T> void saveMatrix(List<List<T>> matrix, Class<T> type, 
                                             String path, String formatString) {
         String delimiter = ",";
@@ -196,6 +222,24 @@ public class TXT {
             }            
         }
         return out;
+    }
+    
+    public static String MatrixToString(int[][] matrix, String formatString) {
+        // build delimter separated list of values
+        StringWriter writer = new StringWriter();
+        for (int[] row: matrix) {
+            for (int row_ind = 0; row_ind < row.length; row_ind++) {      
+                 int item = row[row_ind];
+                 if (row_ind == row.length - 1) {
+                     writer.append(String.format(formatString, item));
+                 } else {
+                     writer.append(String.format(formatString + ",", item));
+                 }                 
+            }
+            // end of line character
+             writer.append("\n");
+        }        
+        return writer.toString();
     }
     
     public static <T> String MatrixToString(List<List<T>> matrix, String formatString, String delimiter, String EOL) {

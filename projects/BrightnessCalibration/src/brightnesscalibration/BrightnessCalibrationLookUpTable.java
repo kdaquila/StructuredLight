@@ -16,12 +16,12 @@ import java.util.Map;
 public class BrightnessCalibrationLookUpTable {
 
 
-    public static List<List<Integer>> computeLookUpTable(Map<String,BufferedImage> inputImageStack, List<Double> values) {
+    public static List<List<Integer>> computeLookUpTable(Map<String,BufferedImage> grayImageStack, List<Double> values) {
         List<List<Integer>> lookUpTable = new ArrayList<>();
         
-        int nCols = ((BufferedImage)(inputImageStack.values().toArray())[0]).getWidth();
-        int nRows = ((BufferedImage)(inputImageStack.values().toArray())[0]).getHeight();
-        int nSlices = inputImageStack.size();
+        int nCols = ((BufferedImage)(grayImageStack.values().toArray())[0]).getWidth();
+        int nRows = ((BufferedImage)(grayImageStack.values().toArray())[0]).getHeight();
+        int nSlices = grayImageStack.size();
         
         int minDim = Math.min(nCols, nRows);
         int roiW = 10;//(int) Math.round(0.01*minDim);
@@ -31,7 +31,7 @@ public class BrightnessCalibrationLookUpTable {
         
         // Compute the average spectrum through the image stack within the roi
         double[] measuredValues = new double[nSlices];
-        List<String> imgNames = new ArrayList<>(inputImageStack.keySet());
+        List<String> imgNames = new ArrayList<>(grayImageStack.keySet());
         Collections.sort(imgNames, new Comparator<String>(){
             @Override
             public int compare(String s1, String s2) {
@@ -42,9 +42,7 @@ public class BrightnessCalibrationLookUpTable {
             
         });
         for (int slice_num = 0; slice_num < nSlices; slice_num++) {
-            BufferedImage rgbImage = inputImageStack.get(imgNames.get(slice_num));
-            
-            BufferedImage grayImage = ImageUtils.color2Gray(rgbImage);
+            BufferedImage grayImage = grayImageStack.get(imgNames.get(slice_num));
             
             byte[] imgData = ((DataBufferByte)grayImage.getRaster().getDataBuffer()).getData();
             double sum = 0.0;
