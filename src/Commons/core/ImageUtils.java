@@ -30,9 +30,7 @@ public class ImageUtils {
                 String lowerName = name.toLowerCase();
                 boolean isValid = lowerName.endsWith(".png") ||
                                   lowerName.endsWith(".jpg") ||
-                                  lowerName.endsWith(".jpeg") ||
-                                  lowerName.endsWith(".tif") ||
-                                  lowerName.endsWith(".tiff"); 
+                                  lowerName.endsWith(".jpeg"); 
                 return isValid;
             }
         });
