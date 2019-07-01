@@ -30,7 +30,7 @@ public final class BrightnessCalibrationLookUpTable64 {
         int roiX = nCols/2 - roiW/2;
         int roiY = nRows/2 - roiH/2; 
         measuredOutputValues = getAvgZProfile(grayImageStack, roiX, roiY, roiW, roiH);
-        nominalOutputValues = computeNominalValues();
+        nominalOutputValues = computeNominalValues(givenInputValues);
         computedInputValues = computeFittedValues(givenValues, measuredOutputValues, nominalOutputValues);
         
     }
@@ -57,17 +57,20 @@ public final class BrightnessCalibrationLookUpTable64 {
                 }
             }
             double avgValue = sum/(roiW*roiH);
-            double avgValue_norm = avgValue/65536 * 255;
+            double avgValue_norm = avgValue/65536.0 * 255.0;
             measuredValues[slice_num] = avgValue_norm;
         }
         return measuredValues;
     }
     
-    public int[] computeNominalValues() {
+    public int[] computeNominalValues(int[] input) {
         // Get the nominal values
-        int[] nominalValues = new int[256];
-        for (int i = 0; i < 256; i++) {
-            nominalValues[i] = i;
+        int nNominalPts = input[input.length - 1] - input[0] + 1;
+        int[] nominalValues = new int[nNominalPts];
+        int value = input[0];
+        for (int i = 0; i < nNominalPts; i++) {            
+            nominalValues[i] = value;
+            value++;
         }
         return nominalValues;
     }
@@ -90,9 +93,9 @@ public final class BrightnessCalibrationLookUpTable64 {
         fit.fit();
         double[] outputValues = InverseRodbard_Values.computeAll(fit.params, nominalValues_Double);
         
-        // compute the fitted values      
-        int[] outputValues_Int =  new int[256];       
-        for (int i = 0; i < 256; i++) {
+        // round the output values      
+        int[] outputValues_Int =  new int[outputValues.length];       
+        for (int i = 0; i < outputValues.length; i++) {
             outputValues_Int[i] = (int) Math.round(outputValues[i]); 
         }  
         return outputValues_Int;
@@ -102,7 +105,7 @@ public final class BrightnessCalibrationLookUpTable64 {
         
         // only add valid pairs     
         List<Integer> valid_indices = new ArrayList<>();
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < computedInputValues.length; i++) {
             double computedValue = computedInputValues[i];
             if (computedValue <= 255 && computedValue >= 0) {
                 valid_indices.add(i);
@@ -119,21 +122,21 @@ public final class BrightnessCalibrationLookUpTable64 {
         return lookUpTable;
     }
     
-    public static double[][] applyLookUpTable(double[][] inputImg, int[][] lookUpTable) {
+    public static int[][] applyLookUpTable(int[][] inputImg, int[][] lookUpTable) {
                 
         int nRows = inputImg.length;
         int nCols = inputImg[0].length;
         
         // apply the look-up-table
-        double[][] outputImgData = new double[nRows][nCols];
+        int[][] outputImgData = new int[nRows][nCols];
         List<Integer> nominalValues = Arrays.stream(lookUpTable[0]).boxed().collect(Collectors.toList());
         List<Integer> computedValues = Arrays.stream(lookUpTable[1]).boxed().collect(Collectors.toList());
         for (int row_num = 0; row_num < nRows; row_num++) {
             for (int col_num = 0; col_num < nCols; col_num++) {
-                double imgValue = inputImg[row_num][col_num];
+                int imgValue = inputImg[row_num][col_num];
                 int indexFound = nominalValues.indexOf(imgValue);
-                int computedValue = computedValues.get(indexFound);
-                outputImgData[row_num][col_num] = computedValue;
+                int tableValue = computedValues.get(indexFound);
+                outputImgData[row_num][col_num] = tableValue;
             }
         }
                 

@@ -45,7 +45,7 @@ public class SineWaveImageMaker {
         String brightnessCalibrationTableFilename = (String) config.get("brightnessCalibrationTableFilename");
         String brightnessCalibrationFullPath = brightnessCalibrationTableDir + "\\" + brightnessCalibrationTableFilename;
         List<List<Integer>> lookUpTable = TXT.loadMatrix(brightnessCalibrationFullPath, Integer.class);
-        
+
         Map<String,BufferedImage> output = new HashMap<>();
         for (String name: images.keySet()) {
             BufferedImage oldImg = images.get(name);

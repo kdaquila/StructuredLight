@@ -89,30 +89,11 @@ public class InverseRodbard {
         double residualVar = residualSumSqr/nPts;
         double rms = Math.sqrt(residualVar);
         double rSqr = 1 - residualVar/yVar;
-        
-        // TODO debug remove
-        TXT.saveVector(ArrayUtils.ArrayToList_Double(xArray), Double.class, "C:\\Users\\kfd18\\kfd18_Downloads\\x.txt");
-        TXT.saveVector(ArrayUtils.ArrayToList_Double(yArray), Double.class, "C:\\Users\\kfd18\\kfd18_Downloads\\y.txt");
-        TXT.saveVector(ArrayUtils.ArrayToList_Double(y_comp), Double.class, "C:\\Users\\kfd18\\kfd18_Downloads\\y_comp.txt");
-        
-//        String debugPath1 = "C:\\Users\\kfd18\\OneDrive\\kdaquila_SoftwareDev\\Structured-Light\\StructuredLight-Commons\\Test_Resources\\Debug\\iDataActual.txt";
-//        List<Double> iList = ArrayUtils.ArrayToList_Double(iArray);
-//        List<List<Double>> iMatrix = new ArrayList<>();
-//        iMatrix.add(iList);
-//        iMatrix = ArrayUtils.reshape(iMatrix, 15, 15);
-//        TXT.saveMatrix(iMatrix, Double.class, debugPath1, "%.2f");
-//        
-//        String debugPath2 = "C:\\Users\\kfd18\\OneDrive\\kdaquila_SoftwareDev\\Structured-Light\\StructuredLight-Commons\\Test_Resources\\Debug\\iDataComp.txt";
-//        List<Double> iList2 = ArrayUtils.ArrayToList_Double(I_comp);
-//        List<List<Double>> iMatrix2 = new ArrayList<>();
-//        iMatrix2.add(iList2);
-//        iMatrix2 = ArrayUtils.reshape(iMatrix2, 15, 15);
-//        TXT.saveMatrix(iMatrix2, Double.class, debugPath2, "%.2f");
-//        
+          
         if (rSqr < 0.90){
             Print.println("warning low fit rSqr: " + rSqr);
         }
-//        
+        
         Print.println("fit rms: " + solution.getRMS());
         Print.println("fit rSqr: " + rSqr);
         Print.println("fit iterations: " + solution.getIterations());

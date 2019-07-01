@@ -1,5 +1,6 @@
 package brightnesscalibration;
 
+import core.ArrayUtils;
 import core.FITS;
 import core.Print;
 import static core.Print.println;
@@ -71,11 +72,18 @@ public class BrightnessCalibration64 {
         Print.println("Saving the look-up-table");
         app.saveLookUpTable(lookUpTable); 
         
-        int[] computedInputValues = lut64.computedInputValues;
         int[] givenInputValues = lut64.givenInputValues;
-        int[] nominalOutputValues = lut64.nominalOutputValues;
         double[] measuredOutputValues = lut64.measuredOutputValues;
+        int[] nominalOutputValues = lut64.nominalOutputValues;
+        int[] computedInputValues = lut64.computedInputValues;        
+        
+        
         String debugPath = "C:\\Users\\kfd18\\kfd18_Downloads";
+        // TODO debug remove
+        TXT.saveVector(givenInputValues, "%d", debugPath, "givenInputValues.txt");
+        TXT.saveVector(measuredOutputValues, "%f", debugPath, "measuredOutputValues.txt");
+        TXT.saveVector(nominalOutputValues, "%d", debugPath, "nominalOutputValues.txt");
+        TXT.saveVector(computedInputValues, "%d", debugPath, "computedInputValues.txt");       
                 
     }
     
