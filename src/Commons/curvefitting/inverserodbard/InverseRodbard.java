@@ -3,7 +3,6 @@ package curvefitting.inverserodbard;
 import core.ArrayUtils;
 import core.Print;
 import core.TXT;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
@@ -43,7 +42,7 @@ public class InverseRodbard {
         guess[0] = 255.0; //a
         guess[1] = 0.0; //b
         guess[2] = 255.0; //c
-        guess[3] = 1.0; //d
+        guess[3] = 3.0; //d
         builder.start(guess);
         
         // TODO debug remove

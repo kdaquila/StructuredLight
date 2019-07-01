@@ -8,7 +8,6 @@ import static core.Print.println;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.image.DataBufferInt;
 import java.util.HashMap;
 
 public class BrightnessCalibrationImageMaker {
@@ -29,36 +28,39 @@ public class BrightnessCalibrationImageMaker {
     public Map<String,BufferedImage> drawImages() {
         int nRows = (Integer) config.get("nRows");
         int nCols = (Integer) config.get("nCols");
-        double minValue = (Double) config.get("minValue");
-        double maxValue = (Double) config.get("maxValue");
-        double stepValue = (Double) config.get("stepValue");
+        int minValue = (Integer) config.get("minValue");
+        int maxValue = (Integer) config.get("maxValue");
+        int stepValue = (Integer) config.get("stepValue");
         
         Map<String,BufferedImage> outputImages = new HashMap<>();
         
-        for (double value = minValue; value <= maxValue; value += stepValue) {
+        for (int value = minValue; value <= maxValue; value += stepValue) {
             
             // create a new image and get the data array
             BufferedImage singleColorImg = new BufferedImage(nCols, nRows, BufferedImage.TYPE_INT_RGB);
-            int[] singleColorArray = ((DataBufferInt) singleColorImg.getRaster().getDataBuffer()).getData();
-            
-            // write the gray values 
-            int gray = (int) value;
-            int rgb = (gray << 16) + (gray << 8) + gray;
-            for (int index = 0; index < nRows*nCols; index++){
-                singleColorArray[index] = rgb;                
-            }
-            
-            // define display name string
-            String displayName = String.format("%d", gray);
-            
+ 
             // create the graphics object
             Graphics2D g = (Graphics2D) singleColorImg.getGraphics();
+            
+            // draw a border
+            g.setColor(new Color(255, 255, 255));  
+            g.fillRect(0, 0, nCols, nRows);
+            
+            // draw the main area rectangle
+            int borderWidth = 200;
+            g.setColor(new Color(value, value, value));  
+            g.fillRect(borderWidth, borderWidth, nCols-2*borderWidth, nRows-2*borderWidth);
+            g.setColor(new Color(0, 0, 0)); 
+            g.drawRect(borderWidth, borderWidth, nCols-2*borderWidth, nRows-2*borderWidth);
+            
+            // define display name string
+            String displayName = String.format("%d", value);                      
             
             // set the font
             int hText = 100;
             g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, hText));
             
-            // draw the background rect
+            // draw the font background rect
             int xBackgroundRect = 0;
             int yBackgroundRect = 0; 
             double scaleFactor = 1.2;
@@ -68,13 +70,13 @@ public class BrightnessCalibrationImageMaker {
             g.fillRect(xBackgroundRect, yBackgroundRect, wBackgroundRect, hBackgroundRect);
             
             // add text            
-            int xText = (int)(g.getFontMetrics().stringWidth(displayName)*(scaleFactor-1)/2.0);;
+            int xText = (int)(g.getFontMetrics().stringWidth(displayName)*(scaleFactor-1)/2.0);
             int yText = hText; 
             g.setColor(Color.BLACK);            
             g.drawString(displayName, xText, yText);
             
             // store the images
-            outputImages.put(String.valueOf(gray), singleColorImg);
+            outputImages.put(String.valueOf(value), singleColorImg);
         }  
         
         return outputImages;

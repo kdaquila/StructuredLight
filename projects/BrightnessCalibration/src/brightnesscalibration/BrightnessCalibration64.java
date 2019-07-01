@@ -27,7 +27,7 @@ public class BrightnessCalibration64 {
         int minValue = (Integer) config.get("minValue");
         int maxValue = (Integer) config.get("maxValue");
         int stepValue = (Integer) config.get("stepValue");
-        int nSteps = (int)((maxValue - minValue)/stepValue);
+        int nSteps = (int)((maxValue - minValue)/stepValue + 1);
         int[] givenValues = new int[nSteps];
         int value = minValue;
         for (int step_num = 0; step_num < nSteps; step_num++) {
@@ -41,7 +41,7 @@ public class BrightnessCalibration64 {
         String brightnessCalibrationDataDir = (String) config.get("brightnessCalibrationDataDir");
         String brightnessCalibrationDataFilename = (String) config.get("brightnessCalibrationDataFilename");
         String formatString = (String) config.get("formatString");
-        TXT.saveMatrix(lookUpTable, brightnessCalibrationDataDir, brightnessCalibrationDataFilename, formatString);
+        TXT.saveMatrix(lookUpTable, formatString, brightnessCalibrationDataDir, brightnessCalibrationDataFilename);
     }
 
     public static void main(String[] args) {
@@ -70,6 +70,12 @@ public class BrightnessCalibration64 {
 
         Print.println("Saving the look-up-table");
         app.saveLookUpTable(lookUpTable); 
+        
+        int[] computedInputValues = lut64.computedInputValues;
+        int[] givenInputValues = lut64.givenInputValues;
+        int[] nominalOutputValues = lut64.nominalOutputValues;
+        double[] measuredOutputValues = lut64.measuredOutputValues;
+        String debugPath = "C:\\Users\\kfd18\\kfd18_Downloads";
                 
     }
     

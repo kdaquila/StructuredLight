@@ -193,6 +193,54 @@ public class TXT {
             throw new RuntimeException("Could not save to the file");
         }
     }
+    
+    public static void saveVector(int[] vector, String formatString, 
+                                            String folder, String fileName){
+        
+        createFolder(folder);
+        String path = folder + "\\" + fileName;
+        
+        try {
+            // open the writer
+            File newFile = new File(path);
+            FileWriter writer = new FileWriter(newFile, false);
+            BufferedWriter buffWriter = new BufferedWriter(writer);
+            
+            // write the string
+            String vectorString = VectorToString(vector, formatString);            
+            buffWriter.write(vectorString);
+            
+            // close the writer
+            buffWriter.close();
+        }
+        catch (IOException exp){
+            throw new RuntimeException("Could not save to the file");
+        }
+    }
+    
+    public static void saveVector(double[] vector, String formatString, 
+                                            String folder, String fileName){
+        
+        createFolder(folder);
+        String path = folder + "\\" + fileName;
+        
+        try {
+            // open the writer
+            File newFile = new File(path);
+            FileWriter writer = new FileWriter(newFile, false);
+            BufferedWriter buffWriter = new BufferedWriter(writer);
+            
+            // write the string
+            String vectorString = VectorToString(vector, formatString);            
+            buffWriter.write(vectorString);
+            
+            // close the writer
+            buffWriter.close();
+        }
+        catch (IOException exp){
+            throw new RuntimeException("Could not save to the file");
+        }
+    }
         
     public static <T> List<List<T>> StringToMatrix(String input, Class<T> type, String delimiter, String EOL){
         List<List<T>> out = new ArrayList<>();
@@ -257,6 +305,24 @@ public class TXT {
             // end of line character
              writer.append(EOL);
         }        
+        return writer.toString();
+    }
+    
+    public static String VectorToString(double[] vector, String formatString) {
+        // build delimter separated list of values
+        StringWriter writer = new StringWriter();
+        for (double item: vector) {            
+             writer.append(String.format(formatString + ",", item));
+        }              
+        return writer.toString();
+    }
+    
+    public static String VectorToString(int[] vector, String formatString) {
+        // build delimter separated list of values
+        StringWriter writer = new StringWriter();
+        for (int item: vector) {            
+             writer.append(String.format(formatString + ",", item));
+        }              
         return writer.toString();
     }
     

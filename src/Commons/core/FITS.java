@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
+import nom.tam.fits.FitsFactory;
+import nom.tam.util.BufferedFile;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 public class FITS {
@@ -112,10 +115,36 @@ public class FITS {
     }
 
     public static void saveImageBatch(Map<String, Object> arrayStack, String folderName) {
-        
+        for (String name: arrayStack.keySet()) {
+            Object array = arrayStack.get(name);
+            String fileName = name + ".FITS";
+            saveImage(array, folderName, fileName);
+        }
     }
     
     public static void saveImage(Object array, String folderName, String fileName) {
-        
+        // Create the FITS data structure
+        Fits f = new Fits();
+        try {
+            f.addHDU(FitsFactory.HDUFactory(array));
+        } catch (FitsException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+        // Create the folder if necessary
+        try {
+            FileUtils.forceMkdir(new File(folderName));
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+        // Save the FITS structure
+        try {
+            BufferedFile bf = new BufferedFile(folderName + "\\" + fileName, "rw");
+            f.write(bf);
+            bf.close();
+        } catch (FitsException | IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }

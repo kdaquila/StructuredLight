@@ -1,9 +1,7 @@
 package brightnesscalibration;
 
-import core.ImageUtils;
 import curvefitting.inverserodbard.InverseRodbard;
 import curvefitting.inverserodbard.InverseRodbard_Values;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,7 +57,7 @@ public final class BrightnessCalibrationLookUpTable64 {
                 }
             }
             double avgValue = sum/(roiW*roiH);
-            double avgValue_norm = avgValue/65536;
+            double avgValue_norm = avgValue/65536 * 255;
             measuredValues[slice_num] = avgValue_norm;
         }
         return measuredValues;
