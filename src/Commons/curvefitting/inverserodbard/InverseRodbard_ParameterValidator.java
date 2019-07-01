@@ -18,8 +18,8 @@ public class InverseRodbard_ParameterValidator implements ParameterValidator{
             output.setEntry(0, 50.0);
         }
         
-        if ( b > 5) {
-            output.setEntry(1, 5.0);
+        if ( b > 0) {
+            output.setEntry(1, 0.0);
         }
         
         if ( c <= 255.0) {
