@@ -14,6 +14,52 @@ import org.apache.commons.io.FileUtils;
 
 public class TXT {
     
+    public static double[][] loadMatrix_Double(String path)
+    {
+        List<List<Double>> output = new ArrayList<>();
+        try {
+            File newFile = new File(path);
+            FileReader reader = new FileReader(newFile);
+            BufferedReader buffReader = new BufferedReader(reader);
+            for (String newLine; (newLine = buffReader.readLine()) != null; ) {   
+                String[] inputParts = newLine.split(",");
+                List<Double> out = new ArrayList<>();
+                for (String part: inputParts) {            
+                    out.add(Double.parseDouble(part)); 
+                }
+                output.add(out);
+            }
+        }
+        catch(IOException e){
+            throw new RuntimeException("Could not read a line from the file at: " + path + ". " + e.getMessage());
+        }
+                
+        return ArrayUtils.ListToArray_Double2D(output);
+    }
+    
+    public static int[][] loadMatrix_Integer(String path)
+    {
+        List<List<Integer>> output = new ArrayList<>();
+        try {
+            File newFile = new File(path);
+            FileReader reader = new FileReader(newFile);
+            BufferedReader buffReader = new BufferedReader(reader);
+            for (String newLine; (newLine = buffReader.readLine()) != null; ) {   
+                String[] inputParts = newLine.split(",");
+                List<Integer> out = new ArrayList<>();
+                for (String part: inputParts) {            
+                    out.add(Integer.parseInt(part)); 
+                }
+                output.add(out);
+            }
+        }
+        catch(IOException e){
+            throw new RuntimeException("Could not read a line from the file at: " + path + ". " + e.getMessage());
+        }
+                
+        return ArrayUtils.ListToArray_Integer2D(output);
+    }
+    
     public static <T> List<List<T>> loadMatrix(String path, Class<T> type)
     {
         String delimiter = ",";

@@ -1,14 +1,15 @@
-package phaseimages;
+package sinewavepattern;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class SineWaveImage {    
     
     public static Map<String, BufferedImage> makeSineWaveImageStack(int nRows, int nCols, double amplitude, double offset, double waveLength, int nPhaseSteps, String orientation) {
-        Map<String, BufferedImage> imgStack = new HashMap<>();
+        SortedMap<String, BufferedImage> imgStack = new TreeMap();
         for (int phase_index = 0; phase_index < nPhaseSteps; phase_index++) {
             double phase = 2*Math.PI/nPhaseSteps * phase_index;
             BufferedImage newImg = makeSineWaveImage(nRows, nCols, amplitude, offset, waveLength, phase, orientation);
@@ -16,8 +17,7 @@ public class SineWaveImage {
             imgStack.put(imgName, newImg);
         }
         return imgStack;
-    }
-    
+    }      
     
     public static BufferedImage makeSineWaveImage(int nRows, int nCols, double amplitude, double offset, double waveLength, double phaseOffset, String orientation) {
         

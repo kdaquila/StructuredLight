@@ -21,6 +21,14 @@ public class XML {
         map = XML.loadMap(path, "config");
     }
     
+    public int getShort(String xPath) {
+        Node valueNode = root.selectSingleNode(xPath);
+        if (valueNode == null) {
+            throw new RuntimeException("Could not find " + xPath + " in the configuration file");
+        }  
+        return Short.parseShort(valueNode.getText());
+    }
+    
     public int getInt(String xPath) {
         int radix = 10;
         return getInt(xPath, radix);
@@ -110,6 +118,9 @@ public class XML {
             switch (typeValue) {
                 case "int":
                     parsedValue = Integer.parseInt(stringValue, 10);
+                    break;
+                case "short":
+                    parsedValue = Short.parseShort(stringValue, 10);
                     break;
                 case "hex":
                     parsedValue = Integer.parseInt(stringValue, 16);

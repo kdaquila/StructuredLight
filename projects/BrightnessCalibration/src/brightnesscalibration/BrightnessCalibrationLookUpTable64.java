@@ -57,7 +57,7 @@ public final class BrightnessCalibrationLookUpTable64 {
                 }
             }
             double avgValue = sum/(roiW*roiH);
-            double avgValue_norm = avgValue/65536.0 * 255.0;
+            double avgValue_norm = avgValue;
             measuredValues[slice_num] = avgValue_norm;
         }
         return measuredValues;
@@ -107,7 +107,7 @@ public final class BrightnessCalibrationLookUpTable64 {
         List<Integer> valid_indices = new ArrayList<>();
         for (int i = 0; i < computedInputValues.length; i++) {
             double computedValue = computedInputValues[i];
-            if (computedValue <= 255 && computedValue >= 0) {
+            if (computedValue <= 65535 && computedValue >= 0) {
                 valid_indices.add(i);
             }            
         }       
@@ -135,6 +135,9 @@ public final class BrightnessCalibrationLookUpTable64 {
             for (int col_num = 0; col_num < nCols; col_num++) {
                 int imgValue = inputImg[row_num][col_num];
                 int indexFound = nominalValues.indexOf(imgValue);
+                if (indexFound == -1) {
+                    throw new RuntimeException("Could not apply look up table. Value " + imgValue + " was not found" );
+                }
                 int tableValue = computedValues.get(indexFound);
                 outputImgData[row_num][col_num] = tableValue;
             }
@@ -142,4 +145,5 @@ public final class BrightnessCalibrationLookUpTable64 {
                 
         return outputImgData;
     }
+    
 }

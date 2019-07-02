@@ -39,9 +39,9 @@ public class InverseRodbard {
         
         // Set the intial guess
         double[] guess = new double[4];
-        guess[0] = 255.0; //a
+        guess[0] = 40000.0; //a
         guess[1] = 0.0; //b
-        guess[2] = 255.0; //c
+        guess[2] = 40000.0; //c
         guess[3] = 3.0; //d
         builder.start(guess);
         
