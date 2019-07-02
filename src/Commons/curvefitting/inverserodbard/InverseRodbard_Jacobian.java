@@ -1,11 +1,6 @@
 package curvefitting.inverserodbard;
 
-import core.ArrayUtils;
-import java.util.List;
 import org.apache.commons.math3.analysis.MultivariateMatrixFunction;
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.linear.RealVector;
 
 public class InverseRodbard_Jacobian implements MultivariateMatrixFunction {
 
@@ -103,7 +98,12 @@ public class InverseRodbard_Jacobian implements MultivariateMatrixFunction {
             J[pt_num][1] = a / Math.pow(c - x, 1.0 / d) * (1.0 / d) * Math.pow(x - b, 1.0 / d - 1) * -1.0;
             J[pt_num][2] = a * Math.pow(x - b, 1.0 / d) * (-1.0 / d) * Math.pow(c - x, -1.0 / d - 1.0);
             J[pt_num][3] = a * Math.log((x - b) / (c - x)) * Math.pow((x - b) / (c - x), 1.0/d) * (-1.0 / Math.pow(d, 2));
-                        
+            
+            if (J[pt_num][0] == Double.NaN || J[pt_num][1] == Double.NaN ||
+                J[pt_num][2] == Double.NaN || J[pt_num][3] == Double.NaN) {
+                throw new RuntimeException("The Inverse Rodbard jacobinan function value is non-real. a,b,c,d: " + a + ", " + b + ", " + c + ", " + d);
+            }
+            
         }
         return J;
 

@@ -39,10 +39,9 @@ public class InverseRodbard_Values implements MultivariateVectorFunction {
         double base = (x - b) / (c - x);
         double I = 0;
         if (base < 0) {
-            I = a*Math.pow(-1*base, 1 / d);
-        } else {
-            I = a*Math.pow(base, 1 / d);
-        }
+            throw new RuntimeException("The Inverse Rodbard function value is non-real. a,b,c,d: " + a + ", " + b + ", " + c + ", " + d);
+        } 
+        I = a*Math.pow(base, 1 / d);
         return I;
     }
 

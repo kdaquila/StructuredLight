@@ -358,7 +358,7 @@ public class TXT {
         // build delimter separated list of values
         StringWriter writer = new StringWriter();
         for (double item: vector) {            
-             writer.append(String.format(formatString + ",", item));
+             writer.append(String.format(formatString + "\n", item));
         }              
         return writer.toString();
     }
@@ -367,7 +367,7 @@ public class TXT {
         // build delimter separated list of values
         StringWriter writer = new StringWriter();
         for (int item: vector) {            
-             writer.append(String.format(formatString + ",", item));
+             writer.append(String.format(formatString + "\n", item));
         }              
         return writer.toString();
     }

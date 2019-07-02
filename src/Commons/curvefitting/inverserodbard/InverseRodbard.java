@@ -2,7 +2,6 @@ package curvefitting.inverserodbard;
 
 import core.ArrayUtils;
 import core.Print;
-import core.TXT;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
@@ -39,15 +38,11 @@ public class InverseRodbard {
         
         // Set the intial guess
         double[] guess = new double[4];
-        guess[0] = 40000.0; //a
+        guess[0] = 65535.0; //a
         guess[1] = 0.0; //b
-        guess[2] = 40000.0; //c
+        guess[2] = 65535.0; //c
         guess[3] = 3.0; //d
-        builder.start(guess);
-        
-        // TODO debug remove
-        double[][] J = jacobianValues.value(guess);
-        ArrayUtils.printList_Double2D(ArrayUtils.ArrayToList_Double2D(J), "%.3f");
+        builder.start(guess);                
 
         // Set the target data
         builder.target(yArray);
@@ -105,7 +100,7 @@ public class InverseRodbard {
         output.put("b", params[1]);
         output.put("c", params[2]);
         output.put("d", params[3]);
-        
+                
         return output;
         
     }

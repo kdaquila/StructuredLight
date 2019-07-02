@@ -3,10 +3,42 @@ package core;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 public class ImageStackUtils {
+    
+    
+    public static double[] getAvgZProfile(Map<String, double[][]> grayImageStack, int roiX, int roiY, int roiW, int roiH) {
+        int nSlices = grayImageStack.size();
+        double[] measuredValues = new double[nSlices];
+        List<String> imgNames = new ArrayList<>(grayImageStack.keySet());
+        Collections.sort(imgNames, new Comparator<String>(){
+            @Override
+            public int compare(String s1, String s2) {
+                int int1 = Integer.parseInt(s1.replaceAll("[^0-9]", ""));
+                int int2 = Integer.parseInt(s2.replaceAll("[^0-9]", ""));
+                return int1 - int2;
+            }
+            
+        });
+        for (int slice_num = 0; slice_num < nSlices; slice_num++) {
+            double[][] grayImage = grayImageStack.get(imgNames.get(slice_num));
+            
+            double sum = 0.0;
+            for (int y = roiY; y < (roiY + roiH); y++) {
+                for (int x = roiX; x < (roiX + roiW); x++) {                    
+                    sum += grayImage[y][x];
+                }
+            }
+            double avgValue = sum/(roiW*roiH);
+            double avgValue_norm = avgValue;
+            measuredValues[slice_num] = avgValue_norm;
+        }
+        return measuredValues;
+    }
 
     public static BufferedImage meanStack(Map<String, BufferedImage> imgStack) {
         

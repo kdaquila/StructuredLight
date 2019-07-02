@@ -1,12 +1,16 @@
 <config>	
 	<nRows type="int">600</nRows>
 	<nCols type="int">800</nCols>
-	<minValue type="int">1000</minValue>
+	<minValue type="int">5300</minValue>
 	<maxValue type="int">65400</maxValue>	
 	<stepValue type="int">4300</stepValue>	
 	
-	<formatString type="string">%d</formatString>
+	<roiX type="int">960</roiX>
+	<roiY type="int">540</roiY>
+	<roiWidth type="int">10</roiWidth>
+	<roiHeight type="int">10</roiHeight>
 	
+	<formatString type="string">%d</formatString>	
 	<baseDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\debug</baseDir>
 	<brightnessCalibrationImageDir type="string">C:\Users\kfd18\kfd18_Downloads\Stack4\grayFITS\lampStabilzed</brightnessCalibrationImageDir>	
 	<brightnessCalibrationDataDir type="string" role="subDir">brightness_calibration_data</brightnessCalibrationDataDir>
