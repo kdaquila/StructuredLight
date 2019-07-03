@@ -43,22 +43,18 @@ public class ImageStackUtils {
             
             // Load the image
             String imageAbsPath = Paths.get(folderPath).resolve(fileName).toString();
-            BufferedImage img = ImageUtils.load(imageAbsPath);
+            BufferedImage grayImg = ImageUtils.load(imageAbsPath);
             
-//            BufferedImage grayImg = ImageUtils.color2Gray(img, 0.15f, 0.80f, 0.05f);
-            
-            // Convert to 8-bit gray
-            int nRows = img.getHeight();
-            int nCols = img.getWidth();
-            BufferedImage grayImg = new BufferedImage(nCols, nRows, BufferedImage.TYPE_BYTE_GRAY);
-            Graphics2D g = grayImg.createGraphics();
-            g.drawImage(img, null, 0, 0);
-            g.dispose();
+            if (grayImg.getType() != BufferedImage.TYPE_BYTE_GRAY) {
+                throw new IllegalArgumentException("Cannot load image stack. Images must be 8-bit gray");
+            }
                        
             // Get the buffer
             byte[] dataBuffer = ((DataBufferByte)grayImg.getRaster().getDataBuffer()).getData();
             
-            // convert byte[] to int[][]            
+            // convert byte[] to int[][] 
+            int nRows = grayImg.getHeight();
+            int nCols = grayImg.getWidth();
             int[][] imageData = new int[nRows][nCols];
             for (int row_num = 0; row_num < nRows; row_num++) {
                 for (int col_num = 0; col_num < nCols; col_num++) {

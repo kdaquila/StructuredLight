@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import org.apache.commons.io.FileUtils;
@@ -22,7 +24,7 @@ import org.apache.commons.io.FileUtils;
 
 public class ImageUtils {
     
-    public static Map<String,BufferedImage> load_batch(String dir) {
+    public static SortedMap<String,BufferedImage> load_batch(String dir) {
         // Find the image filenames
         String[] fileNames = (new File(dir)).list(new FilenameFilter() {
             @Override
@@ -41,7 +43,7 @@ public class ImageUtils {
         }
         
         // Load the images
-        Map<String, BufferedImage> images = new HashMap<>();
+        SortedMap<String, BufferedImage> images = new TreeMap<>();
         for (String fileName: fileNames) {
             Print.println("Now loading image " + fileName);
             
@@ -78,7 +80,6 @@ public class ImageUtils {
     {
         for (String imgName: inputImages.keySet()) {
             String fileName = imgName + ".png";
-//            String imageAbsPath = Paths.get(dir).resolve(fileName).toString();
             BufferedImage img = inputImages.get(imgName);
             save(img, dir, fileName);
         }
@@ -421,9 +422,9 @@ public class ImageUtils {
      * @param inputImages A map of base filename (no extension) and the associated image
      * @return
      */
-    public static Map<String, BufferedImage> color2Gray_batch (Map<String, BufferedImage> inputImages)
+    public static SortedMap<String, BufferedImage> color2Gray_batch (Map<String, BufferedImage> inputImages)
     {
-        Map<String, BufferedImage> grayImages = new HashMap<>();
+        SortedMap<String, BufferedImage> grayImages = new TreeMap<>();
         for (String imgName: inputImages.keySet()) {
             Print.println("Now converting image " + imgName);
             

@@ -1,5 +1,6 @@
 package lampstabilitycorrection;
 
+import gui.ProgressBar;
 import core.FITS;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -109,7 +110,7 @@ public class LampStabilityCorrection64 {
             
         });
         
-        GUI gui = new GUI();
+        ProgressBar gui = new ProgressBar();
         gui.updateProgressBar(0);
         
         // Rescale each image in the stack
