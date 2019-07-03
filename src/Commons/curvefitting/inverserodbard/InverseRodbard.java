@@ -2,6 +2,7 @@ package curvefitting.inverserodbard;
 
 import core.ArrayUtils;
 import core.Print;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
@@ -34,13 +35,27 @@ public class InverseRodbard {
         // Set the model
         InverseRodbard_Values functionValues = new InverseRodbard_Values(xArray);
         InverseRodbard_Jacobian jacobianValues = new InverseRodbard_Jacobian(xArray);
-        builder.model(functionValues, jacobianValues);        
+        builder.model(functionValues, jacobianValues);      
+        
+        // Compute max of X values
+        double[] xCopy = new double[xArray.length];
+        System.arraycopy(xArray, 0, xCopy, 0, xArray.length);
+        Arrays.sort(xCopy);
+        double xMax = xCopy[xCopy.length - 1];
+        double xMin = xCopy[0];
+        
+        // Compute max and min of Y values
+        double[] yCopy = new double[yArray.length];
+        System.arraycopy(yArray, 0, yCopy, 0, yArray.length);
+        Arrays.sort(yCopy);
+        double yMax = yCopy[yCopy.length - 1];
+        double yMin = yCopy[0];
         
         // Set the intial guess
         double[] guess = new double[4];
-        guess[0] = 65535.0; //a
+        guess[0] = yMax; //a
         guess[1] = 0.0; //b
-        guess[2] = 65535.0; //c
+        guess[2] = yMax; //c
         guess[3] = 3.0; //d
         builder.start(guess);                
 
@@ -56,11 +71,12 @@ public class InverseRodbard {
         builder.maxEvaluations(maxEval);
         int maxIter = 10000;
         builder.maxIterations(maxIter);        
+       
 
         // Set special features
         builder.lazyEvaluation(false);
 //        builder.parameterValidator(null);
-        builder.parameterValidator(new InverseRodbard_ParameterValidator());
+        builder.parameterValidator(new InverseRodbard_ParameterValidator(xMin, xMax));
         builder.weight(null);   
                 
         // Create the least squares problem

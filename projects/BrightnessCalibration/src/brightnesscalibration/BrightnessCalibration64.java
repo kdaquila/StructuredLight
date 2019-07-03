@@ -43,7 +43,7 @@ public class BrightnessCalibration64 {
         int roiY = (Integer) config.get("roiY");
         int roiWidth = (Integer) config.get("roiWidth");
         int roiHeight = (Integer) config.get("roiHeight");
-        double[] measuredOutputs = ImageStackUtils.getAvgZProfile(imgStack, roiX, roiY, roiWidth, roiHeight);
+        double[] measuredOutputs = ImageStackUtils.getAvgZProfile_double(imgStack, roiX, roiY, roiWidth, roiHeight);
         
         // Compute the nominalOutputs
         int nNominalPts = (int) (measuredOutputs[measuredOutputs.length - 1] - measuredOutputs[0] + 1);
@@ -82,6 +82,7 @@ public class BrightnessCalibration64 {
         int[][] lookUpTable = app.computeLookUpTable(imgStack);
         
         // Save the look up table
+        Print.println("Saving the look-up-table");
         String brightnessCalibrationDataDir = (String) app.config.get("brightnessCalibrationDataDir");
         String brightnessCalibrationDataFilename = (String) app.config.get("brightnessCalibrationDataFilename");
         String formatString = (String) app.config.get("formatString");

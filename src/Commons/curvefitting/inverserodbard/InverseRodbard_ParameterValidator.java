@@ -6,6 +6,15 @@ import org.apache.commons.math3.linear.RealVector;
 
 public class InverseRodbard_ParameterValidator implements ParameterValidator{
     
+    double bMax;
+    double cMin;
+    
+    public InverseRodbard_ParameterValidator(double bMax, double cMin) {
+        this.bMax = bMax;
+        this.cMin = cMin;
+    }
+    
+    @Override
     public RealVector validate (RealVector input) {
         RealVector output = MatrixUtils.createRealVector(input.toArray());
         
@@ -18,13 +27,13 @@ public class InverseRodbard_ParameterValidator implements ParameterValidator{
             output.setEntry(0, 50.0);
         }
         
-//        if ( b > 0) {
-//            output.setEntry(1, 0.0);
-//        }
+        if ( b >= bMax) {
+            output.setEntry(1, bMax - 1e-10);
+        }
         
-//        if ( c <= 65535.0) {
-//            output.setEntry(2, 65535.0 + 1e-10);
-//        }
+        if ( c <= cMin) {
+            output.setEntry(2, cMin + 1e-10);
+        }
         
         if ( d <= 0.0) {
             output.setEntry(3, 0.1);

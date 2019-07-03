@@ -53,7 +53,7 @@ public class LookUpTable_InverseRodbard extends LookUpTable {
         
                     
         // TODO debug remove
-        String debugPath = "C:\\Users\\kfd18\\kfd18_Downloads";        
+        String debugPath = "C:\\kdaquila_Downloads";        
         TXT.saveVector(givenInputs, "%d", debugPath, "givenInputs.txt");
         TXT.saveVector(measuredOutputs, "%f", debugPath, "measuredOutputs.txt");
         TXT.saveVector(nominalOutputs, "%d", debugPath, "nominalOutputs.txt");
