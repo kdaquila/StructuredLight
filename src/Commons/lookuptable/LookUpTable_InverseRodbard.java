@@ -3,6 +3,12 @@ package lookuptable;
 import core.TXT;
 import curvefitting.inverserodbard.InverseRodbard;
 import curvefitting.inverserodbard.InverseRodbard_Values;
+import org.knowm.xchart.SwingWrapper;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.XYSeries;
+import org.knowm.xchart.style.lines.SeriesLines;
+import org.knowm.xchart.style.markers.SeriesMarkers;
 
 public class LookUpTable_InverseRodbard extends LookUpTable {
     
@@ -58,6 +64,29 @@ public class LookUpTable_InverseRodbard extends LookUpTable {
         TXT.saveVector(measuredOutputs, "%f", debugPath, "measuredOutputs.txt");
         TXT.saveVector(nominalOutputs, "%d", debugPath, "nominalOutputs.txt");
         TXT.saveVector(computedInputs, "%d", debugPath, "computedInputs.txt"); 
+        
+        String title = "Brightness Calibration";
+        String xLabel = "Input Value";
+        String yLabel = "Output Value";        
+        XYChart chart = new XYChartBuilder().width(800).height(600).title(title).xAxisTitle(xLabel).yAxisTitle(yLabel).build();
+        
+        String measuredName = "Measured";
+        double[] measuredXData = givenInputs_Double;
+        double[] measuredYData = measuredOutputs;
+        XYSeries measuredDataSeries = chart.addSeries(measuredName, measuredXData, measuredYData);
+        measuredDataSeries.setLineStyle(SeriesLines.NONE);
+        measuredDataSeries.setMarker(SeriesMarkers.CIRCLE);
+        
+        String computedName = "Computed";
+        double[] computedXData = computedInputs_Double;
+        double[] computedYData = nominalOutputs_Double;        
+        XYSeries computedDataSeries = chart.addSeries(computedName, computedXData, computedYData);
+        computedDataSeries.setLineWidth(1.0f);
+        computedDataSeries.setLineStyle(SeriesLines.SOLID);
+        computedDataSeries.setMarker(SeriesMarkers.NONE);
+        
+        
+        (new SwingWrapper(chart)).displayChart();
         
         return lookUpTable;
     }
