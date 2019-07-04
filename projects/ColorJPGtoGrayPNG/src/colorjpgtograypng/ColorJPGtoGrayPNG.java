@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.SortedMap;
 import javax.swing.JFileChooser;
+import org.apache.commons.io.FilenameUtils;
 
 public class ColorJPGtoGrayPNG {
 
@@ -43,7 +44,6 @@ public class ColorJPGtoGrayPNG {
         SortedMap<String, BufferedImage> grayImageStack = ImageUtils.color2Gray_batch(rgbImageStack);
         
         // Save the images
-        String saveDirName = dirname + "\\gray";
         int counter = 0;
         int counterInc = 100/grayImageStack.size();
         for (String imgName: grayImageStack.keySet()) {
@@ -54,7 +54,9 @@ public class ColorJPGtoGrayPNG {
             
             String fileName = imgName + ".png";
             BufferedImage img = grayImageStack.get(imgName);
-            save(img, saveDirName, fileName);
+            
+            String saveDir = FilenameUtils.getFullPathNoEndSeparator(dirname) + "\\PNG_8bitGray";
+            save(img, saveDir, fileName);
         }
         
         // Close the gui
