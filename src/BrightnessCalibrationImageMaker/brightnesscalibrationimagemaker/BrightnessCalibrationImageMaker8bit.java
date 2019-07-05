@@ -12,11 +12,11 @@ import java.awt.image.DataBufferUShort;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-public class BrightnessCalibrationImageMaker {
+public class BrightnessCalibrationImageMaker8bit {
     
     Map<String,Object> config;  
     
-    public BrightnessCalibrationImageMaker(String configPath) {
+    public BrightnessCalibrationImageMaker8bit(String configPath) {
         // Load the XML configuration file
         XML xml = new XML(configPath);        
         
@@ -118,102 +118,9 @@ public class BrightnessCalibrationImageMaker {
         }  
         
         return outputImages;
-    }
+    }    
     
-    public Map<String,BufferedImage> drawImages_10bit() {
-        int nRows = (Integer) config.get("nRows");
-        int nCols = (Integer) config.get("nCols");
-        int minValue = (Integer) config.get("minValue");
-        int maxValue = (Integer) config.get("maxValue");
-        int stepValue = (Integer) config.get("stepValue");
-        
-        Map<String,BufferedImage> outputImages = new HashMap<>();
-        
-        for (int value = minValue; value <= maxValue; value += stepValue) {
-            
-            if (value > 1023 || value < 0) {
-                throw new RuntimeException("Can't draw the image. Value " + value + " is out of the range (0,1023)");
-            }
-            
-            // create a new image and get the data array
-            BufferedImage img = new BufferedImage(nCols, nRows, BufferedImage.TYPE_USHORT_GRAY);
-            short[] data = ((DataBufferUShort)img.getRaster().getDataBuffer()).getData();
- 
-            // create the graphics object
-            Graphics2D g = (Graphics2D) img.getGraphics();
-            
-            // draw the background
-            for (int row_num = 0; row_num < nRows ; row_num++) {
-                for (int col_num = 0; col_num < nCols; col_num++) {
-                    int index = row_num*nCols + col_num;
-                    data[index] = 1023;
-                }
-            }
-            
-            // draw the main area rectangle
-            int borderWidth = 200;
-            for (int row_num = borderWidth; row_num < nRows - borderWidth; row_num++) {
-                for (int col_num = borderWidth; col_num < nCols - borderWidth; col_num++) {
-                    int index = row_num*nCols + col_num;
-                    data[index] = (short) value;
-                }
-            }
-            
-            // draw the border around the main area rectangle
-            int row_num = borderWidth;
-            for (int col_num = borderWidth; col_num < nCols - borderWidth; col_num++) {
-                int index = row_num*nCols + col_num;
-                data[index] = (short) value;
-            }
-            row_num = nRows - borderWidth;
-            for (int col_num = borderWidth; col_num < nCols - borderWidth; col_num++) {
-                int index = row_num*nCols + col_num;
-                data[index] = (short) value;
-            }
-            int col_num = borderWidth;
-            for (row_num = borderWidth; row_num < nRows - borderWidth; row_num++) {
-                int index = row_num*nCols + col_num;
-                data[index] = (short) value;
-            }
-            col_num = nCols - borderWidth;
-            for (row_num = borderWidth; row_num < nRows - borderWidth; row_num++) {
-                int index = row_num*nCols + col_num;
-                data[index] = (short) value;
-            }
-  
-            // define display name string
-            String displayName = String.format("%d", value);                      
-            
-            // set the font
-            int hText = 100;
-            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, hText));
-            
-            // draw the font background rect
-            double scaleFactor = 1.2;
-            int wBackgroundRect = (int)(g.getFontMetrics().stringWidth(displayName)*scaleFactor);
-            int hBackgroundRect = (int) (hText*1.2);             
-            for ( row_num = 0; row_num < hBackgroundRect; row_num++) {
-                for ( col_num = 0; col_num < wBackgroundRect; col_num++) {
-                    int index = row_num*nCols + col_num;
-                    data[index] = 1023;
-                }
-            }
-
-            
-            // add text            
-            int xText = (int)(g.getFontMetrics().stringWidth(displayName)*(scaleFactor-1)/2.0);
-            int yText = hText; 
-            g.setColor(Color.BLACK);            
-            g.drawString(displayName, xText, yText);
-            
-            // store the images
-            outputImages.put(String.valueOf(value), img);
-        }  
-        
-        return outputImages;
-    }   
-    
-    public Map<String,BufferedImage> drawImages() {
+    public Map<String,BufferedImage> drawImages_8bit() {
         int nRows = (Integer) config.get("nRows");
         int nCols = (Integer) config.get("nCols");
         int minValue = (Integer) config.get("minValue");
@@ -287,11 +194,11 @@ public class BrightnessCalibrationImageMaker {
         // Parse the arguments
         String configAbsPath = args[0];
         
-        BrightnessCalibrationImageMaker app = new BrightnessCalibrationImageMaker(configAbsPath);
+        BrightnessCalibrationImageMaker8bit app = new BrightnessCalibrationImageMaker8bit(configAbsPath);
         
         // Draw the images
         println("Drawing Images");
-        Map<String,BufferedImage> brightnessImages = app.drawImages_16bit();
+        Map<String,BufferedImage> brightnessImages = app.drawImages_8bit();
         
         // Save the images
         println("Saving Images");

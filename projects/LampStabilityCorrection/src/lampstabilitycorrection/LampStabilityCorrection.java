@@ -15,7 +15,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
-import org.apache.commons.io.FilenameUtils;
 
 public class LampStabilityCorrection {
     

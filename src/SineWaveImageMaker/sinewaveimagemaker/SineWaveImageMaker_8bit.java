@@ -11,11 +11,11 @@ import java.util.TreeMap;
 import lookuptable.LookUpTable;
 import sinewavepattern.SineWavePattern;
 
-public class SineWaveImageMaker {
+public class SineWaveImageMaker_8bit {
     
     Map<String,Object> config;  
     
-    public SineWaveImageMaker(String configPath) {
+    public SineWaveImageMaker_8bit(String configPath) {
         // Load the XML configuration file
         XML xml = new XML(configPath);        
         
@@ -38,9 +38,9 @@ public class SineWaveImageMaker {
         Map<String,int[][]> sineWaveArrayStack = SineWavePattern.makeSineArrayStack(nRows, nCols, amplitude, offset, waveLength, nPhaseSteps, orientation);
         
         // Apply the look-up-table
-        boolean doBrightnessCalibration = (Boolean) config.get("doBrightnessCalibration");
-        Map<String,int[][]> sineWaveArrayStack_Adj = new TreeMap<>();
+        boolean doBrightnessCalibration = (Boolean) config.get("doBrightnessCalibration");        
         if (doBrightnessCalibration) {
+            Map<String,int[][]> sineWaveArrayStack_Adj = new TreeMap<>();
             String brightnessCalibrationTableDir = (String) config.get("brightnessCalibrationTableDir");
             String brightnessCalibrationTableFilename = (String) config.get("brightnessCalibrationTableFilename");
             String brightnessCalibrationFullPath = brightnessCalibrationTableDir + "\\" + brightnessCalibrationTableFilename;
@@ -49,14 +49,18 @@ public class SineWaveImageMaker {
                 int[][] oldImg = sineWaveArrayStack.get(name);
                 int[][] newImg = LookUpTable.applyTable(oldImg, lookUpTable);
                 sineWaveArrayStack_Adj.put(name, newImg);
-            }        
+            }     
+            
+            // Overwrite the original image stack with the adjusted one
+            sineWaveArrayStack = sineWaveArrayStack_Adj;
         }
+        
          
         // Set as images      
         Map<String,BufferedImage> sineWaveImages = new TreeMap<>();
-        for (String name: sineWaveArrayStack_Adj.keySet()) {
-            int[][] array = sineWaveArrayStack_Adj.get(name);
-            BufferedImage image = BufferedImageFactory.build_16bit_Gray(array);
+        for (String name: sineWaveArrayStack.keySet()) {
+            int[][] array = sineWaveArrayStack.get(name);
+            BufferedImage image = BufferedImageFactory.build_8bit_Gray(array);
             sineWaveImages.put(name, image);
         }    
         return sineWaveImages;
@@ -75,15 +79,15 @@ public class SineWaveImageMaker {
         String configAbsPath = args[0];
         
         // Create the app
-        SineWaveImageMaker app = new SineWaveImageMaker(configAbsPath);
+        SineWaveImageMaker_8bit app = new SineWaveImageMaker_8bit(configAbsPath);
         
         // Create the images
         println("Creating the Images");
         Map<String,BufferedImage> sineWaveImages = app.makeImages();
         
-        // Save the images
-        println("Saving the Images");
+        // Save the images        
         String sineWavePatternsDir = (String) app.config.get("sineWavePatternsDir");
+        println("Saving the Images to: " + sineWavePatternsDir);
         ImageUtils.save_batch(sineWaveImages, sineWavePatternsDir);
     }    
     
