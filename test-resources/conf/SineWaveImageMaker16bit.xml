@@ -13,6 +13,6 @@
 	
 	<doBrightnessCalibration type="boolean">true</doBrightnessCalibration>
 	<brightnessCalibrationTableDir type="string" role="subDir">brightness_calibration_data</brightnessCalibrationTableDir>
-	<brightnessCalibrationTableFilename type="string">brightness_calibration_table.txt</brightnessCalibrationTableFilename>
+	<brightnessCalibrationTableFilename type="string">brightness_calibration_data.txt</brightnessCalibrationTableFilename>
 	
 </config>

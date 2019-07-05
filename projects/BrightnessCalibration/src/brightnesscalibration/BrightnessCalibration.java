@@ -59,6 +59,47 @@ public class BrightnessCalibration {
 
         return lookUpTable;
     }
+    
+    public double[] computeLookUpFunc(Map<String, int[][]> imgStack) {
+
+        // Compute the givenInputs
+        int minValue = (Integer) config.get("minValue");
+        int maxValue = (Integer) config.get("maxValue");
+        int stepValue = (Integer) config.get("stepValue");
+        int nSteps = (int)((maxValue - minValue)/stepValue + 1);
+        int[] givenInputs = new int[nSteps];
+        int givenInput = minValue;
+        for (int step_num = 0; step_num < nSteps; step_num++) {
+            givenInputs[step_num] = givenInput;
+            givenInput += stepValue;
+        }
+        
+        // Get the measuredOutputs
+        int roiX = (Integer) config.get("roiX");
+        int roiY = (Integer) config.get("roiY");
+        int roiWidth = (Integer) config.get("roiWidth");
+        int roiHeight = (Integer) config.get("roiHeight");
+        double[] measuredOutputs = ImageStackUtils.getAvgZProfile_int(imgStack, roiX, roiY, roiWidth, roiHeight);
+        
+        // Compute the nominalOutputs
+        int nNominalPts = (int) (Math.floor(measuredOutputs[measuredOutputs.length - 1]) - Math.ceil(measuredOutputs[0]) + 1);
+        int[] nominalOutputs = new int[nNominalPts];
+        int outputValue = (int) Math.ceil(measuredOutputs[0]);
+        for (int i = 0; i < nNominalPts; i++) {            
+            nominalOutputs[i] = outputValue;
+            outputValue++;
+        }
+        
+        LookUpTable_InverseRodbard lut = new LookUpTable_InverseRodbard(givenInputs, measuredOutputs, nominalOutputs);
+        double[] params = lut.computeParams();
+        
+        double[] paramsWithBounds = new double[params.length + 2];
+        System.arraycopy(params, 0, paramsWithBounds, 0, params.length);
+        paramsWithBounds[params.length] = nominalOutputs[0];
+        paramsWithBounds[params.length + 1] = nominalOutputs[nominalOutputs.length - 1];
+        
+        return paramsWithBounds;
+    }
 
     public static void main(String[] args) {
         println("Running the Brightness Calibration App:");
@@ -79,14 +120,14 @@ public class BrightnessCalibration {
 
         // Compute the look up table
         Print.println("Computing the look-up-table");
-        int[][] lookUpTable = app.computeLookUpTable(imgStack);
+        double[] params = app.computeLookUpFunc(imgStack);
         
         // Save the look up table
         Print.println("Saving the look-up-table");
         String brightnessCalibrationDataDir = (String) app.config.get("brightnessCalibrationDataDir");
         String brightnessCalibrationDataFilename = (String) app.config.get("brightnessCalibrationDataFilename");
         String formatString = (String) app.config.get("formatString");
-        TXT.saveMatrix(lookUpTable, formatString, brightnessCalibrationDataDir, brightnessCalibrationDataFilename);     
+        TXT.saveVector(params, formatString, brightnessCalibrationDataDir, brightnessCalibrationDataFilename);      
                 
     }
     

@@ -32,7 +32,7 @@ public class InverseRodbard_ParameterValidator implements ParameterValidator{
         }
         
         if ( c <= cMin) {
-            output.setEntry(2, cMin + 1e-10);
+            output.setEntry(2, cMin + 1e-3);
         }
         
         if ( d <= 0.0) {

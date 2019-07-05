@@ -100,6 +100,25 @@ public class TXT {
         return output;
     }
     
+    public static double[] loadVector_Double(String path)
+    {
+        List<Double> output = new ArrayList<>();
+        try {
+            File newFile = new File(path);
+            FileReader reader = new FileReader(newFile);
+            BufferedReader buffReader = new BufferedReader(reader);
+            String newLine = buffReader.readLine();
+            while (newLine != null) {
+                output.add(Double.parseDouble(newLine));
+                newLine = buffReader.readLine();
+            }            
+        }
+        catch(IOException exp){
+            throw new RuntimeException("Could not read a line from the file");
+        }
+        return ArrayUtils.ListToArray_Double(output);
+    }
+    
     public static void saveMatrix(int[][] matrix, String formatString,
                                       String folder, String filename) {
         
