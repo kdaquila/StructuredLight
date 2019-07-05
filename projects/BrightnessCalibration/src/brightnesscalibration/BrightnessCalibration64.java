@@ -7,6 +7,7 @@ import static core.Print.println;
 import core.TXT;
 import core.XML;
 import java.util.Map;
+import lookuptable.LookUpTable_CubicSpline;
 import lookuptable.LookUpTable_InverseRodbard;
 
 public class BrightnessCalibration64 {
@@ -46,9 +47,9 @@ public class BrightnessCalibration64 {
         double[] measuredOutputs = ImageStackUtils.getAvgZProfile_double(imgStack, roiX, roiY, roiWidth, roiHeight);
         
         // Compute the nominalOutputs
-        int nNominalPts = (int) (measuredOutputs[measuredOutputs.length - 1] - measuredOutputs[0] + 1);
+        int nNominalPts = (int) (Math.floor(measuredOutputs[measuredOutputs.length - 1]) - Math.ceil(measuredOutputs[0]) + 1);
         int[] nominalOutputs = new int[nNominalPts];
-        int outputValue = (int) measuredOutputs[0];
+        int outputValue = (int) Math.ceil(measuredOutputs[0]);
         for (int i = 0; i < nNominalPts; i++) {            
             nominalOutputs[i] = outputValue;
             outputValue++;
