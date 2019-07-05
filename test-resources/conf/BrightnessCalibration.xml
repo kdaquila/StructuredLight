@@ -5,14 +5,14 @@
 	<maxValue type="int">255</maxValue>	
 	<stepValue type="int">10</stepValue>	
 	
-	<roiX type="int">1496</roiX>
-	<roiY type="int">1000</roiY>
+	<roiX type="int">960</roiX>
+	<roiY type="int">540</roiY>
 	<roiWidth type="int">10</roiWidth>
 	<roiHeight type="int">10</roiHeight>
 	
 	<formatString type="string">%d</formatString>	
 	<baseDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\debug</baseDir>
-	<brightnessCalibrationImageDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\test-resources\image-sets\image-set-8-brightnesscalibration\gray</brightnessCalibrationImageDir>	
+	<brightnessCalibrationImageDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\test-resources\image-sets\image-set-BrightnessCalibration-using16bit\PNG_8bitGray\lampStabilized</brightnessCalibrationImageDir>	
 	<brightnessCalibrationDataDir type="string" role="subDir">brightness_calibration_data</brightnessCalibrationDataDir>
 	<brightnessCalibrationDataFilename type="string">brightness_calibration_table.txt</brightnessCalibrationDataFilename>
 	<brightnessCalibrationPatternDir type="string" role="subDir">brightness_calibration_patterns</brightnessCalibrationPatternDir>

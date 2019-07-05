@@ -2,7 +2,6 @@ package core;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferShort;
 import java.awt.image.DataBufferUShort;
 
 public class BufferedImageFactory {   

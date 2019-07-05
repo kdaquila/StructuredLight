@@ -5,6 +5,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.FitsFactory;
@@ -14,7 +16,7 @@ import org.apache.commons.io.FilenameUtils;
 
 public class FITS {
     
-    public static <T> Map<String, T> loadArray_Batch(String folderName) {
+    public static <T> SortedMap<String, T> loadArray_Batch(String folderName) {
         // Find the image filenames
         String[] fileNames = (new File(folderName)).list(new FilenameFilter() {
             @Override
@@ -30,7 +32,7 @@ public class FITS {
             throw new RuntimeException("No suitables files found in the input directory.");
         }
         
-        Map<String, T> arrayStack = new HashMap<>();
+        SortedMap<String, T> arrayStack = new TreeMap<>();
         for (String fileName: fileNames) {
             Print.println("Now loading image " + fileName);
             

@@ -18,7 +18,7 @@ import org.apache.commons.io.FilenameUtils;
 
 public class ImageStackUtils {
           
-    public static Map<String, int[][]> loadStack_8BitGray(String folderPath) {
+    public static SortedMap<String, int[][]> loadStack_8BitGray(String folderPath) {
         // Find the image filenames
         String[] fileNames = (new File(folderPath)).list(new FilenameFilter() {
             @Override

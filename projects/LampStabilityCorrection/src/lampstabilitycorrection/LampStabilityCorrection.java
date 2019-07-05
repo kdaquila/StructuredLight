@@ -1,33 +1,37 @@
 package lampstabilitycorrection;
 
+import core.BufferedImageFactory;
 import gui.ProgressBar;
-import core.FITS;
+import core.ImageStackUtils;
+import core.ImageUtils;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
+import org.apache.commons.io.FilenameUtils;
 
-public class LampStabilityCorrection64 {
+public class LampStabilityCorrection {
     
     int nRows;
     int nCols;
     int nSlices;
     
-    public LampStabilityCorrection64(Map<String, double[][]> grayImageStack) {
+    public LampStabilityCorrection(SortedMap<String, int[][]> grayImageStack) {
         nCols = grayImageStack.values().iterator().next()[0].length;
         nRows = grayImageStack.values().iterator().next().length;
         nSlices = grayImageStack.size();
     }
     
     
-    public double[] getAvgZProfile(Map<String, double[][]> grayImageStack, int roiX, int roiY, int roiW, int roiH) {
-        double[] measuredValues = new double[nSlices];
+    public int[] getAvgZProfile(SortedMap<String, int[][]> grayImageStack, int roiX, int roiY, int roiW, int roiH) {
+        int[] measuredValues = new int[nSlices];
         List<String> imgNames = new ArrayList<>(grayImageStack.keySet());
         Collections.sort(imgNames, new Comparator<String>(){
             @Override
@@ -39,7 +43,7 @@ public class LampStabilityCorrection64 {
             
         });
         for (int slice_num = 0; slice_num < nSlices; slice_num++) {
-            double[][] grayImage = grayImageStack.get(imgNames.get(slice_num));
+            int[][] grayImage = grayImageStack.get(imgNames.get(slice_num));
             
             double sum = 0.0;
             for (int y = roiY; y < (roiY + roiH); y++) {
@@ -47,7 +51,7 @@ public class LampStabilityCorrection64 {
                     sum += grayImage[y][x];
                 }
             }
-            double avgValue = sum/(roiW*roiH);
+            int avgValue = (int)(sum/(roiW*roiH));
             measuredValues[slice_num] = avgValue;
         }
         return measuredValues;
@@ -76,25 +80,32 @@ public class LampStabilityCorrection64 {
         System.out.println("Loading images from: " + dirname);
         
         // Load the gray image stack
-        Map<String, double[][]> grayImageStack = FITS.loadArray_Batch(dirname);
+        SortedMap<String, int[][]> grayImageStack = ImageStackUtils.loadStack_8BitGray(dirname);
         
-        LampStabilityCorrection64 lampStabilityCorrection64 = new LampStabilityCorrection64(grayImageStack);
+        LampStabilityCorrection lampStabilityCorrection = new LampStabilityCorrection(grayImageStack);
         
         // Get the average Z-axis profile at a location
-        int nSlices = lampStabilityCorrection64.nSlices;
-        int nRows = lampStabilityCorrection64.nRows;
-        int nCols = lampStabilityCorrection64.nCols;
+        int nSlices = lampStabilityCorrection.nSlices;
+        int nRows = lampStabilityCorrection.nRows;
+        int nCols = lampStabilityCorrection.nCols;
         int roiW = 10;
         int roiH = 10;
         int roiX = nCols/2 - roiW/2;
-        int roiY = nRows/10;
+        int roiY = nRows/10;        
+        int[] zProfile = lampStabilityCorrection.getAvgZProfile(grayImageStack, roiX, roiY, roiW, roiH);
         
-        double[] zProfile = lampStabilityCorrection64.getAvgZProfile(grayImageStack, roiX, roiY, roiW, roiH);
+        // Compute the average Z-Profile value
+        int sum = 0;
+        for (int i = 0; i < zProfile.length; i++) {
+            sum += zProfile[i];
+        }
+        double zProfile_mean = sum/zProfile.length;
+        
         
         // Compute the rescale factors
         double[] scaleFactors = new double[zProfile.length];
         for (int i = 0; i < zProfile.length; i++) {
-            scaleFactors[i] = zProfile[0]/zProfile[i];
+            scaleFactors[i] = zProfile_mean/zProfile[i];
         }
         
         // Sort the image names
@@ -113,9 +124,38 @@ public class LampStabilityCorrection64 {
         gui.updateProgressBar(0);
         
         // Rescale each image in the stack
-        Map<String, Object> rescaledImageStack = new HashMap<>();
+        SortedMap<String, int[][]> rescaledImageStack = new TreeMap<>();
         for (int slice_num = 0; slice_num < nSlices; slice_num++) {
             
+            String imgName = imgNames.get(slice_num);                                            
+            
+            // update the progress bar
+            int percentProgress = (int)(100.0*slice_num/nSlices);
+            SwingUtilities.invokeLater(new Runnable(){
+                @Override
+                public void run() {
+                    gui.updateProgressBar(percentProgress);
+                    gui.updateLabel("Rescaling " + imgName);
+                }
+            }); 
+            
+            double scaleFactor = scaleFactors[slice_num];
+            int[][] grayImage = grayImageStack.get(imgName);
+            int[][] rescaledImage = new int[nRows][nCols];
+            for (int row_num = 0; row_num < nRows; row_num++) {
+                for (int col_num = 0; col_num < nCols; col_num++) {
+                    int rescaledValue = (int)(grayImage[row_num][col_num]*scaleFactor);
+                    if (rescaledValue > 255) rescaledValue = 255;
+                    if (rescaledValue < 0) rescaledValue = 0;
+                    rescaledImage[row_num][col_num] = rescaledValue;
+                }
+            }
+            rescaledImageStack.put(imgName, rescaledImage);
+        }
+        
+        // Save the rescaled image stack
+        String saveDirectory = dirname + "\\lampStabilized";
+        for (int slice_num = 0; slice_num < nSlices; slice_num++) {
             String imgName = imgNames.get(slice_num);
             
             // update the progress bar
@@ -123,25 +163,16 @@ public class LampStabilityCorrection64 {
             SwingUtilities.invokeLater(new Runnable(){
                 public void run() {
                     gui.updateProgressBar(percentProgress);
-                    gui.updateLabel(imgName);
+                    gui.updateLabel("Saving " + imgName);
+                    gui.pack();
                 }
-            });                       
+            }); 
             
-            
-            double scaleFactor = scaleFactors[slice_num];
-            double[][] grayImage = grayImageStack.get(imgName);
-            double[][] rescaledImage = new double[nRows][nCols];
-            for (int row_num = 0; row_num < nRows; row_num++) {
-                for (int col_num = 0; col_num < nCols; col_num++) {
-                    rescaledImage[row_num][col_num] = grayImage[row_num][col_num]*scaleFactor;
-                }
-            }
-            rescaledImageStack.put(imgName, rescaledImage);
-        }
-        
-        // Save the rescaled image stack
-        String saveDirectory = dirname + "\\lampStabilzed";
-        FITS.saveImageBatch(rescaledImageStack, saveDirectory);
+            int[][] rescaledImage = rescaledImageStack.get(imgName);
+            BufferedImage image = BufferedImageFactory.build_8bit_Gray(rescaledImage);
+            String saveFilename = imgName + ".png";
+            ImageUtils.save(image, saveDirectory, saveFilename);
+        } 
         
         // Close the gui
         gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));

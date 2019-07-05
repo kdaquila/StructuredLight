@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -19,6 +20,7 @@ public final class ProgressBar extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         label = new JLabel("image name");
         label.setFont(new Font(label.getName(), Font.PLAIN, 20));
+        label.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         panel = new JPanel();
         progressBar = new JProgressBar(0,100);
         panel.add(progressBar);
