@@ -1,9 +1,7 @@
 package core;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.file.Paths;
@@ -167,5 +165,148 @@ public class ImageStackUtils {
         }
         
         return outputImg;
+    }
+    
+    public static SortedMap<String, double[][]> blurStack(SortedMap<String, double[][]> inputStack, int radius) {
+        
+        SortedMap<String, double[][]> outputStack = new TreeMap<>();
+        for (Map.Entry<String, double[][]> entry: inputStack.entrySet()) {
+             
+            // Get the data
+            String name = entry.getKey();
+            double[][] inputData = entry.getValue();
+            
+            // Do the mean filter
+            double[][] filteredData = meanFilter(inputData, radius);
+            
+            // Store the results
+            outputStack.put(name, filteredData);
+            
+        }
+        return outputStack;
+    }
+        
+        public static double[][] meanFilter(double[][] inputGrayImage, int radius)
+    {
+        int nRows = inputGrayImage.length;
+        int nCols = inputGrayImage[0].length;        
+        double[][] outputImage = new double[nRows][nCols];        
+        outputImage = meanFilterRows(inputGrayImage, radius);
+        outputImage = meanFilterRows(outputImage, radius);
+        outputImage = meanFilterRows(outputImage, radius);
+        outputImage = transpose(outputImage);
+        outputImage = meanFilterRows(outputImage, radius);
+        outputImage = meanFilterRows(outputImage, radius);
+        outputImage = meanFilterRows(outputImage, radius);
+        outputImage = transpose(outputImage);
+        
+        return outputImage;
+    }
+        
+    private static double[][] meanFilterRows(double[][] inputGrayImage, int radius)
+    {                
+        // Initialize the output image
+        int width = inputGrayImage[0].length;
+        int height = inputGrayImage.length;
+        double[][] blurImage = new double[height][width]; 
+                
+        // Define kernal value
+        double kernalWt = 1.0/(2*radius + 1);
+              
+        // Filter along each row
+        for (int row = 0; row < height; row++)
+        {
+            float rowConvSum = 0;
+            for (int col = 0; col < width; col++)
+            {
+                // Define position in linear array
+                int bufferPos = row*width + col;
+                
+                // Sum initial terms for rowConvSum and for edgeConvSum
+                // the kernal weights are special here, but constant
+                if (col == 0)
+                {
+                    double edgeConvSum = 0;
+                    double edgeKernalWt = 1.0/(radius + 1);
+                    for (int offset = 0; offset < (radius+1); offset++ )
+                    {
+                        double gray = inputGrayImage[row][col + offset];
+                        rowConvSum += kernalWt*gray;  
+                        edgeConvSum += edgeKernalWt*gray;
+                    }
+                    blurImage[row][col] = edgeConvSum;                     
+                }
+                // Only add to rowConvSum, but sum terms for edgeConvSum
+                // the kernal weights are special here, and not constant
+                else if (col <= radius)
+                {
+                    // update rowConvSum
+                    double gray = inputGrayImage[row][col + radius];
+                    rowConvSum += kernalWt*gray;
+                    
+                    // update edgeConvSum
+                    float edgeConvSum = 0;
+                    float edgeKernalWt = 1.0f/(col + radius + 1);
+                    for (int offset = -col; offset <= radius; offset++ )
+                    {
+                        gray = inputGrayImage[row][col + offset];
+                        edgeConvSum += edgeKernalWt*gray;
+                    }
+                    blurImage[row][col] = edgeConvSum; 
+                }
+                // Add and subtract from convSum
+                // the kernal weights are regular here, and constant
+                else if (col > radius && col < (width - radius))
+                {
+                    double newGray = inputGrayImage[row][col + radius];
+                    rowConvSum += kernalWt*newGray;
+                    double oldGray = inputGrayImage[row][col - radius -1];
+                    rowConvSum -= kernalWt*oldGray;
+                    blurImage[row][col] = rowConvSum; 
+                }
+                // Sum terms for edgeConvSum
+                // the kernal weights are special here, and not constant
+                else if ((col >= width - radius) && (col < (width - 1)))
+                {
+                    double edgeConvSum = 0;
+                    double edgeKernalWt = 1.0/(width -1 - col + radius);
+                    for (int offset = -radius; offset < width - 1 - col ; offset++ )
+                    {
+                        double gray = inputGrayImage[row][col + offset];
+                        edgeConvSum += edgeKernalWt*gray;
+                    }
+                    blurImage[row][col] = edgeConvSum; 
+                }  
+                // Sum terms for final edgeConvSum
+                // the kernal weights are special here, and constant
+                else if (col == (width-1))
+                {
+                    float edgeConvSum = 0;
+                    float edgeKernalWt = 1.0f/(radius + 1);
+                    for (int offset = -radius; offset <= 0; offset++ )
+                    {
+                        double gray = inputGrayImage[row][col + offset];
+                        edgeConvSum += edgeKernalWt*gray;
+                    }
+                    blurImage[row][col] = edgeConvSum;                     
+                }
+            }
+        }      
+        return blurImage;
+    }
+    
+    public static double[][] transpose(double[][] inputImage)
+    {
+        // Initialize the output image
+        int nRows = inputImage.length;
+        int nCols = inputImage[0].length;        
+        double[][] outputImage = new double[nCols][nRows]; 
+        for (int row_num = 0; row_num < nRows; row_num++) {
+            for (int col_num = 0; col_num < nCols; col_num++) {
+                outputImage[col_num][row_num] = inputImage[row_num][col_num];
+            }
+        }       
+        
+        return outputImage;
     }
 }

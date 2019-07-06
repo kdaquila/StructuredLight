@@ -1,18 +1,18 @@
 <config>	
 	<nRows type="int">600</nRows>
 	<nCols type="int">800</nCols>
-	<minValue type="int">35</minValue>
-	<maxValue type="int">230</maxValue>	
-	<stepValue type="int">15</stepValue>	
+	<minValue type="int">5300</minValue>
+	<maxValue type="int">65400</maxValue>	
+	<stepValue type="int">4300</stepValue>	
 	
 	<roiX type="int">960</roiX>
 	<roiY type="int">540</roiY>
 	<roiWidth type="int">10</roiWidth>
 	<roiHeight type="int">10</roiHeight>
 	
-	<formatString type="string">%e</formatString>	
+	<formatString type="string">%f</formatString>	
 	<baseDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\debug</baseDir>
-	<brightnessCalibrationImageDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\test-resources\image-sets\image-set-BrightnessCalibration-using8bit\PNG_8bitGray\lampStabilized</brightnessCalibrationImageDir>	
+	<brightnessCalibrationImageDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\test-resources\image-sets\image-set-BrightnessCalibration-using16bit\FITS_64bitFloatGray\lampStabilzed</brightnessCalibrationImageDir>	
 	<brightnessCalibrationDataDir type="string" role="subDir">brightness_calibration_data</brightnessCalibrationDataDir>
 	<brightnessCalibrationDataFilename type="string">brightness_calibration_data.txt</brightnessCalibrationDataFilename>
 	<brightnessCalibrationPatternDir type="string" role="subDir">brightness_calibration_patterns</brightnessCalibrationPatternDir>

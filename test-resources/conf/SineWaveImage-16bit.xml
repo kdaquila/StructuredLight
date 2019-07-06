@@ -4,7 +4,8 @@
 	<nCols type="int">800</nCols>
 	<amplitude type="int">20000</amplitude>
 	<offset type="int">32768</offset>	
-	<waveLength type="double">40.0</waveLength>
+	<waveLength1 type="double">40.0</waveLength1>
+	<waveLength2 type="double">42.0</waveLength2>
 	<nPhaseSteps type="int">7</nPhaseSteps>
 	<waveDirection type="string">horizontal</waveDirection>		
 	
@@ -14,5 +15,9 @@
 	<doBrightnessCalibration type="boolean">true</doBrightnessCalibration>
 	<brightnessCalibrationTableDir type="string" role="subDir">brightness_calibration_data</brightnessCalibrationTableDir>
 	<brightnessCalibrationTableFilename type="string">brightness_calibration_data.txt</brightnessCalibrationTableFilename>
+	
+	<sineWavePhotoSetDir1 type="string" role="subDir">sine_wave_photo_set1</sineWavePhotoSetDir1>
+	<sineWavePhotoSetDir2 type="string" role="subDir">sine_wave_photo_set2</sineWavePhotoSetDir2>
+	<phaseMapDir type="string" role="subDir">phase_map</phaseMapDir>
 	
 </config>

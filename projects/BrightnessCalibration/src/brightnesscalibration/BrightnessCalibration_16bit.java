@@ -7,14 +7,13 @@ import static core.Print.println;
 import core.TXT;
 import core.XML;
 import java.util.Map;
-import lookuptable.LookUpTable_CubicSpline;
 import lookuptable.LookUpTable_InverseRodbard;
 
-public class BrightnessCalibration64 {
+public class BrightnessCalibration_16bit {
     
-     Map<String,Object> config;  
+    Map<String,Object> config;  
     
-    public BrightnessCalibration64(String configPath) {
+    public BrightnessCalibration_16bit(String configPath) {
         // Load the XML configuration file
         XML xml = new XML(configPath);        
         
@@ -113,7 +112,7 @@ public class BrightnessCalibration64 {
         // Parse the arguments
         String configAbsPath = args[0];
         
-        BrightnessCalibration64 app = new BrightnessCalibration64(configAbsPath);
+        BrightnessCalibration_16bit app = new BrightnessCalibration_16bit(configAbsPath);
         
         // Load images
         String brightnessCalibrationImageDir = (String) app.config.get("brightnessCalibrationImageDir");   

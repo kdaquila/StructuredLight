@@ -9,11 +9,11 @@ import core.XML;
 import java.util.Map;
 import lookuptable.LookUpTable_InverseRodbard;
 
-public class BrightnessCalibration {
+public class BrightnessCalibration_8bit {
     
      Map<String,Object> config;  
     
-    public BrightnessCalibration(String configPath) {
+    public BrightnessCalibration_8bit(String configPath) {
         // Load the XML configuration file
         XML xml = new XML(configPath);        
         
@@ -112,7 +112,7 @@ public class BrightnessCalibration {
         // Parse the arguments
         String configAbsPath = args[0];
         
-        BrightnessCalibration app = new BrightnessCalibration(configAbsPath);
+        BrightnessCalibration_8bit app = new BrightnessCalibration_8bit(configAbsPath);
                
         // Load images
         String brightnessCalibrationImageDir = (String) app.config.get("brightnessCalibrationImageDir");

@@ -72,37 +72,40 @@ public class SineWaveImageMaker_16bit {
         int nCols = (Integer) config.get("nCols");
         int amplitude = (Integer) config.get("amplitude");
         int offset = (Integer) config.get("offset");
-        double waveLength = (Double) config.get("waveLength");
         int nPhaseSteps = (Integer) config.get("nPhaseSteps");
-        String orientation = (String) config.get("waveDirection");          
-        Map<String,int[][]> sineWaveArrayStack = SineWavePattern.makeSineArrayStack(nRows, nCols, amplitude, offset, waveLength, nPhaseSteps, orientation);
-        
-        // Apply the look-up-table
-        boolean doBrightnessCalibration = (Boolean) config.get("doBrightnessCalibration");        
-        if (doBrightnessCalibration) {
-            Map<String,int[][]> sineWaveArrayStack_Adj = new TreeMap<>();
-            String brightnessCalibrationTableDir = (String) config.get("brightnessCalibrationTableDir");
-            String brightnessCalibrationTableFilename = (String) config.get("brightnessCalibrationTableFilename");
-            String brightnessCalibrationFullPath = brightnessCalibrationTableDir + "\\" + brightnessCalibrationTableFilename;
-            double[] params = TXT.loadVector_Double(brightnessCalibrationFullPath);
-            for (String name: sineWaveArrayStack.keySet()) {
-                int[][] oldImg = sineWaveArrayStack.get(name);
-                int[][] newImg = LookUpTable.applyParams(oldImg, params);
-                sineWaveArrayStack_Adj.put(name, newImg);
-            }     
-            
-            // Overwrite the original image stack with the adjusted one
-            sineWaveArrayStack = sineWaveArrayStack_Adj;
-        }
-        
-         
-        // Set as images      
+        String orientation = (String) config.get("waveDirection");  
+        String brightnessCalibrationTableDir = (String) config.get("brightnessCalibrationTableDir");
+        String brightnessCalibrationTableFilename = (String) config.get("brightnessCalibrationTableFilename");
+        String brightnessCalibrationFullPath = brightnessCalibrationTableDir + "\\" + brightnessCalibrationTableFilename;
+        double[] params = TXT.loadVector_Double(brightnessCalibrationFullPath);        
+        double waveLength1 = (Double) config.get("waveLength1");                       
+        double waveLength2 = (Double) config.get("waveLength2");
+        double[] waveLenghts = new double[]{waveLength1, waveLength2};
         Map<String,BufferedImage> sineWaveImages = new TreeMap<>();
-        for (String name: sineWaveArrayStack.keySet()) {
-            int[][] array = sineWaveArrayStack.get(name);
-            BufferedImage image = BufferedImageFactory.build_16bit_Gray(array);
-            sineWaveImages.put(name, image);
-        }    
+        for (double wavelength: waveLenghts) {
+            Map<String,int[][]> sineWaveArrayStack = SineWavePattern.makeSineArrayStack(nRows, nCols, amplitude, offset, wavelength, nPhaseSteps, orientation);
+        
+            // Apply the look-up-table
+            boolean doBrightnessCalibration = (Boolean) config.get("doBrightnessCalibration");        
+            if (doBrightnessCalibration) {
+                Map<String,int[][]> sineWaveArrayStack_Adj = new TreeMap<>();
+                for (String name: sineWaveArrayStack.keySet()) {
+                    int[][] oldImg = sineWaveArrayStack.get(name);
+                    int[][] newImg = LookUpTable.applyParams(oldImg, params);
+                    sineWaveArrayStack_Adj.put(name, newImg);
+                }     
+
+                // Overwrite the original image stack with the adjusted one
+                sineWaveArrayStack = sineWaveArrayStack_Adj;
+            }        
+
+            // Set as images 
+            for (String name: sineWaveArrayStack.keySet()) {
+                int[][] array = sineWaveArrayStack.get(name);
+                BufferedImage image = BufferedImageFactory.build_16bit_Gray(array);
+                sineWaveImages.put(name, image);
+            }    
+        }
         return sineWaveImages;
     }
     
