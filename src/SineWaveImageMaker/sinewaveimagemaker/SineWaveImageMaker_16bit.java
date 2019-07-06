@@ -151,6 +151,18 @@ public class SineWaveImageMaker_16bit {
             g.setColor(Color.BLACK);            
             g.drawString(displayName, xText, yText);
         }
+        
+        // Add an all-white image        
+        BufferedImage allWhiteImg = new BufferedImage(nCols, nRows, BufferedImage.TYPE_USHORT_GRAY);
+        short[] data = ((DataBufferUShort)allWhiteImg.getRaster().getDataBuffer()).getData();
+        Graphics2D g = (Graphics2D) allWhiteImg.getGraphics();
+        for (int row_num = 0; row_num < nRows ; row_num++) {
+            for (int col_num = 0; col_num < nCols; col_num++) {
+                int index = row_num*nCols + col_num;
+                data[index] = (short)(offset + amplitude);
+            }
+        }
+        sineWaveImages.put("white", allWhiteImg);
           
         return sineWaveImages;
     }
