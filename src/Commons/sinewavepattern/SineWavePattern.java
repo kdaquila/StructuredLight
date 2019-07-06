@@ -1,17 +1,16 @@
 package sinewavepattern;
 
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class SineWavePattern {    
     
-    public static Map<String, int[][]> makeSineArrayStack(int nRows, int nCols, int amplitude, int offset, double waveLength, int nPhaseSteps, String orientation) {
+    public static SortedMap<String, int[][]> makeSineArrayStack(int nRows, int nCols, int amplitude, int offset, double waveLength, int nPhaseSteps, String orientation) {
         SortedMap<String, int[][]> imgStack = new TreeMap();
         for (int phase_index = 0; phase_index < nPhaseSteps; phase_index++) {
             double phase = 2*Math.PI/nPhaseSteps * phase_index;
             int[][] newImg = makeSineArray(nRows, nCols, amplitude, offset, waveLength, phase, orientation);
-            String imgName = "waveLen" + String.format("%.1f", waveLength) + "_phase" + String.format("%.1f", phase);
+            String imgName = orientation + "WaveLen" + String.format("%.1f", waveLength) + "_phase" + String.format("%.1f", phase);
             imgStack.put(imgName, newImg);
         }
         return imgStack;

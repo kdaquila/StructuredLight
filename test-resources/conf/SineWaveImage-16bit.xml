@@ -4,10 +4,14 @@
 	<nCols type="int">800</nCols>
 	<amplitude type="int">20000</amplitude>
 	<offset type="int">32768</offset>	
-	<waveLength1 type="double">40.0</waveLength1>
-	<waveLength2 type="double">42.0</waveLength2>
-	<nPhaseSteps type="int">7</nPhaseSteps>
-	<waveDirection type="string">horizontal</waveDirection>		
+	<horizontalWaveLength1 type="double">40.0</horizontalWaveLength1>
+	<horizontalWaveLength2 type="double">42.0</horizontalWaveLength2>
+	<verticalWaveLength1 type="double">40.0</verticalWaveLength1>
+	<verticalWaveLength2 type="double">42.0</verticalWaveLength2>
+	<nPhaseSteps type="int">7</nPhaseSteps>	
+	
+	<borderWidth type="int">100</borderWidth>
+	<fontSize type="int">20</fontSize>
 	
 	<baseDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\debug</baseDir>
 	<sineWavePatternsDir type="string" role="subDir">sine_wave_patterns</sineWavePatternsDir>	
@@ -16,8 +20,11 @@
 	<brightnessCalibrationTableDir type="string" role="subDir">brightness_calibration_data</brightnessCalibrationTableDir>
 	<brightnessCalibrationTableFilename type="string">brightness_calibration_data.txt</brightnessCalibrationTableFilename>
 	
-	<sineWavePhotoSetDir1 type="string" role="subDir">sine_wave_photo_set1</sineWavePhotoSetDir1>
-	<sineWavePhotoSetDir2 type="string" role="subDir">sine_wave_photo_set2</sineWavePhotoSetDir2>
+	<horizontalWaveLength1Dir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\test-resources\image-sets\image-set-sineWavePhotos\horizontalWaveLength1</horizontalWaveLength1Dir>
+	<horizontalWaveLength2Dir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\test-resources\image-sets\image-set-sineWavePhotos\horizontalWaveLength2</horizontalWaveLength2Dir>
+	<verticalWaveLength1Dir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\test-resources\image-sets\image-set-sineWavePhotos\verticalWaveLength1</verticalWaveLength1Dir>	
+	<verticalWaveLength2Dir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\test-resources\image-sets\image-set-sineWavePhotos\verticalWaveLength2</verticalWaveLength2Dir>
+	
 	<phaseMapDir type="string" role="subDir">phase_map</phaseMapDir>
 	
 </config>

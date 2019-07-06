@@ -27,15 +27,36 @@ public class TwoAxisTwoFreqPhaseMap {
         config = xml.map;   
     }
     
-    public void computePhaseMap(){
-        
-        
+    public void computeHorizontalPhaseMap(){
         // load image stacks
-        String sineWavePhotoSetDir1 = (String) config.get("sineWavePhotoSetDir1");
-        SortedMap<String, double[][]> grayStack1 = FITS.loadDoubleArray2D_Batch(sineWavePhotoSetDir1);
-        String sineWavePhotoSetDir2 = (String) config.get("sineWavePhotoSetDir2");
-        SortedMap<String, double[][]> grayStack2 = FITS.loadDoubleArray2D_Batch(sineWavePhotoSetDir2);
-
+        String horizontalWaveLength1Dir = (String) config.get("horizontalWaveLength1Dir");
+        SortedMap<String, double[][]> grayStack1 = FITS.loadDoubleArray2D_Batch(horizontalWaveLength1Dir);
+        String horizontalWaveLength2Dir = (String) config.get("horizontalWaveLength2Dir");
+        SortedMap<String, double[][]> grayStack2 = FITS.loadDoubleArray2D_Batch(horizontalWaveLength2Dir);
+        
+        // load the wavelengths
+        double horizontalWaveLength1 = (Double) config.get("horizontalWaveLength1");        
+        double horizontalWaveLength2 = (Double) config.get("horizontalWaveLength2");
+        
+        computePhaseMap(grayStack1, grayStack2, horizontalWaveLength1, horizontalWaveLength2, "horizontal");
+    }
+    
+    public void computeVerticalPhaseMap(){
+        // load image stacks
+        String verticalWaveLength1Dir = (String) config.get("verticalWaveLength1Dir");
+        SortedMap<String, double[][]> grayStack1 = FITS.loadDoubleArray2D_Batch(verticalWaveLength1Dir);
+        String verticalWaveLength2Dir = (String) config.get("verticalWaveLength2Dir");
+        SortedMap<String, double[][]> grayStack2 = FITS.loadDoubleArray2D_Batch(verticalWaveLength2Dir);
+        
+        // load the wavelengths
+        double verticalWaveLength1 = (Double) config.get("verticalWaveLength1");        
+        double verticalWaveLength2 = (Double) config.get("verticalWaveLength2");
+        
+        computePhaseMap(grayStack1, grayStack2, verticalWaveLength1, verticalWaveLength2, "vertical");
+    }
+    
+    private void computePhaseMap(SortedMap<String, double[][]> grayStack1, SortedMap<String, double[][]> grayStack2, double waveLength1, double waveLength2, String orientation){
+   
         // blur the images slightly
         int blurRadius = 3;
         SortedMap<String, double[][]> blurGrayStack1 = ImageStackUtils.blurStack(grayStack1, blurRadius);
@@ -46,9 +67,7 @@ public class TwoAxisTwoFreqPhaseMap {
         List<Double> phaseOffsets = new ArrayList<>(nPhaseSteps);
         for (double phase = 0; phase < 2*Math.PI; phase += (2*Math.PI/nPhaseSteps)) {
             phaseOffsets.add(-phase);
-        }
-        double waveLength1 = (Double) config.get("waveLength1");        
-        double waveLength2 = (Double) config.get("waveLength2");  
+        }          
 
         // compute wrapped phase maps
         double[][] wrappedPhaseMap1 = computeWrappedPhaseMap(grayStack1, phaseOffsets);
@@ -56,16 +75,16 @@ public class TwoAxisTwoFreqPhaseMap {
         
         // save wrapped phase maps
         String phaseMapDir = (String) config.get("phaseMapDir");
-        String wrappedPhaseMapName1 = "wrappedPhaseMap_" + waveLength1 + ".FITS";
+        String wrappedPhaseMapName1 = orientation + "WrappedPhaseMap_" + waveLength1 + ".FITS";
         FITS.saveImage(wrappedPhaseMap1, phaseMapDir, wrappedPhaseMapName1);
-        String wrappedPhaseMapName2 = "wrappedPhaseMap_" + waveLength2 + ".FITS";
-        FITS.saveImage(wrappedPhaseMap1, phaseMapDir, wrappedPhaseMapName2);
+        String wrappedPhaseMapName2 = orientation + "WrappedPhaseMap_" + waveLength2 + ".FITS";
+        FITS.saveImage(wrappedPhaseMap2, phaseMapDir, wrappedPhaseMapName2);
                 
         // compute unwrapped phase map
         double[][] unwrappedPhaseMap = computeUnwrappedPhaseMap(wrappedPhaseMap1, wrappedPhaseMap2);
         
         // save unwrapped phase maps
-        String unWrappedPhaseMapName = "unWrappedPhaseMap.FITS";
+        String unWrappedPhaseMapName = orientation + "UnWrappedPhaseMap.FITS";
         FITS.saveImage(unwrappedPhaseMap, phaseMapDir, unWrappedPhaseMapName);
         
         // compute absolute phase map
@@ -73,7 +92,7 @@ public class TwoAxisTwoFreqPhaseMap {
         double[][] absolutePhaseMap = computeAbsPhaseMap(wrappedPhaseMap1, waveLength1, unwrappedPhaseMap, unWrappedWaveLength);
                 
         // save the absolute phase map
-        String absolutePhaseMapName = "absolutePhaseMap.FITS";
+        String absolutePhaseMapName = orientation + "AbsolutePhaseMap.FITS";
         FITS.saveImage(absolutePhaseMap, phaseMapDir, absolutePhaseMapName);
     }
     
@@ -159,9 +178,8 @@ public class TwoAxisTwoFreqPhaseMap {
         
         // Run the app
         TwoAxisTwoFreqPhaseMap twoFreqPhaseMap = new TwoAxisTwoFreqPhaseMap(configPath);
-        twoFreqPhaseMap.computePhaseMap();
-        
-        
+        twoFreqPhaseMap.computeHorizontalPhaseMap();
+        twoFreqPhaseMap.computeVerticalPhaseMap();                
     }
     
 }
