@@ -1,0 +1,107 @@
+<config>
+		
+	<nRows type="int">600</nRows>
+	<nCols type="int">800</nCols>
+	<amplitude type="int">20000</amplitude>
+	<offset type="int">32768</offset>	
+	<horizontalWaveLength1 type="double">40.0</horizontalWaveLength1>
+	<horizontalWaveLength2 type="double">42.0</horizontalWaveLength2>
+	<verticalWaveLength1 type="double">40.0</verticalWaveLength1>
+	<verticalWaveLength2 type="double">42.0</verticalWaveLength2>
+	<nPhaseSteps type="int">7</nPhaseSteps>	
+	
+	<borderWidth type="int">100</borderWidth>
+	<fontSize type="int">20</fontSize>
+	
+	<isSaveDataMode type="boolean">true</isSaveDataMode>
+	<isSaveImageMode type="boolean">true</isSaveImageMode>
+	
+	<drawCirclesRadius type="int">3</drawCirclesRadius>
+	<drawCirclesLineWidth type="double">1.0</drawCirclesLineWidth>
+	<drawCirclesColor type="hex">FF0000</drawCirclesColor>
+	<drawCirclesIsFill type="boolean">true</drawCirclesIsFill>
+	
+	<adaptiveThresholdWindowSize type="int">41</adaptiveThresholdWindowSize>
+	<adaptiveThresholdOffset type="int">5</adaptiveThresholdOffset>
+	
+	<contoursMinArea type="double">100</contoursMinArea>
+	
+	<nRows type="int">13</nRows>
+	<nCols type="int">17</nCols>
+	<dx type="double">25.0</dx>
+	<dy type="double">25.0</dy>	
+		
+	<brightnessCalibrationDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\debug\brightness_calibration_data</brightnessCalibrationDir>
+	<brightnessCalibrationFilename type="string">brightness_calibration_data.txt</brightnessCalibrationFilename>
+	
+	<baseDir type="string">C:\Users\kfd18\OneDrive\kdaquila_SoftwareDev\StructuredLight\test-resources\image-sets\image-set-projectorCalibration</baseDir>
+	
+	<worldPointsDir type="string" task="prependBaseDir">world_points</worldPointsDir>
+	<worldPointsFilename type="string">worldPoints.txt</worldPointsFilename>
+	
+	<cameraIntrinsicMatrixDir type="string" task="prependBaseDir">camera_intrinsic_matrix</cameraIntrinsicMatrixDir>
+	<projectorIntrinsicMatrixDir type="string" task="prependBaseDir">projector_intrinsic_matrix</cameraIntrinsicMatrixDir>
+	<intrinsicMatrixFilename type="string">intrinsic.txt</intrinsicMatrixFilename>	
+	
+	<cameraDistortionsDir type="string" task="prependBaseDir">camera_distortions</cameraDistortionsDir>
+	<projectorDistortionsDir type="string" task="prependBaseDir">projector_distortionss</projectorDistortionsDir>	
+	<distortionsFilename type="string">radialCoeffs.txt</distortionsFilename>
+	
+	<view1HorizontalWaveLength1Dir type="string" task="prependBaseDir">view1\horizontalWaveLength1</view1HorizontalWaveLength1Dir>
+	<view1HorizontalWaveLength2Dir type="string" task="prependBaseDir">view1\horizontalWaveLength2</view1HorizontalWaveLength2Dir>
+	<view1VerticalWaveLength1Dir type="string" task="prependBaseDir">view1\verticalWaveLength1</view1VerticalWaveLength1Dir>	
+	<view1VerticalWaveLength2Dir type="string" task="prependBaseDir">view1\verticalWaveLength2</view1VerticalWaveLength2Dir>
+	<view1phaseMapDir type="string" task="prependBaseDir">view1\phaseMaps</view1phaseMapDir>
+	<view1BrightImageFilePath type="string" task="prependBaseDir">view1\brightImage.FITS</view1BrightImageFilePath>
+	<view1ProjectorExtrinsicMatrixDir type="string" role="subDir">view1\projection_extrinsic_matrix</view1ProjectorExtrinsicMatrixDir>	
+	<view1CameraExtrinsicMatrixDir type="string" role="subDir">view1\camera_extrinsic_matrix</view1CameraExtrinsicMatrixDir>
+
+	<view2HorizontalWaveLength1Dir type="string" task="prependBaseDir">view2\horizontalWaveLength1</view2HorizontalWaveLength1Dir>
+	<view2HorizontalWaveLength2Dir type="string" task="prependBaseDir">view2\horizontalWaveLength2</view2HorizontalWaveLength2Dir>
+	<view2VerticalWaveLength1Dir type="string" task="prependBaseDir">view2\verticalWaveLength1</view2VerticalWaveLength1Dir>	
+	<view2VerticalWaveLength2Dir type="string" task="prependBaseDir">view2\verticalWaveLength2</view2VerticalWaveLength2Dir>
+	<view2phaseMapDir type="string" task="prependBaseDir">view2\phaseMaps</view2phaseMapDir>
+	<view2BrightImageFilePath type="string" task="prependBaseDir">view2\brightImage.FITS</view2BrightImageFilePath>
+	<view2ProjectorExtrinsicMatrixDir type="string" role="subDir">view2\projection_extrinsic_matrix</view2ProjectorExtrinsicMatrixDir>	
+	<view2CameraExtrinsicMatrixDir type="string" role="subDir">view2\camera_extrinsic_matrix</view2CameraExtrinsicMatrixDir>
+		
+	<view3HorizontalWaveLength1Dir type="string" task="prependBaseDir">view3\horizontalWaveLength1</view3HorizontalWaveLength1Dir>
+	<view3HorizontalWaveLength2Dir type="string" task="prependBaseDir">view3\horizontalWaveLength2</view3HorizontalWaveLength2Dir>
+	<view3VerticalWaveLength1Dir type="string" task="prependBaseDir">view3\verticalWaveLength1</view3VerticalWaveLength1Dir>	
+	<view3VerticalWaveLength2Dir type="string" task="prependBaseDir">view3\verticalWaveLength2</view3VerticalWaveLength2Dir>
+	<view3phaseMapDir type="string" task="prependBaseDir">view3\phaseMaps</view3phaseMapDir>
+	<view3BrightImageFilePath type="string" task="prependBaseDir">view3\brightImage.FITS</view3BrightImageFilePath>
+	<view3ProjectorExtrinsicMatrixDir type="string" role="subDir">view3\projection_extrinsic_matrix</view3ProjectorExtrinsicMatrixDir>	
+	<view3CameraExtrinsicMatrixDir type="string" role="subDir">view3\camera_extrinsic_matrix</view3CameraExtrinsicMatrixDir>
+		
+	<view4HorizontalWaveLength1Dir type="string" task="prependBaseDir">view4\horizontalWaveLength1</view4HorizontalWaveLength1Dir>
+	<view4HorizontalWaveLength2Dir type="string" task="prependBaseDir">view4\horizontalWaveLength2</view4HorizontalWaveLength2Dir>
+	<view4VerticalWaveLength1Dir type="string" task="prependBaseDir">view4\verticalWaveLength1</view4VerticalWaveLength1Dir>	
+	<view4VerticalWaveLength2Dir type="string" task="prependBaseDir">view4\verticalWaveLength2</view4VerticalWaveLength2Dir>
+	<view4phaseMapDir type="string" task="prependBaseDir">view4\phaseMaps</view4phaseMapDir>
+	<view4BrightImageFilePath type="string" task="prependBaseDir">view4\brightImage.FITS</view4BrightImageFilePath>
+	<view4ProjectorExtrinsicMatrixDir type="string" role="subDir">view4\projection_extrinsic_matrix</view4ProjectorExtrinsicMatrixDir>	
+	<view4CameraExtrinsicMatrixDir type="string" role="subDir">view4\camera_extrinsic_matrix</view4CameraExtrinsicMatrixDir>
+	
+	<view5HorizontalWaveLength1Dir type="string" task="prependBaseDir">view5\horizontalWaveLength1</view5HorizontalWaveLength1Dir>
+	<view5HorizontalWaveLength2Dir type="string" task="prependBaseDir">view5\horizontalWaveLength2</view5HorizontalWaveLength2Dir>
+	<view5VerticalWaveLength1Dir type="string" task="prependBaseDir">view5\verticalWaveLength1</view5VerticalWaveLength1Dir>	
+	<view5VerticalWaveLength2Dir type="string" task="prependBaseDir">view5\verticalWaveLength2</view5VerticalWaveLength2Dir>
+	<view5phaseMapDir type="string" task="prependBaseDir">view5\phaseMaps</view5phaseMapDir>
+	<view5BrightImageFilePath type="string" task="prependBaseDir">view5\brightImage.FITS</view5BrightImageFilePath>
+	<view5ProjectorExtrinsicMatrixDir type="string" role="subDir">view5\projection_extrinsic_matrix</view5ProjectorExtrinsicMatrixDir>	
+	<view5CameraExtrinsicMatrixDir type="string" role="subDir">view5\camera_extrinsic_matrix</view5CameraExtrinsicMatrixDir>
+		
+	<view6HorizontalWaveLength1Dir type="string" task="prependBaseDir">view6\horizontalWaveLength1</view6HorizontalWaveLength1Dir>
+	<view6HorizontalWaveLength2Dir type="string" task="prependBaseDir">view6\horizontalWaveLength2</view6HorizontalWaveLength2Dir>
+	<view6VerticalWaveLength1Dir type="string" task="prependBaseDir">view6\verticalWaveLength1</view6VerticalWaveLength1Dir>	
+	<view6VerticalWaveLength2Dir type="string" task="prependBaseDir">view6\verticalWaveLength2</view6VerticalWaveLength2Dir>
+	<view6phaseMapDir type="string" task="prependBaseDir">view6\phaseMaps</view6phaseMapDir>
+	<view6BrightImageFilePath type="string" task="prependBaseDir">view6\brightImage.FITS</view6BrightImageFilePath>
+	<view6ProjectorExtrinsicMatrixDir type="string" role="subDir">view6\projection_extrinsic_matrix</view6ProjectorExtrinsicMatrixDir>	
+	<view6CameraExtrinsicMatrixDir type="string" role="subDir">view6\camera_extrinsic_matrix</view6CameraExtrinsicMatrixDir>
+	
+	<horizontalPhaseMapFilename type="string">horizontalPhaseMap.FITS </horizontalPhaseMapFilename>
+	<veticalPhaseMapFilename type="string">verticalPhaseMap.FITS </veticalPhaseMapFilename>
+	
+</config>

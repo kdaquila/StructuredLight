@@ -149,5 +149,11 @@ public class XML {
             String tagName = node.getName();
             map.put(tagName, baseDirNode.getText() + "\\" + (String) map.get(tagName));
         }
+        
+        subDirNodes = root.selectNodes("/config/*[@task='prependBaseDir']");
+        for (Node node: subDirNodes) {
+            String tagName = node.getName();
+            map.put(tagName, baseDirNode.getText() + "\\" + (String) map.get(tagName));
+        }
     }
 }

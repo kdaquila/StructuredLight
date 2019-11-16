@@ -3,10 +3,7 @@ package phasemap;
 import core.FITS;
 import core.ImageStackUtils;
 import static core.Print.println;
-import core.TXT;
 import core.XML;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -96,7 +93,7 @@ public class TwoAxisTwoFreqPhaseMap {
         FITS.saveImage(absolutePhaseMap, phaseMapDir, absolutePhaseMapName);
     }
     
-    private double[][] computeWrappedPhaseMap(SortedMap<String, double[][]> stack, List<Double> phaseOffsets){        
+    private static double[][] computeWrappedPhaseMap(SortedMap<String, double[][]> stack, List<Double> phaseOffsets){        
         
 
         // get image dimensions
@@ -126,7 +123,7 @@ public class TwoAxisTwoFreqPhaseMap {
         return output;
     }
     
-    private double[][] computeUnwrappedPhaseMap(double[][] phaseMap1, double[][] phaseMap2){
+    private static double[][] computeUnwrappedPhaseMap(double[][] phaseMap1, double[][] phaseMap2){
         int nCols = phaseMap1[0].length;
         int nRows = phaseMap1.length;
         double[][] output = new double[nRows][nCols];
@@ -140,7 +137,7 @@ public class TwoAxisTwoFreqPhaseMap {
         return output;
     }
     
-    private double[][] computeAbsPhaseMap(double[][] phaseMap1, Double waveLength1, double[][] phaseMap3, Double waveLength3) {
+    private static double[][] computeAbsPhaseMap(double[][] phaseMap1, Double waveLength1, double[][] phaseMap3, Double waveLength3) {
         int nCols = phaseMap1[0].length;
         int nRows = phaseMap1.length;
         double[][] output = new double[nRows][nCols];
@@ -155,7 +152,7 @@ public class TwoAxisTwoFreqPhaseMap {
         return output;        
     }
     
-    private double mod(double x, double y)
+    private static double mod(double x, double y)
     {
         double result = x % y;
         if (result < 0)
@@ -182,4 +179,26 @@ public class TwoAxisTwoFreqPhaseMap {
         twoFreqPhaseMap.computeVerticalPhaseMap();                
     }
     
+    public static double[][] computePhaseMap(SortedMap<String, double[][]> grayStack1, SortedMap<String, double[][]> grayStack2, double waveLength1, double waveLength2, int nPhaseSteps){
+           
+        // compute the phase offsets
+        List<Double> phaseOffsets = new ArrayList<>(nPhaseSteps);
+        for (double phase = 0; phase < 2*Math.PI; phase += (2*Math.PI/nPhaseSteps)) {
+            phaseOffsets.add(-phase);
+        }          
+
+        // compute wrapped phase maps
+        double[][] wrappedPhaseMap1 = computeWrappedPhaseMap(grayStack1, phaseOffsets);
+        double[][] wrappedPhaseMap2 = computeWrappedPhaseMap(grayStack2, phaseOffsets);    
+                
+        // compute unwrapped phase map
+        double[][] unwrappedPhaseMap = computeUnwrappedPhaseMap(wrappedPhaseMap1, wrappedPhaseMap2);
+                
+        // compute absolute phase map
+        double unWrappedWaveLength = waveLength1*waveLength2/Math.abs(waveLength1-waveLength2);
+        double[][] absolutePhaseMap = computeAbsPhaseMap(wrappedPhaseMap1, waveLength1, unwrappedPhaseMap, unWrappedWaveLength);
+        
+        return absolutePhaseMap;
+    }
+
 }
