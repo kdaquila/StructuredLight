@@ -13,6 +13,4 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
-mainClassName = 'brightnesscalibrationapp.BrightnessCalibration'
-
-
+mainClassName = 'brightnesscalibrationimagemaker.BrightnessCalibrationImageMaker'
