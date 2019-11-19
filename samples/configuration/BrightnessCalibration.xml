@@ -11,8 +11,9 @@
 	<roiHeight type="int">10</roiHeight>
 	
 	<formatString type="string">%f</formatString>	
-	<baseDir type="string">F:\OneDrive\kdaquila_SoftwareDev\StructuredLight\samples</baseDir>
-	<imageDir type="string" role="subDir">images/BrightnessCalibration/FITS_64bitFloatGray/normalized</imageDir>	
-	<dataDir type="string" role="subDir">data/BrightnessCalibration</dataDir>
+	<baseDir type="string"></baseDir>
+	<imageDir type="string">F:\OneDrive\kdaquila_SoftwareDev\StructuredLight\results\images\BrightnessCalibrationAnalysis\FITS_64bitFloatGray\normalized</imageDir>	
+	<dataDir type="string">F:\OneDrive\kdaquila_SoftwareDev\StructuredLight\results\data\BrightnessCalibrationAnalysis</dataDir>
 	<dataFilename type="string">brightness_calibration_data.txt</dataFilename>
+	<patternDir type="string">F:\OneDrive\kdaquila_SoftwareDev\StructuredLight\results\images\BrightnessCalibrationPatterns</patternDir>
 </config>
