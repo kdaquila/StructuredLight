@@ -1,0 +1,18 @@
+<config>	
+	<nRows type="int">600</nRows>
+	<nCols type="int">800</nCols>
+	<minValue type="int">5300</minValue>
+	<maxValue type="int">65400</maxValue>	
+	<stepValue type="int">4300</stepValue>	
+	
+	<roiX type="int">960</roiX>
+	<roiY type="int">540</roiY>
+	<roiWidth type="int">10</roiWidth>
+	<roiHeight type="int">10</roiHeight>
+	
+	<formatString type="string">%f</formatString>	
+	<baseDir type="string">F:\OneDrive\kdaquila_SoftwareDev\StructuredLight\samples</baseDir>
+	<imageDir type="string" role="subDir">images/BrightnessCalibration/FITS_64bitFloatGray/normalized</imageDir>	
+	<dataDir type="string" role="subDir">data/BrightnessCalibration</dataDir>
+	<dataFilename type="string">brightness_calibration_data.txt</dataFilename>
+</config>
