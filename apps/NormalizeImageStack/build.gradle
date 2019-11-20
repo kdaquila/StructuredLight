@@ -13,3 +13,18 @@ dependencies {
 }
 
 mainClassName = 'normalizeimagestackapp.NormalizeImageStack'
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+
+	archiveClassifier = 'fat'
+	
+	from sourceSets.main.output
+	
+	dependsOn configurations.runtimeClasspath	
+    from { 
+		configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) } 
+	}
+}
