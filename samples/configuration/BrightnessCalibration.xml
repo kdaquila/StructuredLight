@@ -12,7 +12,7 @@
 	
 	<formatString type="string">%f</formatString>	
 	<baseDir type="string"></baseDir>
-	<imageDir type="string">F:\OneDrive\kdaquila_SoftwareDev\StructuredLight\results\images\BrightnessCalibrationAnalysis\FITS_64bitFloatGray\normalized</imageDir>	
+	<imageDir type="string">F:\OneDrive\kdaquila_SoftwareDev\StructuredLight\results\images\BrightnessCalibrationAnalysis\FITS_64bitFloatGray_Normalized</imageDir>	
 	<dataDir type="string">F:\OneDrive\kdaquila_SoftwareDev\StructuredLight\results\data\BrightnessCalibrationAnalysis</dataDir>
 	<dataFilename type="string">brightness_calibration_data.txt</dataFilename>
 	<patternDir type="string">F:\OneDrive\kdaquila_SoftwareDev\StructuredLight\results\images\BrightnessCalibrationPatterns</patternDir>
