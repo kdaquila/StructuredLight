@@ -1,0 +1,31 @@
+<config>
+		
+	<nRows type="int">600</nRows>
+	<nCols type="int">800</nCols>
+	<amplitude type="int">20000</amplitude>
+	<offset type="int">32768</offset>	
+	<horizontalWaveLength1 type="double">40.0</horizontalWaveLength1>
+	<horizontalWaveLength2 type="double">42.0</horizontalWaveLength2>
+	<verticalWaveLength1 type="double">40.0</verticalWaveLength1>
+	<verticalWaveLength2 type="double">42.0</verticalWaveLength2>
+	<nPhaseSteps type="int">7</nPhaseSteps>	
+	
+	<borderWidth type="int">100</borderWidth>
+	<fontSize type="int">20</fontSize>
+	
+	<baseDir type="string">F:\OneDrive\kdaquila_SoftwareDev\StructuredLight</baseDir>
+	
+	<sineWavePatternsDir type="string" role="subDir">results\images\PhaseMapPatterns</sineWavePatternsDir>	
+	
+	<doBrightnessCalibration type="boolean">true</doBrightnessCalibration>
+	<brightnessCalibrationTableDir type="string" role="subDir">results\data\BrightnessCalibrationAnalysis</brightnessCalibrationTableDir>
+	<brightnessCalibrationTableFilename type="string">brightness_calibration_data.txt</brightnessCalibrationTableFilename>
+	
+	<horizontalWaveLength1Dir type="string" role="subDir">samples\images\PhaseMap\sineWave_photos\horizontalWaveLength1</horizontalWaveLength1Dir>
+	<horizontalWaveLength2Dir type="string" role="subDir">samples\images\PhaseMap\sineWave_photos\horizontalWaveLength2</horizontalWaveLength2Dir>
+	<verticalWaveLength1Dir   type="string" role="subDir">samples\images\PhaseMap\sineWave_photos\verticalWaveLength1</verticalWaveLength1Dir>	
+	<verticalWaveLength2Dir   type="string" role="subDir">samples\images\PhaseMap\sineWave_photos\verticalWaveLength2</verticalWaveLength2Dir>
+	
+	<phaseMapDir type="string" role="subDir">results\images\PhaseMap</phaseMapDir>
+	
+</config>
