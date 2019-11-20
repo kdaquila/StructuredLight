@@ -1,0 +1,4 @@
+rootProject.name = 'NormalizeImageStack'
+
+include ':ComputerVisionLibrary'
+project(':ComputerVisionLibrary').projectDir = new File('../../library/ComputerVision/')

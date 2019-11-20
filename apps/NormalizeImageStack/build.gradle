@@ -1,0 +1,15 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	compile project(":ComputerVisionLibrary")
+    testImplementation 'junit:junit:4.12'
+}
+
+mainClassName = 'normalizeimagestackapp.NormalizeImageStack'
