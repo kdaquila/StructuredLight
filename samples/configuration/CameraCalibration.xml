@@ -41,7 +41,7 @@
 	<imagesGrayDir type="string" role="subDir">results\images\CameraCalibrationAnalysis\ImagesGray</imagesGrayDir>
 	<imagesBWDir type="string" role="subDir">results\images\CameraCalibrationAnalysis\ImagesBW</imagesBWDir>
 	<pointDrawingsDir type="string" role="subDir">results\images\CameraCalibrationAnalysis\PointDrawings</pointDrawingsDir>
-	<imagePointsDir type="string" role="subDir">results\images\CameraCalibrationAnalysis\ImagePoints</imagePointsDir>
+	<imagePointsDir type="string" role="subDir">results\data\CameraCalibration\ImagePoints</imagePointsDir>
 	
 	<intrinsicMatrixFilename type="string">intrinsic.txt</intrinsicMatrixFilename>	
 	<worldPointsFilename type="string">worldPoints.txt</worldPointsFilename>	
