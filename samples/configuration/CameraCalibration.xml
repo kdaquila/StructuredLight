@@ -1,0 +1,49 @@
+<config>
+	<baseDir type="string">F:\OneDrive\kdaquila_SoftwareDev\StructuredLight</baseDir>
+
+	<!-- Image Maker -->
+	<nRows type="int">13</nRows>
+	<nCols type="int">17</nCols>
+	<borderWidth type="int">160</borderWidth>
+	<halfPitch type="int">400</halfPitch>
+	<discRadius type="int">200</discRadius>
+	<borderColor type="hex">000000</borderColor>
+	<backgroundColor type="hex">FFFFFF</backgroundColor>
+	<patternDir type="string" role="subDir">results\images\CameraCalibrationPatterns</patternDir>
+	<patternFilename type="string">camera_calibration_pattern.png</patternFilename>
+
+	<!-- Image Analysis -->
+	<isSaveDataMode type="boolean">true</isSaveDataMode>
+	<isSaveImageMode type="boolean">true</isSaveImageMode>
+	
+	<drawCirclesRadius type="int">3</drawCirclesRadius>
+	<drawCirclesLineWidth type="double">1.0</drawCirclesLineWidth>
+	<drawCirclesColor type="hex">FF0000</drawCirclesColor>
+	<drawCirclesIsFill type="boolean">true</drawCirclesIsFill>
+	
+	<adaptiveThresholdWindowSize type="int">41</adaptiveThresholdWindowSize>
+	<adaptiveThresholdOffset type="int">5</adaptiveThresholdOffset>
+	
+	<contoursMinArea type="double">100</contoursMinArea>
+	
+	<dx type="double">25.0</dx>
+	<dy type="double">25.0</dy>	
+	
+	<saveDataFormatString type="string">%+07e</saveDataFormatString>
+	<saveDataDelimiter type="string">,</saveDataDelimiter>
+	
+	<imagesRGBDir type="string" role="subDir">samples\images\CameraCalibration\rings_1920x1080</imagesRGBDir>	
+	
+	<intrinsicMatrixDir type="string" role="subDir">results\data\CameraCalibration\IntrinsicMatrix</intrinsicMatrixDir>
+	<worldPointsDir type="string" role="subDir">results\data\CameraCalibration\WorldPoints</worldPointsDir>
+	<distortionsDir type="string" role="subDir">results\data\CameraCalibration\Distortions</distortionsDir>
+	<extrinsicMatrixDir type="string" role="subDir">results\data\CameraCalibration\ExtrinsicMatrix</extrinsicMatrixDir>	
+	<imagesGrayDir type="string" role="subDir">results\images\CameraCalibrationAnalysis\ImagesGray</imagesGrayDir>
+	<imagesBWDir type="string" role="subDir">results\images\CameraCalibrationAnalysis\ImagesBW</imagesBWDir>
+	<pointDrawingsDir type="string" role="subDir">results\images\CameraCalibrationAnalysis\PointDrawings</pointDrawingsDir>
+	<imagePointsDir type="string" role="subDir">results\images\CameraCalibrationAnalysis\ImagePoints</imagePointsDir>
+	
+	<intrinsicMatrixFilename type="string">intrinsic.txt</intrinsicMatrixFilename>	
+	<worldPointsFilename type="string">worldPoints.txt</worldPointsFilename>	
+	<distortionsFilename type="string">radialCoeffs.txt</distortionsFilename>
+</config>
