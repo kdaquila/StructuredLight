@@ -1,0 +1,5 @@
+<config>
+	<baseDir type="string">F:\OneDrive\kdaquila_SoftwareDev\StructuredLight</baseDir>
+	<matrix1Dir type="string" role="subDir">results\data\CameraCalibration</matrix1Dir>
+
+</config>
