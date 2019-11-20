@@ -1,0 +1,4 @@
+rootProject.name = 'TIF16toFITS64'
+
+include ':ComputerVisionLibrary'
+project(':ComputerVisionLibrary').projectDir = new File('../../library/ComputerVision/')
