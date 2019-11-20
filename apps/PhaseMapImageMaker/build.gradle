@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	compile project(":ComputerVisionLibrary")
+    testImplementation 'junit:junit:4.12'
+}
+
+mainClassName = 'phasemapimagemakerapp.PhaseMapImageMaker'
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+
+	archiveClassifier = 'fat'
+	
+	from sourceSets.main.output
+	
+	dependsOn configurations.runtimeClasspath	
+    from { 
+		configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) } 
+	}
+}
